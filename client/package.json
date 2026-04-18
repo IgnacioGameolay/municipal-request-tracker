@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "municipal-request-tracker",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test.e2e": "cypress run",
     "test.unit": "vitest",
-    "lint": "eslint"
+    "lint": "eslint",
+    "start:client": "npm run start --prefix client",
+    "build:client": "npm run build --prefix client"
   },
   "dependencies": {
     "@capacitor/app": "8.1.0",
