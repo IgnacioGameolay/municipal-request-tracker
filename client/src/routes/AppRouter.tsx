@@ -4,9 +4,11 @@ import { IonRouterOutlet } from '@ionic/react';
 import { Route, Redirect } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 
-//Nills, aquí te dejé componentes de prueba,
-// tienes que que cambialos por las vistas que se usarán finalmente
-const DummyLogin: React.FC = () => <div>Login Page</div>;
+// 1. IMPORTAMOS AMBAS PÁGINAS AQUÍ
+import LoginPage from '../pages/auth/LoginPage';
+import CambiarPassword from '../pages/auth/CambiarPassword';
+
+// Dummies para las otras vistas
 const DummyDashboardCiudadano: React.FC = () => <div>Dashboard Ciudadano</div>;
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
@@ -14,7 +16,10 @@ export const AppRouter: React.FC = () => {
   return (
     <IonReactRouter>
       <IonRouterOutlet>
-        <Route exact path="/login" component={DummyLogin} />
+        
+        {/* 2. CONECTAMOS AMBAS RUTAS */}
+        <Route exact path="/login" component={LoginPage} />
+        <Route exact path="/recuperar" component={CambiarPassword} />
         
         <Route exact path="/">
           <Redirect to="/login" />
