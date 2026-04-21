@@ -4,13 +4,13 @@ import { IonRouterOutlet } from '@ionic/react';
 import { Route, Redirect } from 'react-router-dom';
 import { ProtectedRoute } from './ProtectedRoute';
 
-// 1. IMPORTAMOS AMBAS PÁGINAS AQUÍ
+// IMPORTACIONES REALES
 import LoginPage from '../pages/auth/LoginPage';
 import CambiarPassword from '../pages/auth/CambiarPassword';
 import RegisterPage from '../pages/auth/RegisterPage';
+import DashboardCiudadano from '../pages/ciudadano/DashboardCiudadano';
 
-// Dummies para las otras vistas
-const DummyDashboardCiudadano: React.FC = () => <div>Dashboard Ciudadano</div>;
+// Dummy solo para el admin que aún no hacemos
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
 export const AppRouter: React.FC = () => {
@@ -18,10 +18,12 @@ export const AppRouter: React.FC = () => {
     <IonReactRouter>
       <IonRouterOutlet>
         
-        {/* 2. CONECTAMOS AMBAS RUTAS */}
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/recuperar" component={CambiarPassword} />
         <Route exact path="/registro" component={RegisterPage} />
+        
+        {/* TRUCO: Usamos Route normal para saltarnos la validación mientras diseñamos */}
+        <Route exact path="/ciudadano/tramites" component={DashboardCiudadano} />
         
         <Route exact path="/">
           <Redirect to="/login" />
@@ -29,17 +31,11 @@ export const AppRouter: React.FC = () => {
 
         <ProtectedRoute 
           exact 
-          path="/ciudadano/tramites" 
-          component={DummyDashboardCiudadano} 
-          allowedRole="solicitante" 
-        />
-        
-        <ProtectedRoute 
-          exact 
           path="/admin/bandeja" 
           component={DummyBandejaAdmin} 
           allowedRole="funcionario" 
         />
+        
       </IonRouterOutlet>
     </IonReactRouter>
   );
