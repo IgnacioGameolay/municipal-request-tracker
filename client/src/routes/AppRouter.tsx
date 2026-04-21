@@ -7,6 +7,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 // 1. IMPORTAMOS AMBAS PÁGINAS AQUÍ
 import LoginPage from '../pages/auth/LoginPage';
 import CambiarPassword from '../pages/auth/CambiarPassword';
+import RegisterPage from '../pages/auth/RegisterPage';
 
 // Dummies para las otras vistas
 const DummyDashboardCiudadano: React.FC = () => <div>Dashboard Ciudadano</div>;
@@ -20,6 +21,7 @@ export const AppRouter: React.FC = () => {
         {/* 2. CONECTAMOS AMBAS RUTAS */}
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/recuperar" component={CambiarPassword} />
+        <Route exact path="/registro" component={RegisterPage} />
         
         <Route exact path="/">
           <Redirect to="/login" />
