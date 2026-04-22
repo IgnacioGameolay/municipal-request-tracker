@@ -1,48 +1,103 @@
+import React from 'react';
 import { 
-  IonContent, IonHeader, IonMenu, IonMenuButton, 
-  IonPage, IonTitle, IonToolbar, IonList, 
-  IonItem, IonIcon, IonLabel, IonMenuToggle 
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, 
+  IonMenuToggle, IonButton 
 } from '@ionic/react';
-import { homeOutline, documentTextOutline, logOutOutline } from 'ionicons/icons';
+import { notificationsOutline, personCircleOutline, person, menuOutline } from 'ionicons/icons';
 
-const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const DashboardCiudadano: React.FC = () => {
   return (
-    <>
-      <IonMenu contentId="main-content">
-        <IonHeader>
-          <IonToolbar color="primary">
-            <IonTitle>MRT - Menú</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent>
-          <IonList>
-            <IonMenuToggle autoHide={false}>
-              <IonItem button routerLink="/ciudadano/tramites">
-                <IonIcon slot="start" icon={homeOutline} />
-                <IonLabel>Mis Trámites</IonLabel>
-              </IonItem>
-              <IonItem button routerLink="/login">
-                <IonIcon slot="start" icon={logOutOutline} />
-                <IonLabel>Cerrar Sesión</IonLabel>
-              </IonItem>
+    <IonPage>
+      {/* Cabecera superior oscura con íconos y Rol */}
+      <IonHeader className="ion-no-border">
+        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white' }}>
+          
+          {/* ========================================== */}
+          {/* CAMBIO DEFINITIVO: FUERZA BRUTA CON TOGGLE */}
+          <IonButtons slot="start">
+            <IonMenuToggle menu="menu-lateral" autoHide={false}>
+              <IonButton style={{ color: 'white' }}>
+                <IonIcon icon={menuOutline} style={{ fontSize: '2rem' }} />
+              </IonButton>
             </IonMenuToggle>
-          </IonList>
-        </IonContent>
-      </IonMenu>
+          </IonButtons>
+          {/* ========================================== */}
+          
+          <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
+            Proyecto web y movil
+          </IonTitle>
 
-      <IonPage id="main-content">
-        <IonHeader>
-          <IonToolbar>
-            <IonMenuButton slot="start" />
-            <IonTitle>Municipal Request Tracker</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {children}
-        </IonContent>
-      </IonPage>
-    </>
+          <IonButtons slot="end" style={{ display: 'flex', alignItems: 'center' }}>
+            <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
+            <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
+            
+            {/* Cuadro amarillo del Rol */}
+            <div style={{ 
+              backgroundColor: '#cddc39', color: 'white', padding: '0 20px', 
+              fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
+              display: 'flex', alignItems: 'center' 
+            }}>
+              Rol: Solicitante
+            </div>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+
+      <IonContent className="ion-padding" style={{ '--background': '#ffffff' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', paddingTop: '10px' }}>
+          
+          <h2 style={{ color: '#000', fontWeight: 'bold', marginBottom: '20px', fontSize: '1.5rem' }}>
+            Información personal
+          </h2>
+
+          {/* Tarjeta gris claro */}
+          <div style={{ backgroundColor: '#eeeeee', borderRadius: '8px', padding: '30px' }}>
+            <h3 style={{ color: '#666', marginTop: 0, marginBottom: '25px', fontSize: '1.1rem' }}>
+              Datos personales
+            </h3>
+
+            <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
+              
+              {/* Imagen de perfil (Placeholder) */}
+              <div style={{
+                width: '130px', height: '160px', backgroundColor: '#a9a9a9',
+                borderRadius: '8px', display: 'flex', justifyContent: 'center', 
+                alignItems: 'flex-end', overflow: 'hidden'
+              }}>
+                <IonIcon icon={person} style={{ fontSize: '9rem', color: '#444', marginBottom: '-25px' }} />
+              </div>
+
+              {/* Cuadrícula de datos */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', flex: 1 }}>
+                <div>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Nombre</strong>
+                  <span style={{ color: '#666' }}>Solicitante n°1</span>
+                </div>
+                <div>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Rut</strong>
+                  <span style={{ color: '#666' }}>12.345.678-9</span>
+                </div>
+                <div>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Teléfono</strong>
+                  <span style={{ color: '#666' }}>+56 9 1234 5678</span>
+                </div>
+                <div>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Email</strong>
+                  <span style={{ color: '#666' }}>correo@gmail.com</span>
+                </div>
+                <div style={{ gridColumn: 'span 2' }}>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>ROL</strong>
+                  <span style={{ color: '#666' }}>Solicitante</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </IonContent>
+    </IonPage>
   );
 };
 
-export default DashboardLayout;
+export default DashboardCiudadano;
