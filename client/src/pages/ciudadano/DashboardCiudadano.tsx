@@ -10,26 +10,20 @@ const DashboardCiudadano: React.FC = () => {
     <IonPage>
       {/* Cabecera superior oscura con íconos y Rol */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white' }}>
+        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
-            {/* ESTE ES EL BOTÓN OFICIAL QUE ABRE EL MENÚ SOLITO */}
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
           
           <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
             Proyecto web y movil
           </IonTitle>
-
-          <IonButtons slot="end" style={{ display: 'flex', alignItems: 'center' }}>
+          
+          <IonButtons slot="end" style={{ margin: '0', height: '56px', display: 'flex', alignItems: 'center' }}>
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
-            
-            {/* Cuadro amarillo del Rol */}
-            <div style={{ 
-              backgroundColor: '#cddc39', color: 'white', padding: '0 20px', 
-              fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
-              display: 'flex', alignItems: 'center' 
-            }}>
+            {/* EL CUADRO AMARILLO AHORA TOMA EL 100% DE LA ALTURA Y PEGA AL BORDE */}
+            <div style={{ backgroundColor: '#cddc39', color: 'white', padding: '0 25px', fontWeight: 'bold', fontSize: '0.9rem', height: '100%', display: 'flex', alignItems: 'center' }}>
               Rol: Solicitante
             </div>
           </IonButtons>

@@ -12,6 +12,8 @@ import RegisterPage from '../pages/auth/RegisterPage';
 import { MenuCiudadano } from '../components/MenuCiudadano';
 import DashboardCiudadano from '../pages/ciudadano/DashboardCiudadano';
 import RealizarSolicitud from '../pages/ciudadano/RealizarSolicitud';
+import SolicitudesRealizadas from '../pages/ciudadano/SolicitudesRealizadas';
+import DetalleSolicitud from '../pages/ciudadano/DetalleSolicitud';
 
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
@@ -26,10 +28,14 @@ export const AppRouter: React.FC = () => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/recuperar" component={CambiarPassword} />
         <Route exact path="/registro" component={RegisterPage} />
-        
+        <Route exact path="/ciudadano/tramites" component={DashboardCiudadano} />
+        <Route exact path="/ciudadano/nueva-solicitud" component={RealizarSolicitud} />
+        <Route exact path="/ciudadano/historial" component={SolicitudesRealizadas} />
         {/* Rutas del Ciudadano */}
         <Route exact path="/ciudadano/tramites" component={DashboardCiudadano} />
         <Route exact path="/ciudadano/nueva-solicitud" component={RealizarSolicitud} />
+        <Route exact path="/ciudadano/solicitud/:id" component={DetalleSolicitud} />
+        <Route exact path="/ciudadano/editar-solicitud/:id" component={RealizarSolicitud} />
         
         {/* Redirección por defecto */}
         <Route exact path="/">
