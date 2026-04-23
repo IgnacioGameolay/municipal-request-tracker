@@ -26,6 +26,7 @@ export const AppRouter: React.FC = () => {
         
         {/* Usamos el DashboardLayout que tú creaste */}
         <Route exact path="/ciudadano/tramites" component={DashboardLayout} />
+        <Route path="/ciudadano" component={DashboardLayout} />
         
         <Route exact path="/">
           <Redirect to="/login" />

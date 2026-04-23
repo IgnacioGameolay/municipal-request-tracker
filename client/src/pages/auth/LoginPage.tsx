@@ -74,7 +74,7 @@ const LoginPage: React.FC = () => {
           {/* Botón: Ingresar */}
           <IonButton
             expand="block"
-            routerLink="/ciudadano/tramites"
+            routerLink="/ciudadano/perfil"
             style={{
               '--background': '#a3a8ff', // Color lila del diseño
               '--box-shadow': 'none',
