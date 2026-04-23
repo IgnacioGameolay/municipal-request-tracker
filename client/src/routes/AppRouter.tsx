@@ -7,8 +7,11 @@ import { ProtectedRoute } from './ProtectedRoute';
 import LoginPage from '../pages/auth/LoginPage';
 import CambiarPassword from '../pages/auth/CambiarPassword';
 import RegisterPage from '../pages/auth/RegisterPage';
-import DashboardLayout from '../components/DashboardLayout'; 
+
+// AQUÍ ESTÁN LAS IMPORTACIONES CORRECTAS
 import { MenuCiudadano } from '../components/MenuCiudadano';
+import DashboardCiudadano from '../pages/ciudadano/DashboardCiudadano';
+import RealizarSolicitud from '../pages/ciudadano/RealizarSolicitud';
 
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
@@ -16,7 +19,7 @@ export const AppRouter: React.FC = () => {
   return (
     <IonReactRouter>
       
-      {/* El menú sigue aquí, perfecto */}
+      {/* El menú lateral que controla la navegación */}
       <MenuCiudadano />
 
       <IonRouterOutlet id="main-content">
@@ -24,12 +27,15 @@ export const AppRouter: React.FC = () => {
         <Route exact path="/recuperar" component={CambiarPassword} />
         <Route exact path="/registro" component={RegisterPage} />
         
-        {/* Usamos el DashboardLayout que tú creaste */}
-        <Route exact path="/ciudadano/tramites" component={DashboardLayout} />
+        {/* Rutas del Ciudadano */}
+        <Route exact path="/ciudadano/tramites" component={DashboardCiudadano} />
+        <Route exact path="/ciudadano/nueva-solicitud" component={RealizarSolicitud} />
         
+        {/* Redirección por defecto */}
         <Route exact path="/">
           <Redirect to="/login" />
         </Route>
+
         <ProtectedRoute 
           exact 
           path="/admin/bandeja" 

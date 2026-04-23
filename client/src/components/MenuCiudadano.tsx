@@ -32,9 +32,12 @@ export const MenuCiudadano: React.FC = () => {
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
           <IonMenuToggle autoHide={false}>
-            <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
+            
+            {/* AQUÍ ESTÁ EL CAMBIO: Le agregamos el routerLink */}
+            <IonItem button routerLink="/ciudadano/nueva-solicitud" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Realizar nueva solicitud</IonLabel>
             </IonItem>
+            
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
             <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>

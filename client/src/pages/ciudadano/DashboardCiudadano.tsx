@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
-  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon 
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, 
+  IonMenuButton // <--- ¡Asegúrate de que esto esté aquí!
 } from '@ionic/react';
 import { menuOutline, notificationsOutline, personCircleOutline, person } from 'ionicons/icons';
 
@@ -11,7 +12,8 @@ const DashboardCiudadano: React.FC = () => {
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': '#2b2d5c', color: 'white' }}>
           <IonButtons slot="start">
-            <IonIcon icon={menuOutline} style={{ fontSize: '2rem', marginLeft: '10px', cursor: 'pointer' }} />
+            {/* ESTE ES EL BOTÓN OFICIAL QUE ABRE EL MENÚ SOLITO */}
+            <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
           
           <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
