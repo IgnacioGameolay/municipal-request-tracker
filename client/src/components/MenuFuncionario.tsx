@@ -40,15 +40,9 @@ export const MenuFuncionario: React.FC = () => {
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
           <IonMenuToggle autoHide={false}>
-            <IonItem button routerLink="/funcionario/bandeja" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
-              <IonLabel style={{ textDecoration: 'underline' }}>Solicitudes</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
-          
-          <IonMenuToggle autoHide={false}>
-            {/* AGREGAMOS EL routerLink AQUÍ */}
+            {/* DEJAMOS UN SOLO ENLACE QUE APUNTA AL HISTORIAL */}
             <IonItem button routerLink="/funcionario/historial" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
-              <IonLabel style={{ textDecoration: 'underline' }}>Historial</IonLabel>
+              <IonLabel style={{ textDecoration: 'underline' }}>Historial y gestor de solicitudes</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
@@ -59,7 +53,8 @@ export const MenuFuncionario: React.FC = () => {
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
           <IonMenuToggle autoHide={false}>
-            <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
+            {/* CAMBIO APLICADO AQUÍ: Agregamos el routerLink a las notificaciones */}
+            <IonItem button routerLink="/funcionario/notificaciones" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Bandeja de notificaciones</IonLabel>
             </IonItem>
           </IonMenuToggle>

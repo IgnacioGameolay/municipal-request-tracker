@@ -17,7 +17,7 @@ interface Solicitud {
 }
 
 const RealizarSolicitud: React.FC = () => {
-  const { id } = useParams<{ id: string }>(); // Si hay ID, estamos en modo Edición
+  const { id } = useParams<{ id: string }>(); 
   const history = useHistory();
   const esEdicion = !!id;
 
@@ -26,7 +26,6 @@ const RealizarSolicitud: React.FC = () => {
   const [descripcionOriginal, setDescripcionOriginal] = useState('');
   const [descripcionAgregada, setDescripcionAgregada] = useState('');
 
-  // Cargar datos si estamos en modo edición
   useEffect(() => {
     if (esEdicion) {
       const dataGuardada = localStorage.getItem('solicitudes_db');
@@ -36,7 +35,6 @@ const RealizarSolicitud: React.FC = () => {
         if (solicitudEncontrada) {
           setTitulo(solicitudEncontrada.titulo);
           setTipo(solicitudEncontrada.tipo || 'Tipo 1');
-          // Simulamos una descripción original si no la tenía guardada
           setDescripcionOriginal(solicitudEncontrada.descripcion || 'Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.');
         }
       }
@@ -45,25 +43,43 @@ const RealizarSolicitud: React.FC = () => {
 
   const manejarGuardar = () => {
     const dataGuardada = localStorage.getItem('solicitudes_db');
+    let db: Solicitud[] = [];
     
+    // 1. Cargamos la base de datos si existe
     if (dataGuardada) {
-      const db: Solicitud[] = JSON.parse(dataGuardada);
+      db = JSON.parse(dataGuardada);
+    }
 
-      if (esEdicion) {
-        // 1. Buscamos la solicitud específica que estamos editando
-        const index = db.findIndex(s => s.id.toString() === id);
-        
-        if (index !== -1) {
-          // 2. Si el usuario escribió algo nuevo, lo unimos al texto original
-          if (descripcionAgregada.trim() !== '') {
-            // Agregamos un salto de línea y una etiqueta para mantener el orden
-            db[index].descripcion = descripcionOriginal + '\n\n[Agregado el ' + new Date().toLocaleDateString() + ']: ' + descripcionAgregada;
-          }
-          // 3. Guardamos la base de datos actualizada en el navegador
-          localStorage.setItem('solicitudes_db', JSON.stringify(db));
+    if (esEdicion) {
+      // --- LÓGICA DE EDICIÓN ---
+      const index = db.findIndex(s => s.id.toString() === id);
+      
+      if (index !== -1) {
+        if (descripcionAgregada.trim() !== '') {
+          db[index].descripcion = descripcionOriginal + '\n\n[Agregado el ' + new Date().toLocaleDateString() + ']: ' + descripcionAgregada;
         }
       }
+    } else {
+      // --- LÓGICA DE CREACIÓN (¡Esto era lo que faltaba!) ---
+      const nuevaSolicitud: Solicitud = {
+        id: Math.floor(Math.random() * 1000) + 1, // Generamos un ID aleatorio para el prototipo
+        titulo: titulo || 'Sin título',
+        encargado: 'Por asignar',
+        
+        // Obtenemos la fecha actual en formato dd-mm-yyyy
+        fecha: new Date().toLocaleDateString('es-CL').replace(/\//g, '-'), 
+        
+        estado: 'Pendiente', // Por defecto entra como pendiente
+        tipo: tipo,
+        descripcion: descripcionOriginal
+      };
+      
+      // Agregamos la nueva solicitud a la lista
+      db.push(nuevaSolicitud);
     }
+    
+    // 3. Guardamos la base de datos actualizada en el navegador
+    localStorage.setItem('solicitudes_db', JSON.stringify(db));
     
     // 4. Redirigimos al historial
     history.push('/ciudadano/historial');
@@ -71,7 +87,6 @@ const RealizarSolicitud: React.FC = () => {
 
   return (
     <IonPage>
-      {/* CABECERA (Mismo diseño azul/amarillo) */}
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
@@ -121,15 +136,17 @@ const RealizarSolicitud: React.FC = () => {
               <IonSelect 
                 value={tipo} 
                 onIonChange={e => setTipo(e.detail.value!)} 
-                disabled={esEdicion} // Se bloquea en edición
+                disabled={esEdicion} 
                 style={{ 
-                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', // Gris si está bloqueado
+                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', 
                   border: '1px solid #ccc', borderRadius: '4px', minHeight: '40px', width: '200px', paddingLeft: '10px' 
                 }}
               >
                 <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
                 <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
                 <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
+                {/* AQUÍ ESTÁ EL TIPO 4 AGREGADO */}
+                <IonSelectOption value="Tipo 4">Tipo 4</IonSelectOption> 
               </IonSelect>
             </div>
 
@@ -139,9 +156,9 @@ const RealizarSolicitud: React.FC = () => {
               <IonInput 
                 value={titulo} 
                 onIonChange={e => setTitulo(e.detail.value!)} 
-                disabled={esEdicion} // Se bloquea en edición
+                disabled={esEdicion} 
                 style={{ 
-                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', // Gris si está bloqueado
+                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', 
                   border: '1px solid #ccc', borderRadius: '4px', minHeight: '40px', paddingLeft: '10px', color: esEdicion ? '#555' : '#000'
                 }} 
               />
@@ -149,7 +166,6 @@ const RealizarSolicitud: React.FC = () => {
 
             {/* DESCRIPCIONES CONDICIONALES */}
             {esEdicion ? (
-              // VISTA DE EDICIÓN (Dos columnas)
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Descripción de la solicitud</label>
@@ -176,7 +192,6 @@ const RealizarSolicitud: React.FC = () => {
                 </div>
               </div>
             ) : (
-              // VISTA DE CREACIÓN NORMAL (Una columna)
               <div style={{ marginBottom: '30px' }}>
                 <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Descripción de la solicitud</label>
                 <textarea 
@@ -190,7 +205,7 @@ const RealizarSolicitud: React.FC = () => {
               </div>
             )}
 
-            {/* DOCUMENTACIÓN (Mockup visual) */}
+            {/* DOCUMENTACIÓN */}
             <div style={{ marginBottom: '30px' }}>
               <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '15px', fontWeight: '500' }}>Documentación de la solicitud</label>
               
@@ -221,7 +236,7 @@ const RealizarSolicitud: React.FC = () => {
                 <button 
                   onClick={manejarGuardar}
                   style={{ 
-                    backgroundColor: '#68cc24', // Verde exacto de tu diseño
+                    backgroundColor: '#68cc24',
                     color: 'white', fontWeight: 'bold', fontSize: '1.1rem', 
                     border: 'none', borderRadius: '4px', padding: '15px 40px', 
                     cursor: 'pointer', width: '300px'

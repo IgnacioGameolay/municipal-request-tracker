@@ -64,11 +64,6 @@ export const MenuCiudadano: React.FC = () => {
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
-            <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
-              <IonLabel style={{ textDecoration: 'underline' }}>Contacto y ayuda</IonLabel>
-            </IonItem>
-          </IonMenuToggle>
-          <IonMenuToggle autoHide={false}>
             {/* AGREGAMOS routerLink="/ciudadano/contacto" */}
             <IonItem button routerLink="/ciudadano/contacto" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Contacto y ayuda</IonLabel>

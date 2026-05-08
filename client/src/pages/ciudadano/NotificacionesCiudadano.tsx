@@ -45,7 +45,7 @@ const NotificacionesCiudadano: React.FC = () => {
     <IonPage>
       <IonHeader className="ion-no-border">
         {/* Cabecera con el nuevo Azul Cielo */}
-        <IonToolbar style={{ '--background': '#0da6f2', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
@@ -74,7 +74,7 @@ const NotificacionesCiudadano: React.FC = () => {
                 window.location.href = nuevoRol === 'ciudadano' ? '/ciudadano/tramites' : '/funcionario/tramites'; 
               }}
               style={{ 
-                backgroundColor: '#ffcc00', 
+                backgroundColor: '#EDCA4E', 
                 color: 'white', padding: '0 25px', 
                 fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
                 display: 'flex', alignItems: 'center', cursor: 'pointer' 

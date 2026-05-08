@@ -42,7 +42,7 @@ const DetalleSolicitud: React.FC = () => {
           </IonButtons>
           
           <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
-            Proyecto web y movil
+            Gestor de Solicitudes
           </IonTitle>
           
           <IonButtons slot="end" style={{ margin: '0', height: '56px', display: 'flex', alignItems: 'center' }}>

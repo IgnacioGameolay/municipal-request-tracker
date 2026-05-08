@@ -5,7 +5,8 @@ import {
   IonMenuButton, IonButton, IonInput, IonSelect, IonSelectOption
 } from '@ionic/react';
 import { 
-  notificationsOutline, personCircleOutline, refreshOutline, eyeOutline 
+  notificationsOutline, personCircleOutline, refreshOutline, 
+  createOutline // <-- CAMBIO 1: Importamos el ícono del lápiz en vez del ojito
 } from 'ionicons/icons';
 
 interface Solicitud {
@@ -14,7 +15,8 @@ interface Solicitud {
   encargado: string;
   fecha: string;
   estado: string;
-  cliente?: string; // <-- Opcional por ahora, ya que las viejas no tienen cliente guardado
+  cliente?: string; 
+  tipo?: string; 
 }
 
 const HistorialFuncionario: React.FC = () => {
@@ -23,10 +25,10 @@ const HistorialFuncionario: React.FC = () => {
   const [todasLasSolicitudes, setTodasLasSolicitudes] = useState<Solicitud[]>([]);
   const [solicitudesMostrar, setSolicitudesMostrar] = useState<Solicitud[]>([]);
 
-  const [filtroNro, setFiltroNro] = useState('');
   const [filtroId, setFiltroId] = useState('');
-  const [filtroFecha, setFiltroFecha] = useState('');
-  const [filtroCliente, setFiltroCliente] = useState(''); // <-- NUEVO FILTRO
+  const [filtroTipo, setFiltroTipo] = useState(''); 
+  const [ordenFecha, setOrdenFecha] = useState(''); 
+  const [filtroCliente, setFiltroCliente] = useState(''); 
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroTitulo, setFiltroTitulo] = useState('');
 
@@ -39,28 +41,40 @@ const HistorialFuncionario: React.FC = () => {
     }
   }, []);
 
+  const obtenerMilisegundos = (fechaStr: string) => {
+    if (!fechaStr) return 0;
+    const soloFecha = fechaStr.substring(0, 10);
+    const partes = soloFecha.split('-');
+    if (partes.length === 3) {
+      return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).getTime();
+    }
+    return 0;
+  };
+
   const manejarBusqueda = () => {
-    let filtrado = todasLasSolicitudes;
-    if (filtroNro) filtrado = filtrado.filter(s => s.id.toString().includes(filtroNro));
+    let filtrado = [...todasLasSolicitudes]; 
+    
+    if (filtroId) filtrado = filtrado.filter(s => s.id.toString().includes(filtroId));
+    if (filtroTipo) filtrado = filtrado.filter(s => s.tipo === filtroTipo);
     if (filtroEstado) filtrado = filtrado.filter(s => s.estado.toLowerCase() === filtroEstado.toLowerCase());
     if (filtroTitulo) filtrado = filtrado.filter(s => s.titulo.toLowerCase().includes(filtroTitulo.toLowerCase()));
-    if (filtroFecha) {
-      const [year, month, day] = filtroFecha.split('-');
-      const fechaBuscada = `${day}-${month}-${year}`;
-      filtrado = filtrado.filter(s => s.fecha.includes(fechaBuscada));
-    }
-    // Lógica para filtrar por cliente si es que el dato existe
     if (filtroCliente) {
       filtrado = filtrado.filter(s => s.cliente && s.cliente.toLowerCase().includes(filtroCliente.toLowerCase()));
+    }
+    
+    if (ordenFecha === 'recientes') {
+      filtrado.sort((a, b) => obtenerMilisegundos(b.fecha) - obtenerMilisegundos(a.fecha));
+    } else if (ordenFecha === 'antiguas') {
+      filtrado.sort((a, b) => obtenerMilisegundos(a.fecha) - obtenerMilisegundos(b.fecha));
     }
     
     setSolicitudesMostrar(filtrado);
   };
 
   const limpiarFiltros = () => {
-    setFiltroNro('');
     setFiltroId('');
-    setFiltroFecha('');
+    setFiltroTipo('');
+    setOrdenFecha('');
     setFiltroCliente('');
     setFiltroEstado('');
     setFiltroTitulo('');
@@ -82,14 +96,19 @@ const HistorialFuncionario: React.FC = () => {
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
           
-          <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
-            Proyecto web y movil
-          </IonTitle>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ width: '30px', height: '30px', backgroundColor: 'white', borderRadius: '4px', marginRight: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0da6f2', fontSize: '10px', fontWeight: 'bold' }}>
+              LOGO
+            </div>
+            <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem', padding: 0 }}>
+              Gestor de Solicitudes
+            </IonTitle>
+          </div>
           
           <IonButtons slot="end" style={{ margin: '0', height: '56px', display: 'flex', alignItems: 'center' }}>
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
@@ -120,12 +139,34 @@ const HistorialFuncionario: React.FC = () => {
           <div style={{ backgroundColor: '#f4f5f8', borderRadius: '8px', padding: '20px', marginBottom: '20px', border: '1px solid #e0e0e0' }}>
             <h3 style={{ margin: '0 0 15px 0', fontSize: '1rem', color: '#333', fontWeight: 'bold' }}>Filtrar por</h3>
             
-            {/* AHORA SON 4 COLUMNAS PARA METER EL FILTRO "CLIENTE" */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px', marginBottom: '15px' }}>
-              <div><label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>NRO. Solicitud</label><IonInput value={filtroNro} onIonChange={e => setFiltroNro(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} /></div>
-              <div><label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Identificador</label><IonInput value={filtroId} onIonChange={e => setFiltroId(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} /></div>
-              <div><label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Fecha solicitud</label><IonInput type="date" value={filtroFecha} onIonChange={e => setFiltroFecha(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} /></div>
-              <div><label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Cliente</label><IonInput value={filtroCliente} onIonChange={e => setFiltroCliente(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} /></div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>ID. Solicitud</label>
+                <IonInput value={filtroId} onIonChange={e => setFiltroId(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} />
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Tipo de solicitud</label>
+                <IonSelect value={filtroTipo} onIonChange={e => setFiltroTipo(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                  <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
+                  <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
+                  <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
+                  <IonSelectOption value="Tipo 4">Tipo 4</IonSelectOption>
+                </IonSelect>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Fecha solicitud</label>
+                <IonSelect value={ordenFecha} onIonChange={e => setOrdenFecha(e.detail.value!)} placeholder="Seleccione orden..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                  <IonSelectOption value="recientes">Más recientes</IonSelectOption>
+                  <IonSelectOption value="antiguas">Más antiguas</IonSelectOption>
+                </IonSelect>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Cliente</label>
+                <IonInput value={filtroCliente} onIonChange={e => setFiltroCliente(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px' }} />
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
@@ -180,10 +221,12 @@ const HistorialFuncionario: React.FC = () => {
                         </span>
                       </td>
                       <td style={{ padding: '15px 10px', display: 'flex', justifyContent: 'center', gap: '8px' }}>
-                        {/* BOTÓN REVISAR, IGUAL QUE EN LA BANDEJA */}
-                        <div onClick={() => history.push(`/funcionario/solicitud/${soli.id}`)} title="Ver Detalle" style={{ backgroundColor: '#0088ff', color: 'white', padding: '5px 15px', borderRadius: '4px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', fontWeight: 'bold', gap: '5px' }}>
-                          <IonIcon icon={eyeOutline} /> Ver
+                        
+                        {/* CAMBIO 2: Aquí actualizamos el botón a "Comentar" con el lápiz */}
+                        <div onClick={() => history.push(`/funcionario/solicitud/${soli.id}`)} title="Comentar Solicitud" style={{ backgroundColor: '#0088ff', color: 'white', padding: '5px 15px', borderRadius: '4px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', fontWeight: 'bold', gap: '5px' }}>
+                          <IonIcon icon={createOutline} /> Comentar
                         </div>
+
                       </td>
                     </tr>
                   ))}
