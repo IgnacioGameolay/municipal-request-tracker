@@ -8,9 +8,9 @@ import { notificationsOutline, personCircleOutline, person } from 'ionicons/icon
 const DashboardCiudadano: React.FC = () => {
   return (
     <IonPage>
-      {/* Cabecera superior oscura con íconos y Rol */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        {/* CAMBIO DE COLOR: Nuevo Azul Cielo (#0084D8) */}
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
@@ -23,18 +23,17 @@ const DashboardCiudadano: React.FC = () => {
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
             
-            {/* EL CUADRO AMARILLO AHORA ES UN BOTÓN PARA CAMBIAR DE ROL */}
             <div 
               onClick={() => {
                 const rolActual = localStorage.getItem('rol_actual') || 'ciudadano';
                 const nuevoRol = rolActual === 'ciudadano' ? 'funcionario' : 'ciudadano';
                 localStorage.setItem('rol_actual', nuevoRol);
                 window.dispatchEvent(new Event('rolCambiado'));
-                // CAMBIO AQUÍ: Ahora dirige a /funcionario/tramites
                 window.location.href = nuevoRol === 'ciudadano' ? '/ciudadano/tramites' : '/funcionario/tramites'; 
               }}
               style={{ 
-                backgroundColor: '#cddc39', color: 'white', padding: '0 25px', 
+                backgroundColor: '#EDCA4E', /* CAMBIO DE COLOR: Amarillo Mostaza */
+                color: 'white', padding: '0 25px', 
                 fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
                 display: 'flex', alignItems: 'center', cursor: 'pointer' 
               }}>

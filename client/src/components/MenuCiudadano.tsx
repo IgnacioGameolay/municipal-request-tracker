@@ -10,7 +10,7 @@ export const MenuCiudadano: React.FC = () => {
       
       {/* Cabecera propia del menú para que no se pegue al techo */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white' }}>
+        <IonToolbar style={{ '--background': '#04466e', color: 'white' }}>
           <IonTitle style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>Menú</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -18,7 +18,7 @@ export const MenuCiudadano: React.FC = () => {
       <IonContent>
         
         {/* SECCIÓN 1: Mi cuenta */}
-        <IonListHeader style={{ backgroundColor: '#7377ad', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
+        <IonListHeader style={{ backgroundColor: '#0565A2', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
           Mi cuenta
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
@@ -35,7 +35,7 @@ export const MenuCiudadano: React.FC = () => {
         </IonList>
 
         {/* SECCIÓN 2: Gestor de solicitudes */}
-        <IonListHeader style={{ backgroundColor: '#7377ad', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
+        <IonListHeader style={{ backgroundColor: '#0565A2', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
           Gestor de solicitudes
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
@@ -54,7 +54,7 @@ export const MenuCiudadano: React.FC = () => {
         </IonList>
 
         {/* SECCIÓN 3: Centro de Comunicación */}
-        <IonListHeader style={{ backgroundColor: '#7377ad', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
+        <IonListHeader style={{ backgroundColor: '#0565A2', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
           Centro de Comunicación
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>

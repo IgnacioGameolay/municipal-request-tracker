@@ -8,7 +8,6 @@ import LoginPage from '../pages/auth/LoginPage';
 import CambiarPassword from '../pages/auth/CambiarPassword';
 import RegisterPage from '../pages/auth/RegisterPage';
 
-// IMPORTACIONES DE COMPONENTES
 import { MenuCiudadano } from '../components/MenuCiudadano';
 import { MenuFuncionario } from '../components/MenuFuncionario'; 
 import DashboardCiudadano from '../pages/ciudadano/DashboardCiudadano';
@@ -17,14 +16,11 @@ import SolicitudesRealizadas from '../pages/ciudadano/SolicitudesRealizadas';
 import DetalleSolicitud from '../pages/ciudadano/DetalleSolicitud';
 import DashboardFuncionario from '../pages/funcionario/DashboardFuncionario';
 import HistorialFuncionario from '../pages/funcionario/HistorialFuncionario';
-
-// IMPORTACIÓN DEL FUNCIONARIO
 import BandejaFuncionario from '../pages/funcionario/BandejaFuncionario';
 
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
 export const AppRouter: React.FC = () => {
-  // Lógica mínima para detectar el cambio de rol y actualizar el menú
   const [rolActual, setRolActual] = useState(localStorage.getItem('rol_actual') || 'ciudadano');
 
   useEffect(() => {
@@ -38,7 +34,6 @@ export const AppRouter: React.FC = () => {
   return (
     <IonReactRouter>
       
-      {/* Cambia el menú según el rol actual */}
       {rolActual === 'ciudadano' ? <MenuCiudadano /> : <MenuFuncionario />}
 
       <IonRouterOutlet id="main-content">
@@ -58,12 +53,6 @@ export const AppRouter: React.FC = () => {
         <Route exact path="/funcionario/bandeja" component={BandejaFuncionario} />
         <Route exact path="/funcionario/historial" component={HistorialFuncionario} />
 
-        {/* Redirección por defecto: SIEMPRE AL LOGIN PRIMERO */}
-        <Route exact path="/">
-          <Redirect to="/login" />
-        </Route>
-
-        {/* Redirección por defecto: SIEMPRE AL LOGIN PRIMERO */}
         <Route exact path="/">
           <Redirect to="/login" />
         </Route>

@@ -6,7 +6,7 @@ import {
 } from '@ionic/react';
 import { 
   notificationsOutline, personCircleOutline, refreshOutline, 
-  eyeOutline // <-- Ícono de "Revisar"
+  eyeOutline
 } from 'ionicons/icons';
 
 interface Solicitud {
@@ -29,7 +29,6 @@ const BandejaFuncionario: React.FC = () => {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroTitulo, setFiltroTitulo] = useState('');
 
-  // Efecto que lee la misma base de datos que el ciudadano
   useEffect(() => {
     const dataGuardada = localStorage.getItem('solicitudes_db');
     if (dataGuardada) {
@@ -63,10 +62,9 @@ const BandejaFuncionario: React.FC = () => {
 
   const getColorEstado = (estado: string) => {
     switch(estado.toLowerCase()) {
-      case 'recibido': return { bg: '#9c27b0', text: 'white' }; 
+      case 'recibido': return { bg: '#8e8e93', text: 'white' }; 
       case 'en revisión': return { bg: '#00a8ff', text: 'white' }; 
-      case 'observado': return { bg: '#ffcc00', text: '#333' }; 
-      case 'pendiente': return { bg: '#8e8e93', text: 'white' }; 
+      case 'pendiente': return { bg: '#ffcc00', text: 'white' }; 
       case 'aprobada': return { bg: '#34c759', text: 'white' }; 
       case 'rechazada': return { bg: '#ff3b30', text: 'white' }; 
       default: return { bg: '#e0e0e0', text: '#333' };
@@ -76,7 +74,8 @@ const BandejaFuncionario: React.FC = () => {
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        {/* CAMBIO DE COLOR: Nuevo Azul Cielo (#0084D8) */}
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
@@ -89,7 +88,6 @@ const BandejaFuncionario: React.FC = () => {
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
             
-            {/* Lógica para cambiar al rol Ciudadano */}
             <div 
               onClick={() => {
                 localStorage.setItem('rol_actual', 'ciudadano');
@@ -97,7 +95,7 @@ const BandejaFuncionario: React.FC = () => {
                 window.location.href = '/ciudadano/tramites';
               }}
               style={{ 
-                backgroundColor: '#e53935', color: 'white', padding: '0 25px', // <-- Botón Rojo
+                backgroundColor: '#C92323', color: 'white', padding: '0 25px', 
                 fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
                 display: 'flex', alignItems: 'center', cursor: 'pointer' 
               }}>
@@ -110,7 +108,6 @@ const BandejaFuncionario: React.FC = () => {
       <IonContent style={{ '--background': '#ffffff' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '30px', paddingBottom: '30px', paddingLeft: '20px', paddingRight: '20px' }}>
           
-          {/* TÍTULO MODIFICADO PARA EL FUNCIONARIO */}
           <h2 style={{ color: '#000', fontWeight: 'bold', marginBottom: '20px', fontSize: '1.8rem' }}>Bandeja de Gestión de Solicitudes</h2>
 
           <div style={{ backgroundColor: '#f4f5f8', borderRadius: '8px', padding: '20px', marginBottom: '20px', border: '1px solid #e0e0e0' }}>
@@ -179,7 +176,6 @@ const BandejaFuncionario: React.FC = () => {
                       </td>
                       <td style={{ padding: '15px 10px', display: 'flex', justifyContent: 'center', gap: '8px' }}>
                         
-                        {/* AQUÍ ESTÁ EL CAMBIO PARA EL FUNCIONARIO: BOTÓN REVISAR */}
                         <div 
                           onClick={() => history.push(`/funcionario/solicitud/${soli.id}`)} 
                           title="Revisar Solicitud" 
