@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
     <IonPage>
       {/* Cabecera superior oscura */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c' }}>
+        <IonToolbar style={{ '--background': '#0084D8' }}>
           <IonTitle 
             className="ion-text-center" 
             style={{ color: 'white', fontWeight: 'bold', fontSize: '1.4rem' }}

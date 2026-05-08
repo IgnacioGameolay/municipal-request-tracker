@@ -17,6 +17,8 @@ import DetalleSolicitud from '../pages/ciudadano/DetalleSolicitud';
 import DashboardFuncionario from '../pages/funcionario/DashboardFuncionario';
 import HistorialFuncionario from '../pages/funcionario/HistorialFuncionario';
 import BandejaFuncionario from '../pages/funcionario/BandejaFuncionario';
+import NotificacionesCiudadano from '../pages/ciudadano/NotificacionesCiudadano';
+import ContactoCiudadano from '../pages/ciudadano/ContactoCiudadano';
 
 const DummyBandejaAdmin: React.FC = () => <div>Bandeja Admin</div>;
 
@@ -47,7 +49,8 @@ export const AppRouter: React.FC = () => {
         <Route exact path="/ciudadano/historial" component={SolicitudesRealizadas} />
         <Route exact path="/ciudadano/solicitud/:id" component={DetalleSolicitud} />
         <Route exact path="/ciudadano/editar-solicitud/:id" component={RealizarSolicitud} />
-        
+        <Route exact path="/ciudadano/notificaciones" component={NotificacionesCiudadano} />
+        <Route exact path="/ciudadano/contacto" component={ContactoCiudadano} />
         {/* Rutas del Funcionario */}
         <Route exact path="/funcionario/tramites" component={DashboardFuncionario} />
         <Route exact path="/funcionario/bandeja" component={BandejaFuncionario} />

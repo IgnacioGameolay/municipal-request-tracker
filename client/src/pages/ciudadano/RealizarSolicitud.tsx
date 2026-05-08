@@ -1,183 +1,248 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import { 
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, 
-  IonMenuButton, IonButton, IonSelect, IonSelectOption, IonInput, IonTextarea,
-  IonToast 
+  IonMenuButton, IonInput, IonSelect, IonSelectOption, IonButton, IonTextarea
 } from '@ionic/react';
-import { 
-  notificationsOutline, personCircleOutline, cloudUploadOutline, documentTextOutline 
-} from 'ionicons/icons';
+import { notificationsOutline, personCircleOutline, documentOutline, pushOutline } from 'ionicons/icons';
+
+interface Solicitud {
+  id: number;
+  titulo: string;
+  encargado: string;
+  fecha: string;
+  estado: string;
+  tipo?: string;
+  descripcion?: string;
+}
 
 const RealizarSolicitud: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // Si hay ID, estamos en modo Edición
   const history = useHistory();
-  
-  // NUEVOS ESTADOS: Ahora recordamos el tipo y la descripción
-  const [tipo, setTipo] = useState('');
-  const [titulo, setTitulo] = useState(''); 
-  const [descripcion, setDescripcion] = useState('');
-  
-  const [archivos, setArchivos] = useState<File[]>([]);
-  const [mostrarToast, setMostrarToast] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const esEdicion = !!id;
 
-  // AL CARGAR LA PÁGINA: Leemos TODOS los datos
+  const [tipo, setTipo] = useState('Tipo 1');
+  const [titulo, setTitulo] = useState('');
+  const [descripcionOriginal, setDescripcionOriginal] = useState('');
+  const [descripcionAgregada, setDescripcionAgregada] = useState('');
+
+  // Cargar datos si estamos en modo edición
   useEffect(() => {
-    if (id) {
-      setIsEditing(true);
-      const guardadas = JSON.parse(localStorage.getItem('solicitudes_db') || '[]');
-      const soliAEditar = guardadas.find((s: any) => s.id.toString() === id);
-      if (soliAEditar) {
-        setTitulo(soliAEditar.titulo || '');
-        setTipo(soliAEditar.tipo || '');               // Cargamos el tipo
-        setDescripcion(soliAEditar.descripcion || ''); // Cargamos la descripción
+    if (esEdicion) {
+      const dataGuardada = localStorage.getItem('solicitudes_db');
+      if (dataGuardada) {
+        const db: Solicitud[] = JSON.parse(dataGuardada);
+        const solicitudEncontrada = db.find(s => s.id.toString() === id);
+        if (solicitudEncontrada) {
+          setTitulo(solicitudEncontrada.titulo);
+          setTipo(solicitudEncontrada.tipo || 'Tipo 1');
+          // Simulamos una descripción original si no la tenía guardada
+          setDescripcionOriginal(solicitudEncontrada.descripcion || 'Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.');
+        }
       }
-    } else {
-      // Si es nueva, limpiamos todo
-      setIsEditing(false);
-      setTitulo('');
-      setTipo('');
-      setDescripcion('');
-      setArchivos([]);
     }
-  }, [id]);
+  }, [id, esEdicion]);
 
-  const abrirBuscadorArchivos = () => fileInputRef.current?.click();
+  const manejarGuardar = () => {
+    const dataGuardada = localStorage.getItem('solicitudes_db');
+    
+    if (dataGuardada) {
+      const db: Solicitud[] = JSON.parse(dataGuardada);
 
-  const manejarSeleccionArchivo = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) setArchivos([...archivos, ...Array.from(files)]);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const eliminarArchivo = (index: number) => setArchivos(archivos.filter((_, i) => i !== index));
-
-  const manejarCreacionOEdicion = () => {
-    const guardadas = JSON.parse(localStorage.getItem('solicitudes_db') || '[]');
-
-    if (isEditing) {
-      // MODO EDICIÓN: Actualizamos TODOS los campos
-      const index = guardadas.findIndex((s: any) => s.id.toString() === id);
-      if (index !== -1) {
-        guardadas[index].titulo = titulo;
-        guardadas[index].tipo = tipo;               // Guardamos el tipo editado
-        guardadas[index].descripcion = descripcion; // Guardamos la descripción editada
-        guardadas[index].estado = 'Recibido'; 
-        guardadas[index].fecha = new Date().toLocaleString('es-CL', { 
-          day: '2-digit', month: '2-digit', year: 'numeric', 
-          hour: '2-digit', minute: '2-digit', hour12: true 
-        });
+      if (esEdicion) {
+        // 1. Buscamos la solicitud específica que estamos editando
+        const index = db.findIndex(s => s.id.toString() === id);
+        
+        if (index !== -1) {
+          // 2. Si el usuario escribió algo nuevo, lo unimos al texto original
+          if (descripcionAgregada.trim() !== '') {
+            // Agregamos un salto de línea y una etiqueta para mantener el orden
+            db[index].descripcion = descripcionOriginal + '\n\n[Agregado el ' + new Date().toLocaleDateString() + ']: ' + descripcionAgregada;
+          }
+          // 3. Guardamos la base de datos actualizada en el navegador
+          localStorage.setItem('solicitudes_db', JSON.stringify(db));
+        }
       }
-      localStorage.setItem('solicitudes_db', JSON.stringify(guardadas));
-    } else {
-      // MODO CREACIÓN: Guardamos TODOS los campos
-      const nuevaSolicitud = {
-        id: Math.floor(Math.random() * 100) + 1,
-        titulo: titulo || 'Solicitud sin título',
-        tipo: tipo,               // Guardamos el tipo
-        descripcion: descripcion, // Guardamos la descripción
-        encargado: 'Por asignar',
-        fecha: new Date().toLocaleString('es-CL', { 
-          day: '2-digit', month: '2-digit', year: 'numeric', 
-          hour: '2-digit', minute: '2-digit', hour12: true 
-        }),
-        estado: 'Pendiente'
-      };
-      localStorage.setItem('solicitudes_db', JSON.stringify([nuevaSolicitud, ...guardadas]));
     }
-
-    setMostrarToast(true);
-    setTimeout(() => {
-      history.push('/ciudadano/historial');
-    }, 1000); 
+    
+    // 4. Redirigimos al historial
+    history.push('/ciudadano/historial');
   };
 
   return (
     <IonPage>
+      {/* CABECERA (Mismo diseño azul/amarillo) */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
           
-          <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
-            Proyecto web y movil
-          </IonTitle>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ width: '30px', height: '30px', backgroundColor: 'white', borderRadius: '4px', marginRight: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#0da6f2', fontSize: '10px', fontWeight: 'bold' }}>
+              LOGO
+            </div>
+            <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem', padding: 0 }}>
+              Gestor de solicitudes
+            </IonTitle>
+          </div>
           
           <IonButtons slot="end" style={{ margin: '0', height: '56px', display: 'flex', alignItems: 'center' }}>
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
-            {/* EL CUADRO AMARILLO AHORA TOMA EL 100% DE LA ALTURA Y PEGA AL BORDE */}
-            <div style={{ backgroundColor: '#cddc39', color: 'white', padding: '0 25px', fontWeight: 'bold', fontSize: '0.9rem', height: '100%', display: 'flex', alignItems: 'center' }}>
-              Rol: Solicitante
+            
+            <div 
+              onClick={() => {
+                const rolActual = localStorage.getItem('rol_actual') || 'ciudadano';
+                const nuevoRol = rolActual === 'ciudadano' ? 'funcionario' : 'ciudadano';
+                localStorage.setItem('rol_actual', nuevoRol);
+                window.dispatchEvent(new Event('rolCambiado'));
+                window.location.href = nuevoRol === 'ciudadano' ? '/ciudadano/tramites' : '/funcionario/tramites'; 
+              }}
+              style={{ backgroundColor: '#EDCA4E', color: 'white', padding: '0 25px', fontWeight: 'bold', fontSize: '0.9rem', height: '100%', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              Rol: {localStorage.getItem('rol_actual') === 'funcionario' ? 'Funcionario Municipal' : 'Solicitante'}
             </div>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent style={{ '--background': '#f4f5f8' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto', paddingTop: '50px', paddingBottom: '50px' }}>
+      <IonContent style={{ '--background': '#ffffff' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', paddingTop: '30px', paddingBottom: '50px', paddingLeft: '20px', paddingRight: '20px' }}>
           
-          <h2 style={{ color: '#000', fontWeight: 'bold', marginBottom: '20px', fontSize: '1.5rem', paddingLeft: '20px' }}>
-            {isEditing ? `Editar Solicitud NRO. ${id}` : 'Realizar solicitud'}
+          <h2 style={{ color: '#000', fontWeight: 'bold', marginBottom: '20px', fontSize: '1.8rem' }}>
+            {esEdicion ? 'Editar solicitud' : 'Realizar nueva solicitud'}
           </h2>
 
-          <div style={{ backgroundColor: '#eeeeee', borderRadius: '8px', padding: '30px', margin: '0 20px' }}>
+          <div style={{ backgroundColor: '#f4f5f8', borderRadius: '8px', padding: '30px', border: '1px solid #e0e0e0' }}>
             
-            {/* AQUÍ CONECTAMOS EL TIPO */}
+            {/* TIPO DE SOLICITUD */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500' }}>Tipo de solicitud</label>
-              <IonSelect value={tipo} onIonChange={e => setTipo(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', width: '220px', minHeight: '40px' }}>
-                <IonSelectOption value="bache">Baches/Pavimentación</IonSelectOption>
-                <IonSelectOption value="aseo">Aseo y Ornato</IonSelectOption>
-                <IonSelectOption value="iluminacion">Iluminación Pública</IonSelectOption>
+              <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Tipo de solicitud</label>
+              <IonSelect 
+                value={tipo} 
+                onIonChange={e => setTipo(e.detail.value!)} 
+                disabled={esEdicion} // Se bloquea en edición
+                style={{ 
+                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', // Gris si está bloqueado
+                  border: '1px solid #ccc', borderRadius: '4px', minHeight: '40px', width: '200px', paddingLeft: '10px' 
+                }}
+              >
+                <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
+                <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
+                <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
               </IonSelect>
             </div>
 
+            {/* TÍTULO */}
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500' }}>Título de la solicitud</label>
-              <IonInput value={titulo} onIonChange={e => setTitulo(e.detail.value!)} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '40px' }} />
+              <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Título de la solicitud</label>
+              <IonInput 
+                value={titulo} 
+                onIonChange={e => setTitulo(e.detail.value!)} 
+                disabled={esEdicion} // Se bloquea en edición
+                style={{ 
+                  backgroundColor: esEdicion ? '#d3d3d3' : '#fff', // Gris si está bloqueado
+                  border: '1px solid #ccc', borderRadius: '4px', minHeight: '40px', paddingLeft: '10px', color: esEdicion ? '#555' : '#000'
+                }} 
+              />
             </div>
 
-            {/* AQUÍ CONECTAMOS LA DESCRIPCIÓN */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500' }}>Descripción de la solicitud</label>
-              <IonTextarea value={descripcion} onIonChange={e => setDescripcion(e.detail.value!)} rows={8} style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px' }} />
-            </div>
-
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: '#333', fontWeight: '500' }}>Documentación de la solicitud</label>
-              <input type="file" multiple ref={fileInputRef} style={{ display: 'none' }} onChange={manejarSeleccionArchivo} />
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center', backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', padding: '15px', overflowX: 'auto' }}>
-                <IonButton fill="outline" color="dark" style={{ textTransform: 'none', fontSize: '0.9rem', flexShrink: 0 }} onClick={abrirBuscadorArchivos}>
-                  <IonIcon slot="start" icon={cloudUploadOutline} /> Subir archivo
-                </IonButton>
-                {archivos.length > 0 && (
-                  <div style={{ display: 'flex', gap: '15px', borderLeft: '1px solid #eee', paddingLeft: '15px' }}>
-                    {archivos.map((archivo, index) => (
-                      <div key={index} style={{ textAlign: 'center', position: 'relative', width: '60px' }}>
-                        <div onClick={() => eliminarArchivo(index)} style={{ position: 'absolute', top: -5, right: 0, backgroundColor: '#ff4b4b', color: 'white', borderRadius: '50%', width: '18px', height: '18px', fontSize: '10px', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', zIndex: 10 }}>✕</div>
-                        <IonIcon icon={documentTextOutline} style={{ fontSize: '2.5rem', color: '#444' }} />
-                        <span style={{ display: 'block', fontSize: '0.65rem', fontWeight: 'bold', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{archivo.name.length > 8 ? archivo.name.substring(0, 6) + '...' : archivo.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+            {/* DESCRIPCIONES CONDICIONALES */}
+            {esEdicion ? (
+              // VISTA DE EDICIÓN (Dos columnas)
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Descripción de la solicitud</label>
+                  <textarea 
+                    value={descripcionOriginal}
+                    disabled
+                    style={{ 
+                      width: '100%', height: '200px', backgroundColor: '#d3d3d3', border: '1px solid #ccc', 
+                      borderRadius: '4px', padding: '10px', resize: 'none', color: '#555', fontFamily: 'inherit'
+                    }} 
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Agregar a la descripción de la solicitud</label>
+                  <textarea 
+                    placeholder="(Descripción agregada) Faltó incluir unos documentos, los adjunto ahora."
+                    value={descripcionAgregada}
+                    onChange={e => setDescripcionAgregada(e.target.value)}
+                    style={{ 
+                      width: '100%', height: '200px', backgroundColor: '#fff', border: '1px solid #ccc', 
+                      borderRadius: '4px', padding: '10px', resize: 'none', color: '#000', fontFamily: 'inherit'
+                    }} 
+                  />
+                </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              // VISTA DE CREACIÓN NORMAL (Una columna)
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '8px', fontWeight: '500' }}>Descripción de la solicitud</label>
+                <textarea 
+                  value={descripcionOriginal}
+                  onChange={e => setDescripcionOriginal(e.target.value)}
+                  style={{ 
+                    width: '100%', height: '150px', backgroundColor: '#fff', border: '1px solid #ccc', 
+                    borderRadius: '4px', padding: '10px', resize: 'none', color: '#000', fontFamily: 'inherit'
+                  }} 
+                />
+              </div>
+            )}
 
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
-            <IonButton onClick={manejarCreacionOEdicion} style={{ '--background': '#4ade80', '--color': 'white', width: '280px', height: '50px', fontWeight: 'bold', fontSize: '1.1rem', textTransform: 'none' }}>
-              {isEditing ? 'Guardar Cambios' : 'Crear Solicitud'}
-            </IonButton>
+            {/* DOCUMENTACIÓN (Mockup visual) */}
+            <div style={{ marginBottom: '30px' }}>
+              <label style={{ display: 'block', fontSize: '0.9rem', color: '#333', marginBottom: '15px', fontWeight: '500' }}>Documentación de la solicitud</label>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '8px', padding: '20px' }}>
+                <IonButton fill="outline" style={{ '--color': '#333', '--border-color': '#ccc', textTransform: 'none', height: '40px' }}>
+                  <IonIcon icon={pushOutline} slot="start" /> Subir archivo
+                </IonButton>
+                
+                <div style={{ display: 'flex', gap: '15px' }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <IonIcon icon={documentOutline} style={{ fontSize: '2.5rem', color: '#333' }} />
+                    <span style={{ display: 'block', fontSize: '0.7rem', color: '#666', marginTop: '5px' }}>Permiso...</span>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <IonIcon icon={documentOutline} style={{ fontSize: '2.5rem', color: '#333' }} />
+                    <span style={{ display: 'block', fontSize: '0.7rem', color: '#666', marginTop: '5px' }}>Datos p...</span>
+                  </div>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#555', marginTop: '10px', display: 'flex', gap: '5px' }}>
+                <span>*</span> La falta de documentación puede llevar a la posterior anulación de la solicitud.
+              </p>
+            </div>
+
+            {/* BOTONES FINALES */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '40px' }}>
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                <button 
+                  onClick={manejarGuardar}
+                  style={{ 
+                    backgroundColor: '#68cc24', // Verde exacto de tu diseño
+                    color: 'white', fontWeight: 'bold', fontSize: '1.1rem', 
+                    border: 'none', borderRadius: '4px', padding: '15px 40px', 
+                    cursor: 'pointer', width: '300px'
+                  }}
+                >
+                  {esEdicion ? 'Editar Solicitud' : 'Enviar Solicitud'}
+                </button>
+              </div>
+              <button 
+                onClick={() => history.goBack()}
+                style={{ 
+                  background: 'none', border: 'none', color: '#555', 
+                  fontSize: '1rem', cursor: 'pointer', textDecoration: 'none' 
+                }}
+              >
+                Volver
+              </button>
+            </div>
+
           </div>
         </div>
-        
-        <IonToast isOpen={mostrarToast} onDidDismiss={() => setMostrarToast(false)} message={isEditing ? "¡Solicitud actualizada correctamente!" : "¡Solicitud creada exitosamente!"} duration={1500} color="success" position="bottom" />
       </IonContent>
     </IonPage>
   );

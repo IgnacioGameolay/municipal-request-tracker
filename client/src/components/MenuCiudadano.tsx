@@ -46,7 +46,6 @@ export const MenuCiudadano: React.FC = () => {
           </IonMenuToggle>
           
           <IonMenuToggle autoHide={false}>
-            {/* AQUÍ ESTÁ EL ENLACE AL HISTORIAL: routerLink="/ciudadano/historial" */}
             <IonItem button routerLink="/ciudadano/historial" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Solicitudes realizadas</IonLabel>
             </IonItem>
@@ -59,12 +58,19 @@ export const MenuCiudadano: React.FC = () => {
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
           <IonMenuToggle autoHide={false}>
-            <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
+            {/* AQUÍ ESTÁ EL ENLACE A NOTIFICACIONES */}
+            <IonItem button routerLink="/ciudadano/notificaciones" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Bandeja de notificaciones</IonLabel>
             </IonItem>
           </IonMenuToggle>
           <IonMenuToggle autoHide={false}>
             <IonItem button lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
+              <IonLabel style={{ textDecoration: 'underline' }}>Contacto y ayuda</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            {/* AGREGAMOS routerLink="/ciudadano/contacto" */}
+            <IonItem button routerLink="/ciudadano/contacto" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Contacto y ayuda</IonLabel>
             </IonItem>
           </IonMenuToggle>

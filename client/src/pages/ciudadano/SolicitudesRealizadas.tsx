@@ -96,7 +96,7 @@ const SolicitudesRealizadas: React.FC = () => {
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
             <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
@@ -109,7 +109,7 @@ const SolicitudesRealizadas: React.FC = () => {
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
             {/* EL CUADRO AMARILLO AHORA TOMA EL 100% DE LA ALTURA Y PEGA AL BORDE */}
-            <div style={{ backgroundColor: '#cddc39', color: 'white', padding: '0 25px', fontWeight: 'bold', fontSize: '0.9rem', height: '100%', display: 'flex', alignItems: 'center' }}>
+            <div style={{ backgroundColor: '#EDCA4E', color: 'white', padding: '0 25px', fontWeight: 'bold', fontSize: '0.9rem', height: '100%', display: 'flex', alignItems: 'center' }}>
               Rol: Solicitante
             </div>
           </IonButtons>
