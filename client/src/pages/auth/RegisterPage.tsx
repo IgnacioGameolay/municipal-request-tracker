@@ -69,11 +69,19 @@ const RegisterPage: React.FC = () => {
             <span style={{ color: 'red', fontSize: '0.75rem', marginLeft: '10px', width: '90px' }}>*(Obligatorio)</span>
           </div>
 
+          {/* Input Confirmar Password */}
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%', marginBottom: '10px' }}>
+            <IonInput placeholder="Confirmar contraseña" type="password" style={{ backgroundColor: '#f2f2f2', border: '1px solid #d1d1d1', borderRadius: '4px', paddingLeft: '15px', height: '40px', flex: 1, color: '#666' }} />
+            <span style={{ color: 'red', fontSize: '0.75rem', marginLeft: '10px', width: '90px' }}>*(Obligatorio)</span>
+          </div>
+
           {/* Checkbox */}
           <div style={{ display: 'flex', alignItems: 'flex-start', width: '100%', marginTop: '10px', marginBottom: '20px' }}>
             <IonCheckbox slot="start" style={{ marginRight: '10px' }} />
             <IonLabel style={{ fontSize: '0.85rem', color: '#000' }}>
-              <span style={{ color: 'red', fontWeight: 'bold' }}>[Obligatorio]</span> Leí y acepto los términos.
+              <span style={{ color: 'red' }}>[Obligatorio]</span>{' '} Leí y acepto la{' '}
+              <span style={{ color: '#007bff' }}>Política de privacidad</span>{' '} y los{' '}
+              <span style={{ color: '#007bff' }}>Términos de servicio</span>.
             </IonLabel>
           </div>
 
@@ -88,7 +96,7 @@ const RegisterPage: React.FC = () => {
               height: '50px'
             }}
           >
-            Ingresar
+            Crear cuenta
           </IonButton>
         </div>
       </IonContent>
@@ -97,3 +105,6 @@ const RegisterPage: React.FC = () => {
 };
 
 export default RegisterPage;
+
+
+

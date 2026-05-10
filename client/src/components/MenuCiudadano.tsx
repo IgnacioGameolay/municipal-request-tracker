@@ -7,7 +7,7 @@ import {
 export const MenuCiudadano: React.FC = () => {
   return (
     <IonMenu menuId="menu-lateral" contentId="main-content" type="overlay">
-      
+
       {/* Cabecera propia del menú para que no se pegue al techo */}
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': '#04466e', color: 'white' }}>
@@ -16,7 +16,7 @@ export const MenuCiudadano: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        
+
         {/* SECCIÓN 1: Mi cuenta */}
         <IonListHeader style={{ backgroundColor: '#0565A2', color: 'white', minHeight: '30px', margin: 0, padding: '5px 15px', fontSize: '0.9rem' }}>
           Mi cuenta
@@ -44,12 +44,14 @@ export const MenuCiudadano: React.FC = () => {
               <IonLabel style={{ textDecoration: 'underline' }}>Realizar nueva solicitud</IonLabel>
             </IonItem>
           </IonMenuToggle>
-          
+
           <IonMenuToggle autoHide={false}>
             <IonItem button routerLink="/ciudadano/historial" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
               <IonLabel style={{ textDecoration: 'underline' }}>Solicitudes realizadas</IonLabel>
             </IonItem>
           </IonMenuToggle>
+          
+
         </IonList>
 
         {/* SECCIÓN 3: Centro de Comunicación */}
@@ -69,6 +71,12 @@ export const MenuCiudadano: React.FC = () => {
               <IonLabel style={{ textDecoration: 'underline' }}>Contacto y ayuda</IonLabel>
             </IonItem>
           </IonMenuToggle>
+          <IonMenuToggle autoHide={false}>
+            <IonItem button routerLink="/ciudadano/informacion-solicitudes" lines="none" style={{ '--min-height': '35px', fontSize: '0.9rem', color: '#555' }}>
+              <IonLabel style={{ textDecoration: 'underline' }}>Información sobre solicitudes</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
+
         </IonList>
 
       </IonContent>

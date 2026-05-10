@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom'; 
 import { 
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, 
-  IonMenuButton, IonButton, IonInput, IonSelect, IonSelectOption
+  IonMenuButton, IonButton, IonInput, IonSelect, IonSelectOption, useIonViewWillEnter
 } from '@ionic/react';
 import { 
   notificationsOutline, personCircleOutline, refreshOutline, 
@@ -29,14 +29,26 @@ const BandejaFuncionario: React.FC = () => {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroTitulo, setFiltroTitulo] = useState('');
 
-  useEffect(() => {
-    const dataGuardada = localStorage.getItem('solicitudes_db');
-    if (dataGuardada) {
-      const parsed = JSON.parse(dataGuardada);
-      setTodasLasSolicitudes(parsed);
-      setSolicitudesMostrar(parsed);
-    }
-  }, []);
+const cargarSolicitudes = () => {
+  const dataGuardada = localStorage.getItem('solicitudes_db');
+
+  if (dataGuardada) {
+    const parsed = JSON.parse(dataGuardada);
+    setTodasLasSolicitudes(parsed);
+    setSolicitudesMostrar(parsed);
+  } else {
+    setTodasLasSolicitudes([]);
+    setSolicitudesMostrar([]);
+  }
+};
+
+useEffect(() => {
+  cargarSolicitudes();
+}, []);
+
+useIonViewWillEnter(() => {
+  cargarSolicitudes();
+});
 
   const manejarBusqueda = () => {
     let filtrado = todasLasSolicitudes;
@@ -122,7 +134,7 @@ const BandejaFuncionario: React.FC = () => {
             <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
               <div style={{ width: '200px' }}>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Estado</label>
-                <IonSelect value={filtroEstado} onIonChange={e => setFiltroEstado(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                <IonSelect  interface="popover"value={filtroEstado} onIonChange={e => setFiltroEstado(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
                   <IonSelectOption value="Recibido">Recibido</IonSelectOption>
                   <IonSelectOption value="En revisión">En revisión</IonSelectOption>
                   <IonSelectOption value="Observado">Observado</IonSelectOption>

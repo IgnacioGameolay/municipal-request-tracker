@@ -147,7 +147,7 @@ const HistorialFuncionario: React.FC = () => {
               
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Tipo de solicitud</label>
-                <IonSelect value={filtroTipo} onIonChange={e => setFiltroTipo(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                <IonSelect  interface="popover" value={filtroTipo} onIonChange={e => setFiltroTipo(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
                   <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
                   <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
                   <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
@@ -157,7 +157,7 @@ const HistorialFuncionario: React.FC = () => {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Fecha solicitud</label>
-                <IonSelect value={ordenFecha} onIonChange={e => setOrdenFecha(e.detail.value!)} placeholder="Seleccione orden..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                <IonSelect  interface="popover" value={ordenFecha} onIonChange={e => setOrdenFecha(e.detail.value!)} placeholder="Seleccione orden..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
                   <IonSelectOption value="recientes">Más recientes</IonSelectOption>
                   <IonSelectOption value="antiguas">Más antiguas</IonSelectOption>
                 </IonSelect>
@@ -172,7 +172,7 @@ const HistorialFuncionario: React.FC = () => {
             <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-end' }}>
               <div style={{ width: '200px' }}>
                 <label style={{ display: 'block', fontSize: '0.85rem', color: '#555', marginBottom: '5px' }}>Estado</label>
-                <IonSelect value={filtroEstado} onIonChange={e => setFiltroEstado(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
+                <IonSelect  interface="popover" value={filtroEstado} onIonChange={e => setFiltroEstado(e.detail.value!)} placeholder="Seleccione..." style={{ backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', minHeight: '35px', width: '100%' }}>
                   <IonSelectOption value="Recibido">Recibido</IonSelectOption>
                   <IonSelectOption value="En revisión">En revisión</IonSelectOption>
                   <IonSelectOption value="Observado">Observado</IonSelectOption>
