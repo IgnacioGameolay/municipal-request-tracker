@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, Role } from '../context/AuthContext';
 
 interface ProtectedRouteProps extends RouteProps {
   component: React.ComponentType<any>;
-  allowedRole: 'solicitante' | 'funcionario';
+  allowedRole: Role;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -18,12 +18,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     <Route
       {...rest}
       render={(props) => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || !role) {
           return <Redirect to="/login" />;
         }
 
         if (role !== allowedRole) {
-          const fallbackPath = role === 'funcionario' ? '/admin/bandeja' : '/ciudadano/tramites';
+          const fallbackPath =
+            role === 'funcionario'
+              ? '/funcionario/tramites'
+              : '/ciudadano/tramites';
+
           return <Redirect to={fallbackPath} />;
         }
 

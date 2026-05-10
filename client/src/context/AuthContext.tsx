@@ -1,28 +1,46 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 
-type Role = 'solicitante' | 'funcionario' | null;
+export type Role = 'solicitante' | 'funcionario';
 
 interface AuthState {
   isAuthenticated: boolean;
-  role: Role;
+  role: Role | null;
   login: (role: Role) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
+const getInitialRole = (): Role | null => {
+  const storedRole = localStorage.getItem('rol_actual');
+
+  if (storedRole === 'solicitante' || storedRole === 'funcionario') {
+    return storedRole;
+  }
+
+  return null;
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [role, setRole] = useState<Role>(null);
+  const initialRole = getInitialRole();
+
+  const [role, setRole] = useState<Role | null>(initialRole);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialRole !== null);
 
   const login = (selectedRole: Role) => {
-    setIsAuthenticated(true);
+    localStorage.setItem('rol_actual', selectedRole);
     setRole(selectedRole);
+    setIsAuthenticated(true);
+
+    window.dispatchEvent(new Event('rolCambiado'));
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    localStorage.removeItem('rol_actual');
     setRole(null);
+    setIsAuthenticated(false);
+
+    window.dispatchEvent(new Event('rolCambiado'));
   };
 
   return (
@@ -34,8 +52,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useAuth = (): AuthState => {
   const context = useContext(AuthContext);
+
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth debe utilizarse dentro de AuthProvider');
   }
+
   return context;
 };

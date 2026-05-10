@@ -1,44 +1,40 @@
 import React from 'react';
 import { 
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonIcon, 
-  IonMenuToggle, IonButton 
+  IonMenuButton 
 } from '@ionic/react';
-import { notificationsOutline, personCircleOutline, person, menuOutline } from 'ionicons/icons';
+import { notificationsOutline, personCircleOutline, person } from 'ionicons/icons';
 
-
-const DashboardCiudadano: React.FC = () => {
+const DashboardFuncionario: React.FC = () => {
   return (
     <IonPage>
-      {/* Cabecera superior oscura con íconos y Rol */}
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': '#2b2d5c', color: 'white' }}>
-          
-          {/* ========================================== */}
-          {/* CAMBIO DEFINITIVO: FUERZA BRUTA CON TOGGLE */}
+        <IonToolbar style={{ '--background': '#0084D8', color: 'white', '--padding-end': '0', '--min-height': '56px' }}>
           <IonButtons slot="start">
-            <IonMenuToggle menu="menu-lateral" autoHide={false}>
-              <IonButton style={{ color: 'white' }}>
-                <IonIcon icon={menuOutline} style={{ fontSize: '2rem' }} />
-              </IonButton>
-            </IonMenuToggle>
+            <IonMenuButton style={{ color: 'white' }} />
           </IonButtons>
-          {/* ========================================== */}
           
           <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
-            Proyecto web y movil
+            Gestor de Solicitudes
           </IonTitle>
-
-          <IonButtons slot="end" style={{ display: 'flex', alignItems: 'center' }}>
+          
+          <IonButtons slot="end" style={{ margin: '0', height: '56px', display: 'flex', alignItems: 'center' }}>
             <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem', marginRight: '15px', cursor: 'pointer' }} />
             <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem', marginRight: '15px', cursor: 'pointer' }} />
             
-            {/* Cuadro amarillo del Rol */}
-            <div style={{ 
-              backgroundColor: '#cddc39', color: 'white', padding: '0 20px', 
-              fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
-              display: 'flex', alignItems: 'center' 
-            }}>
-              Rol: Solicitante
+            {/* BOTÓN ROJO PARA VOLVER AL CIUDADANO */}
+            <div 
+              onClick={() => {
+                localStorage.setItem('rol_actual', 'ciudadano');
+                window.dispatchEvent(new Event('rolCambiado'));
+                window.location.href = '/ciudadano/tramites'; // Redirige al perfil del ciudadano
+              }}
+              style={{ 
+                backgroundColor: '#C92323', color: 'white', padding: '0 25px', // <-- Color Rojo
+                fontWeight: 'bold', fontSize: '0.9rem', height: '100%', 
+                display: 'flex', alignItems: 'center', cursor: 'pointer' 
+              }}>
+              Rol: Funcionario Municipal
             </div>
           </IonButtons>
         </IonToolbar>
@@ -51,15 +47,12 @@ const DashboardCiudadano: React.FC = () => {
             Información personal
           </h2>
 
-          {/* Tarjeta gris claro */}
           <div style={{ backgroundColor: '#eeeeee', borderRadius: '8px', padding: '30px' }}>
             <h3 style={{ color: '#666', marginTop: 0, marginBottom: '25px', fontSize: '1.1rem' }}>
               Datos personales
             </h3>
 
             <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-              
-              {/* Imagen de perfil (Placeholder) */}
               <div style={{
                 width: '130px', height: '160px', backgroundColor: '#a9a9a9',
                 borderRadius: '8px', display: 'flex', justifyContent: 'center', 
@@ -68,11 +61,11 @@ const DashboardCiudadano: React.FC = () => {
                 <IonIcon icon={person} style={{ fontSize: '9rem', color: '#444', marginBottom: '-25px' }} />
               </div>
 
-              {/* Cuadrícula de datos */}
+              {/* DATOS DEL FUNCIONARIO (Copiados de tu Figma) */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', flex: 1 }}>
                 <div>
                   <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Nombre</strong>
-                  <span style={{ color: '#666' }}>Solicitante n°1</span>
+                  <span style={{ color: '#666' }}>Funcionario n°1</span>
                 </div>
                 <div>
                   <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Rut</strong>
@@ -83,15 +76,18 @@ const DashboardCiudadano: React.FC = () => {
                   <span style={{ color: '#666' }}>+56 9 1234 5678</span>
                 </div>
                 <div>
-                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Email</strong>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Email personal</strong>
                   <span style={{ color: '#666' }}>correo@gmail.com</span>
                 </div>
                 <div style={{ gridColumn: 'span 2' }}>
+                  <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>Email Institucional</strong>
+                  <span style={{ color: '#666' }}>correoinstitucional@gmail.com</span>
+                </div>
+                <div style={{ gridColumn: 'span 3' }}>
                   <strong style={{ display: 'block', color: '#333', marginBottom: '5px' }}>ROL</strong>
-                  <span style={{ color: '#666' }}>Solicitante</span>
+                  <span style={{ color: '#666' }}>Funcionario Municipal</span>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -101,4 +97,4 @@ const DashboardCiudadano: React.FC = () => {
   );
 };
 
-export default DashboardCiudadano;
+export default DashboardFuncionario;
