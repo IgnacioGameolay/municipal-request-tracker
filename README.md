@@ -1,18 +1,18 @@
 # Municipal Request Tracker - Gestor de Solicitudes Municipales
 
-Aplicación web desarrollada con **Ionic + React + TypeScript** para el seguimiento, revisión y comunicación de solicitudes municipales entre solicitantes y funcionarios. El proyecto corresponde a la Entrega Parcial 1 de Ingeniería Web y Móvil, centrada en frontend, navegación, prototipado funcional, roles, experiencia de usuario y estructura inicial del sistema.
+Aplicación web desarrollada con **Ionic + React + TypeScript** para el seguimiento, revisión y comunicación de solicitudes municipales entre solicitantes y funcionarios. El proyecto corresponde a la Entrega Parcial 1 de Ingeniería Web y Móvil, centrada en frontend, navegación, prototipado funcional, roles, experiencia de usuario y organización modular del código.
 
----
+
 
 ## 1. Descripción general del proyecto
 
 Municipal Request Tracker es un prototipo funcional de una plataforma de gestión de solicitudes municipales. Su propósito es mejorar la comunicación entre los municipios y las personas solicitantes durante el proceso de revisión de trámites, especialmente cuando una solicitud requiere correcciones, documentación adicional, aclaraciones o cuando es rechazada/anulada.
 
-El sistema permite que una persona solicitante cree solicitudes, consulte su historial, revise el estado de sus trámites, acceda a observaciones realizadas por funcionarios y vea canales de contacto oficiales. Por otra parte, permite que un funcionario municipal revise solicitudes, actualice estados, registre comentarios y deje trazabilidad de las revisiones realizadas.
+El sistema permite que una persona solicitante cree solicitudes, consulte su historial, revise el estado de sus trámites, acceda a observaciones realizadas por funcionarios, vea notificaciones y consulte canales de contacto. Por otra parte, permite que un funcionario municipal revise solicitudes, actualice estados, registre comentarios y deje trazabilidad de las revisiones realizadas.
 
 El proyecto se diseñó tomando como referencia una problemática real frecuente en servicios municipales: la falta de información clara y oportuna sobre el avance de trámites, documentación faltante y razones de rechazo.
 
----
+
 
 ## 2. Problema abordado
 
@@ -29,7 +29,7 @@ Esta situación produce varios problemas:
 
 El sistema propuesto busca mejorar esta situación mediante una interfaz clara de seguimiento, historial, notificaciones, comentarios de revisión y actualización de estados.
 
----
+
 
 ## 3. Objetivo del sistema
 
@@ -44,11 +44,11 @@ Diseñar e implementar un prototipo frontend de una aplicación web para gestion
 - Mostrar historial de revisiones y última revisión realizada.
 - Facilitar la consulta de requisitos y canales de contacto.
 - Diferenciar la navegación y funcionalidades según rol.
-- Implementar una arquitectura de rutas clara con React Router.
-- Separar la lógica del sistema en componentes, reglas, casos de uso y datos simulados.
-- Usar componentes Ionic para construir una interfaz coherente con la pauta del curso.
+- Implementar rutas públicas y rutas protegidas mediante React Router.
+- Modularizar la interfaz en componentes reutilizables.
+- Separar responsabilidades entre dominio, aplicación, infraestructura, componentes y páginas.
 
----
+
 
 ## 4. Alcance de la Entrega Parcial 1
 
@@ -59,21 +59,22 @@ Esta entrega se enfoca en el desarrollo frontend del sistema. No corresponde aú
 - Proyecto Ionic React con TypeScript.
 - Rutas públicas y protegidas.
 - Separación de roles: Solicitante y Funcionario Municipal.
+- Login, registro y recuperación de contraseña prototipales.
 - Menú lateral diferenciado por rol.
-- Encabezado común reutilizable.
-- Formularios de login, registro y recuperación de contraseña.
-- Validaciones básicas de formularios.
-- Creación, edición, listado, eliminación y detalle de solicitudes.
+- Encabezado común reutilizable para pantallas internas.
+- Creación, edición/complemento, listado, detalle y eliminación de solicitudes.
 - Bandeja e historial para funcionario.
-- Actualización de estado por parte del funcionario.
+- Revisión de solicitudes por funcionario.
+- Cambio de estado mediante modal.
+- Rechazo de solicitudes mediante confirmación.
 - Comentarios de revisión.
 - Historial de revisiones.
 - Notificaciones simuladas para solicitante y funcionario.
-- Consulta de información sobre requisitos de solicitudes.
-- Canales de contacto y ayuda.
-- Datos simulados organizados fuera de las páginas.
-- Repositorio local para solicitudes basado en `localStorage`.
-- Documentación de arquitectura de navegación.
+- Consulta de información sobre requisitos de trámites.
+- Contacto y ayuda con funcionarios simulados.
+- Datos simulados de solicitante, funcionario, solicitudes, notificaciones, contactos e información de trámites.
+- Persistencia temporal mediante `localStorage`.
+- Refactorización modular por carpetas de dominio, aplicación, infraestructura, componentes y páginas.
 
 ### No incluido en EP1
 
@@ -84,10 +85,11 @@ Esta entrega se enfoca en el desarrollo frontend del sistema. No corresponde aú
 - Gestión avanzada de permisos.
 - Integración con servicios municipales reales.
 - Notificaciones push reales.
+- Envío real de correos de recuperación de contraseña.
 
 Estas características se consideran parte de una evolución futura del sistema, especialmente para etapas posteriores del proyecto.
 
----
+
 
 ## 5. Usuarios objetivo
 
@@ -104,6 +106,7 @@ Necesidades principales:
 - Consultar el historial de revisiones.
 - Acceder a canales de contacto.
 - Conocer requisitos por tipo de trámite.
+- Recibir notificaciones simuladas sobre cambios relevantes.
 
 ### 5.2 Funcionario Municipal
 
@@ -111,15 +114,16 @@ Persona encargada de revisar solicitudes ingresadas al sistema, actualizar estad
 
 Necesidades principales:
 
-- Consultar solicitudes asignadas o disponibles para revisión.
-- Filtrar solicitudes por estado, fecha, título o identificador.
-- Revisar detalle de una solicitud.
+- Consultar solicitudes disponibles para revisión.
+- Filtrar solicitudes por estado, fecha, título, tipo o identificador.
+- Revisar el detalle de una solicitud.
 - Registrar comentarios u observaciones.
 - Cambiar el estado de una solicitud.
+- Rechazar una solicitud cuando corresponda.
 - Dejar trazabilidad de la revisión realizada.
-- Consultar historial de solicitudes revisadas.
+- Consultar historial de solicitudes desde la vista de gestión.
 
----
+
 
 ## 6. Roles del sistema
 
@@ -127,21 +131,26 @@ El sistema considera dos roles principales.
 
 | Rol | Descripción | Acceso principal |
 |---|---|---|
-| Solicitante | Usuario que crea y consulta solicitudes municipales. | Perfil, nueva solicitud, historial, detalle, notificaciones, contacto e información de solicitudes. |
-| Funcionario Municipal | Usuario que revisa solicitudes y actualiza estados. | Perfil funcionario, bandeja, historial, revisión de solicitud y notificaciones. |
+| Solicitante | Usuario que crea y consulta solicitudes municipales. | Perfil, nueva solicitud, historial, detalle, notificaciones, contacto, información de solicitudes. |
+| Funcionario Municipal | Usuario que revisa solicitudes y actualiza estados. | Perfil funcionario, bandeja, historial, revisión de solicitud, notificaciones. |
 
-En esta entrega, el control de sesión y rol se simula mediante `AuthContext` y `localStorage`. El rol interno se maneja únicamente con los valores:
+En esta entrega, el control de sesión y rol se simula mediante `AuthContext` y `localStorage`. El rol se guarda bajo la clave `rol_actual` y solo se consideran válidos los valores:
 
 ```txt
 solicitante
 funcionario
 ```
 
-El valor `ciudadano` se conserva solo como parte del nombre de algunas rutas (`/ciudadano/...`), pero no como rol interno del sistema.
+El cambio manual de rol se mantiene como apoyo prototipal para la demostración. Actualmente se gestiona desde el encabezado común, cambiando el rol y redirigiendo a la pantalla inicial correspondiente:
 
-Además, se mantiene un cambio manual de rol desde el encabezado como apoyo prototipal para la demostración y validación rápida del flujo entre solicitante y funcionario. En una versión productiva, este mecanismo sería reemplazado por autenticación real y control de permisos desde backend.
+```txt
+solicitante  -> /funcionario/tramites
+funcionario  -> /ciudadano/tramites
+```
 
----
+En una versión productiva, este mecanismo debe ser reemplazado por autenticación real y control de permisos desde backend.
+
+
 
 ## 7. Requerimientos funcionales considerados
 
@@ -149,35 +158,36 @@ Además, se mantiene un cambio manual de rol desde el encabezado como apoyo prot
 |---|---|---|---|
 | RF01 | Registrar y consultar solicitudes municipales. | Solicitante | Implementado en frontend. |
 | RF02 | Visualizar estado actual de una solicitud. | Solicitante / Funcionario | Implementado con etiquetas de estado. |
-| RF03 | Crear una nueva solicitud. | Solicitante | Implementado con formulario y validaciones. |
+| RF03 | Crear una nueva solicitud. | Solicitante | Implementado con formulario. |
 | RF04 | Editar o complementar información de una solicitud. | Solicitante | Implementado mediante vista de edición. |
-| RF05 | Consultar historial de solicitudes realizadas. | Solicitante | Implementado con tabla y filtros. |
-| RF06 | Eliminar solicitudes desde el historial del solicitante. | Solicitante | Implementado con modal de confirmación. |
-| RF07 | Recibir notificaciones sobre cambios de estado. | Solicitante | Implementado con datos simulados. |
-| RF08 | Visualizar comentarios u observaciones del funcionario. | Solicitante | Implementado en detalle de solicitud. |
-| RF09 | Revisar solicitudes ingresadas. | Funcionario | Implementado en bandeja/historial. |
-| RF10 | Actualizar estado de una solicitud. | Funcionario | Implementado con modal de cambio de estado. |
+| RF05 | Consultar historial de solicitudes realizadas. | Solicitante | Implementado con tabla, filtros y acciones. |
+| RF06 | Recibir notificaciones sobre cambios de estado. | Solicitante | Implementado con datos simulados. |
+| RF07 | Visualizar comentarios u observaciones del funcionario. | Solicitante | Implementado en detalle de solicitud. |
+| RF08 | Revisar solicitudes ingresadas. | Funcionario | Implementado en bandeja e historial. |
+| RF09 | Actualizar estado de una solicitud. | Funcionario | Implementado con modal de cambio de estado. |
+| RF10 | Rechazar una solicitud. | Funcionario | Implementado con modal de confirmación. |
 | RF11 | Registrar historial de revisión. | Funcionario / Solicitante | Implementado con `historialRevisiones`. |
 | RF12 | Consultar requisitos por tipo de solicitud. | Solicitante | Implementado en Información sobre solicitudes. |
-| RF13 | Consultar canales de contacto y ayuda. | Solicitante | Implementado en Contacto y ayuda. |
-| RF14 | Recuperar o cambiar contraseña de forma prototipal. | Usuario público | Implementado con formulario y validaciones. |
+| RF13 | Consultar canales de contacto y ayuda. | Solicitante | Implementado en Contacto. |
+| RF14 | Recuperar contraseña de forma prototipal. | Usuario público | Implementado con validaciones locales. |
+| RF15 | Registrar cuenta de usuario de forma prototipal. | Usuario público | Implementado con validaciones locales. |
 
----
+
 
 ## 8. Requerimientos no funcionales considerados
 
 | ID | Requerimiento no funcional | Aplicación en el prototipo |
 |---|---|---|
 | RNF01 | Usabilidad | Interfaz con menús, filtros, botones claros, etiquetas de estado y formularios simples. |
-| RNF02 | Consistencia visual | Uso de encabezado común, colores por rol y componentes Ionic. |
+| RNF02 | Consistencia visual | Uso de encabezado común, contenedor de página, colores por rol y componentes Ionic. |
 | RNF03 | Trazabilidad | Registro de última revisión, estado nuevo, funcionario responsable y comentarios. |
 | RNF04 | Separación por roles | Rutas protegidas y menús diferenciados para solicitante y funcionario. |
-| RNF05 | Mantenibilidad | Organización por carpetas `components`, `pages`, `routes`, `context`, `dominio`, `aplicacion` e `infraestructura`. |
+| RNF05 | Mantenibilidad | Organización por carpetas `dominio`, `aplicacion`, `infraestructura`, `components`, `pages`, `routes` y `context`. |
 | RNF06 | Rendimiento percibido | Datos locales simulados para navegación rápida durante el prototipo. |
 | RNF07 | Escalabilidad futura | Estructura preparada para reemplazar `localStorage` por API REST y base de datos. |
-| RNF08 | Modularidad | Páginas principales separadas en componentes reutilizables y casos de uso. |
+| RNF08 | Legibilidad | Refactorización de pantallas grandes en componentes y casos de uso más pequeños. |
 
----
+
 
 ## 9. Tecnologías utilizadas
 
@@ -185,136 +195,206 @@ Además, se mantiene un cambio manual de rol desde el encabezado como apoyo prot
 |---|---|
 | Ionic Framework | Componentes visuales y estructura de aplicación web/móvil. |
 | React | Construcción de interfaces mediante componentes. |
-| TypeScript | Tipado de props, estados, interfaces y rutas. |
+| TypeScript | Tipado de props, estados, entidades, casos de uso y rutas. |
 | React Router | Definición de rutas públicas y protegidas. |
 | IonReactRouter | Integración de Ionic con React Router. |
 | localStorage | Persistencia simulada para solicitudes, rol y sesión en EP1. |
-| CSS inline / estilos Ionic | Ajustes visuales rápidos y consistencia con mockups. |
 | Vite | Herramienta de desarrollo y construcción del frontend. |
 | Node.js / npm | Gestión de dependencias y scripts del proyecto. |
+| CSS inline / estilos Ionic | Ajustes visuales rápidos y consistencia con los mockups. |
 
----
 
-## 10. Estructura actual del proyecto
+
+## 10. Estructura actual del frontend
+
+La estructura actual del frontend fue refactorizada para separar responsabilidades. La organización principal bajo `client/src` es la siguiente:
 
 ```txt
-municipal-request-tracker/
-├── README.md
-├── client/
-│   ├── package.json
-│   ├── ionic.config.json
-│   ├── capacitor.config.ts
-│   ├── src/
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   ├── aplicacion/
-│   │   │   └── casosDeUso/
-│   │   │       ├── actualizarEstadoSolicitud.ts
-│   │   │       ├── crearSolicitud.ts
-│   │   │       ├── editarSolicitud.ts
-│   │   │       ├── eliminarSolicitud.ts
-│   │   │       ├── filtrarHistorialFuncionario.ts
-│   │   │       ├── filtrarSolicitudesFuncionario.ts
-│   │   │       ├── obtenerRutaInicioPorRol.ts
-│   │   │       └── prepararSolicitudDesdeNotificacion.ts
-│   │   ├── components/
-│   │   │   ├── auth/
-│   │   │   ├── ciudadano/
-│   │   │   ├── common/
-│   │   │   ├── funcionario/
-│   │   │   ├── notificaciones/
-│   │   │   ├── solicitudes/
-│   │   │   ├── MenuCiudadano.tsx
-│   │   │   └── MenuFuncionario.tsx
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx
-│   │   ├── dominio/
-│   │   │   ├── constantes/
-│   │   │   ├── entidades/
-│   │   │   └── reglas/
-│   │   ├── infraestructura/
-│   │   │   ├── almacenamiento/
-│   │   │   │   └── repositorioLocalSolicitudes.ts
-│   │   │   └── datosSimulados/
-│   │   ├── pages/
-│   │   │   ├── auth/
-│   │   │   │   ├── LoginPage.tsx
-│   │   │   │   ├── RegisterPage.tsx
-│   │   │   │   └── CambiarPassword.tsx
-│   │   │   ├── ciudadano/
-│   │   │   │   ├── DashboardCiudadano.tsx
-│   │   │   │   ├── RealizarSolicitud.tsx
-│   │   │   │   ├── SolicitudesRealizadas.tsx
-│   │   │   │   ├── DetalleSolicitud.tsx
-│   │   │   │   ├── NotificacionesCiudadano.tsx
-│   │   │   │   ├── ContactoCiudadano.tsx
-│   │   │   │   └── InfoSolicitudes.tsx
-│   │   │   └── funcionario/
-│   │   │       ├── DashboardFuncionario.tsx
-│   │   │       ├── BandejaFuncionario.tsx
-│   │   │       ├── HistorialFuncionario.tsx
-│   │   │       ├── RevisarSolicitudFuncionario.tsx
-│   │   │       └── NotificacionesFuncionario.tsx
-│   │   ├── routes/
-│   │   │   ├── AppRouter.tsx
-│   │   │   └── ProtectedRoute.tsx
-│   │   └── theme/
-│   │       └── variables.css
-└── server/
-    └── src/
+src/
+├── App.tsx
+├── main.tsx
+├── aplicacion/
+│   └── casosDeUso/
+│       ├── actualizarEstadoSolicitud.ts
+│       ├── crearSolicitud.ts
+│       ├── editarSolicitud.ts
+│       ├── eliminarSolicitud.ts
+│       ├── filtrarHistorialFuncionario.ts
+│       ├── filtrarSolicitudesFuncionario.ts
+│       ├── obtenerRutaInicioPorRol.ts
+│       └── prepararSolicitudNotificacion.ts
+├── components/
+│   ├── MenuCiudadano.tsx
+│   ├── MenuFuncionario.tsx
+│   ├── auth/
+│   │   ├── CampoAuthConEtiqueta.tsx
+│   │   ├── CampoRegistro.tsx
+│   │   ├── CodigoVerificacion.tsx
+│   │   ├── EncabezadoAuth.tsx
+│   │   ├── FormularioCambiarPassword.tsx
+│   │   ├── FormularioLogin.tsx
+│   │   └── FormularioRegistro.tsx
+│   ├── ciudadano/
+│   │   ├── AvatarContactoFuncionario.tsx
+│   │   ├── AvatarSolicitante.tsx
+│   │   ├── CampoContactoFuncionario.tsx
+│   │   ├── CampoDatoSolicitante.tsx
+│   │   ├── DocumentosRequeridosTramite.tsx
+│   │   ├── FilaDatoEmpresa.tsx
+│   │   ├── ListaContactosFuncionarios.tsx
+│   │   ├── ResumenInformacionTramite.tsx
+│   │   ├── SelectorTipoTramite.tsx
+│   │   ├── TarjetaContactoFuncionario.tsx
+│   │   ├── TarjetaEmpresaSolicitante.tsx
+│   │   └── TarjetaPerfilSolicitante.tsx
+│   ├── common/
+│   │   ├── BarraRol.tsx
+│   │   ├── ColorEstado.tsx
+│   │   ├── ContenedorPagina.tsx
+│   │   ├── EncabezadoAplicacion.tsx
+│   │   └── LogoMunicipal.tsx
+│   ├── funcionario/
+│   │   ├── AvatarFuncionario.tsx
+│   │   ├── CampoDatoFuncionario.tsx
+│   │   ├── FilaBandejaFuncionario.tsx
+│   │   ├── FilaHistorialFuncionario.tsx
+│   │   ├── FiltrosBandejaFuncionario.tsx
+│   │   ├── FiltrosHistorialFuncionario.tsx
+│   │   ├── TablaBandejaFuncionario.tsx
+│   │   ├── TablaHistorialFuncionario.tsx
+│   │   └── TarjetaPerfilFuncionario.tsx
+│   ├── notificaciones/
+│   │   ├── ItemNotificacion.tsx
+│   │   └── ListaNotificacion.tsx
+│   └── solicitudes/
+│       ├── AccionesEnFomularioSolicitud.tsx
+│       ├── ComentariosSolicitud.tsx
+│       ├── DocumentacionSolicitud.tsx
+│       ├── FilaSolicitud.tsx
+│       ├── FiltrarSolicitudes.tsx
+│       ├── FormularioCrearYEditarSolicitudes.tsx
+│       ├── FormularioSolicitud.tsx
+│       ├── ModalCambioDeEstado.tsx
+│       ├── ModalEliminarSolicitud.tsx
+│       ├── ModalSolicitudRechazada.tsx
+│       ├── ResumenSolicitud.tsx
+│       ├── RevisionSolicitud.tsx
+│       └── TablaSolicitudes.tsx
+├── context/
+│   └── AuthContext.tsx
+├── dominio/
+│   ├── constantes/
+│   │   ├── estadosSolicitud.ts
+│   │   └── roles.ts
+│   ├── entidades/
+│   │   ├── ContactoFuncionario.ts
+│   │   ├── Funcionario.ts
+│   │   ├── HistorialRevision.ts
+│   │   ├── InformacionTramite.ts
+│   │   ├── Notificacion.ts
+│   │   ├── Solicitante.ts
+│   │   └── Solicitud.ts
+│   └── reglas/
+│       ├── formatearFecha.ts
+│       ├── normalizarEstado.ts
+│       ├── validarFormularioSolicitud.ts
+│       ├── validarLogin.ts
+│       ├── validarRecuperacionPassword.ts
+│       └── validarRegistro.ts
+├── infraestructura/
+│   ├── almacenamiento/
+│   │   ├── clavesAlmacenamiento.ts
+│   │   └── repositorioLocalSolicitudes.ts
+│   └── simulacionDatos/
+│       ├── contactosFuncionariosSimulados.ts
+│       ├── funcionariosSimulados.ts
+│       ├── informacionTramitesSimulados.ts
+│       ├── notificacionesSimuladas.ts
+│       ├── solicitantesSimulados.ts
+│       └── solicitudesSimuladas.ts
+├── pages/
+│   ├── auth/
+│   │   ├── CambiarPassword.tsx
+│   │   ├── LoginPage.tsx
+│   │   └── RegisterPage.tsx
+│   ├── ciudadano/
+│   │   ├── ContactoCiudadano.tsx
+│   │   ├── DashboardCiudadano.tsx
+│   │   ├── DetalleSolicitud.tsx
+│   │   ├── InfoSolicitudes.tsx
+│   │   ├── NotificacionesCiudadano.tsx
+│   │   ├── RealizarSolicitud.tsx
+│   │   └── SolicitudesRealizadas.tsx
+│   └── funcionario/
+│       ├── BandejaFuncionario.tsx
+│       ├── DashboardFuncionario.tsx
+│       ├── HistorialFuncionario.tsx
+│       ├── NotificacionesFuncionario.tsx
+│       └── RevisarSolicitudFuncionario.tsx
+├── routes/
+│   ├── AppRouter.tsx
+│   └── ProtectedRoute.tsx
+├── services/
+│   ├── authService.ts
+│   └── solicitudesService.ts
+└── theme/
+    └── variables.css
 ```
 
----
 
-## 11. Arquitectura frontend
 
-La aplicación está organizada con una arquitectura frontend por capas simples. No se implementa una Clean Architecture estricta, pero sí una separación clara entre vista, componentes, reglas, casos de uso y persistencia simulada.
+## 11. Arquitectura frontend actual
+
+La aplicación está organizada con una arquitectura frontend simple, pero más ordenada que una estructura basada solo en páginas. La separación actual permite que las vistas principales sean más pequeñas y que la lógica repetida esté centralizada.
 
 ### 11.1 Capas principales
 
 | Capa | Responsabilidad |
 |---|---|
-| `pages` | Contienen las vistas principales y coordinan navegación, estado local y componentes. |
-| `components` | Contienen piezas reutilizables de interfaz: encabezado, formularios, tablas, tarjetas, modales y menús. |
-| `dominio/entidades` | Define interfaces principales como `Solicitud`, `Notificacion`, `Solicitante`, `Funcionario` e información de contacto. |
-| `dominio/reglas` | Contiene reglas de validación, normalización de estados y formato de fechas. |
-| `aplicacion/casosDeUso` | Agrupa acciones del sistema como crear, editar, eliminar, filtrar o actualizar solicitudes. |
-| `infraestructura/almacenamiento` | Centraliza acceso a `localStorage` para solicitudes. |
-| `infraestructura/datosSimulados` | Contiene mocks usados por pantallas de perfil, contacto, información y notificaciones. |
-| `routes` | Centraliza rutas públicas, rutas protegidas y control por rol. |
+| `pages` | Contienen las vistas principales del sistema y coordinan navegación, estado local y componentes. |
+| `components` | Contienen elementos reutilizables de interfaz: encabezados, formularios, tablas, tarjetas, modales y menús. |
+| `dominio/entidades` | Define las interfaces principales del sistema. |
+| `dominio/reglas` | Contiene validaciones, normalización de estados y formateo de fechas. |
+| `dominio/constantes` | Define roles y estados permitidos. |
+| `aplicacion/casosDeUso` | Agrupa operaciones del sistema como crear, editar, eliminar, filtrar y actualizar solicitudes. |
+| `infraestructura/almacenamiento` | Encapsula el acceso a `localStorage`. |
+| `infraestructura/simulacionDatos` | Contiene los datos simulados usados en EP1. |
+| `routes` | Centraliza rutas públicas, rutas protegidas y redirecciones por rol. |
 | `context` | Maneja sesión y rol actual mediante `AuthContext`. |
 
 ### 11.2 Decisión de uso de `localStorage`
 
-Para EP1 se utiliza `localStorage` como mecanismo de persistencia temporal. Esta decisión permite demostrar flujos completos sin depender todavía de backend. Se usa para:
+Para EP1 se utiliza `localStorage` como mecanismo de persistencia temporal. Esta decisión permite demostrar flujos completos sin depender todavía de backend.
 
-- Guardar rol actual.
+Actualmente se usa para:
+
+- Guardar el rol actual (`rol_actual`).
 - Simular sesión iniciada.
-- Guardar solicitudes creadas.
+- Guardar solicitudes creadas o modificadas.
 - Actualizar estados.
 - Registrar comentarios del funcionario.
 - Mantener historial de revisiones.
-- Conservar datos de prueba durante la navegación.
+- Conservar datos durante la navegación y recarga del navegador.
 
-En una versión posterior, esta lógica será reemplazada por una API REST conectada a base de datos relacional.
+Las claves de almacenamiento están centralizadas en:
 
-### 11.3 Autenticación simulada
+```txt
+src/infraestructura/almacenamiento/clavesAlmacenamiento.ts
+```
 
-La sesión se maneja desde `AuthContext`. El estado autenticado depende de la existencia de un rol válido (`solicitante` o `funcionario`). Las rutas protegidas usan `ProtectedRoute` para impedir acceso cruzado entre roles.
-
-El cambio manual de rol se mantiene solo para demostración. Actualmente se centraliza desde el encabezado común para evitar inconsistencias entre menú, ruta y vista actual.
-
----
-
-## 12. Modelo de datos simulado
-
-Las solicitudes se almacenan en `localStorage` bajo la clave:
+La clave principal para solicitudes es:
 
 ```txt
 solicitudes_db
 ```
 
-Estructura lógica de una solicitud:
+
+
+## 12. Modelo de datos simulado
+
+### 12.1 Solicitud
+
+Las solicitudes se trabajan mediante la entidad `Solicitud`:
 
 ```ts
 interface Solicitud {
@@ -331,7 +411,11 @@ interface Solicitud {
   ultimaRevision?: string;
   historialRevisiones?: HistorialRevision[];
 }
+```
 
+### 12.2 Historial de revisión
+
+```ts
 interface HistorialRevision {
   funcionario: string;
   estadoNuevo: string;
@@ -339,28 +423,26 @@ interface HistorialRevision {
 }
 ```
 
-También se utilizan entidades simuladas para:
+### 12.3 Estados utilizados
 
-- `Notificacion`
-- `Solicitante`
-- `Funcionario`
-- `ContactoFuncionario`
-- `InformacionTramite`
-
-### Estados utilizados
+Los estados se centralizan en `dominio/constantes/estadosSolicitud.ts`.
 
 | Estado | Significado | Color visual |
 |---|---|---|
 | Recibido | Solicitud ingresada y recibida por el sistema. | Gris |
 | En revisión | Solicitud en proceso de análisis municipal. | Celeste |
 | Pendiente | Solicitud requiere atención o documentación adicional. | Amarillo |
-| Observado | Solicitud requiere revisión o corrección. | Amarillo |
 | Aprobada | Solicitud aceptada o aprobada. | Verde |
-| Rechazada / Anulada | Solicitud rechazada o anulada. | Rojo |
+| Rechazada | Solicitud rechazada por el funcionario. | Rojo |
+| Anulada | Solicitud anulada durante el proceso. | Rojo |
 
-Los estados se normalizan desde reglas compartidas para evitar problemas por mayúsculas, tildes o nombres equivalentes.
+La visualización se realiza con el componente:
 
----
+```txt
+src/components/common/ColorEstado.tsx
+```
+
+
 
 ## 13. Rutas principales
 
@@ -369,21 +451,21 @@ Los estados se normalizan desde reglas compartidas para evitar problemas por may
 | Ruta | Pantalla | Propósito |
 |---|---|---|
 | `/login` | LoginPage | Ingreso al sistema y selección de rol. |
-| `/registro` | RegisterPage | Creación de cuenta. |
-| `/recuperar` | CambiarPassword | Recuperación o cambio de contraseña. |
+| `/registro` | RegisterPage | Creación de cuenta prototipal. |
+| `/recuperar` | CambiarPassword | Recuperación o cambio de contraseña prototipal. |
 | `/` | Redirect | Redirige a `/login`. |
 
 ### 13.2 Rutas protegidas del solicitante
 
 | Ruta | Pantalla | Propósito |
 |---|---|---|
-| `/ciudadano/tramites` | DashboardCiudadano | Perfil y datos generales del solicitante. |
+| `/ciudadano/tramites` | DashboardCiudadano | Perfil, datos personales y datos de empresa del solicitante. |
 | `/ciudadano/nueva-solicitud` | RealizarSolicitud | Crear una nueva solicitud. |
-| `/ciudadano/historial` | SolicitudesRealizadas | Ver historial y gestionar solicitudes. |
+| `/ciudadano/historial` | SolicitudesRealizadas | Ver historial, filtrar, editar, eliminar y abrir detalle de solicitudes. |
 | `/ciudadano/solicitud/:id` | DetalleSolicitud | Ver detalle, comentarios e historial de revisión. |
 | `/ciudadano/editar-solicitud/:id` | RealizarSolicitud | Complementar una solicitud existente. |
 | `/ciudadano/notificaciones` | NotificacionesCiudadano | Ver cambios relevantes de solicitudes. |
-| `/ciudadano/contacto` | ContactoCiudadano | Consultar canales de contacto y ayuda. |
+| `/ciudadano/contacto` | ContactoCiudadano | Consultar contactos de funcionarios. |
 | `/ciudadano/informacion-solicitudes` | InfoSolicitudes | Revisar requisitos por tipo de solicitud. |
 
 ### 13.3 Rutas protegidas del funcionario
@@ -393,49 +475,71 @@ Los estados se normalizan desde reglas compartidas para evitar problemas por may
 | `/funcionario/tramites` | DashboardFuncionario | Perfil y datos generales del funcionario. |
 | `/funcionario/bandeja` | BandejaFuncionario | Ver solicitudes disponibles para revisión. |
 | `/funcionario/historial` | HistorialFuncionario | Consultar solicitudes desde vista de gestión. |
-| `/funcionario/solicitud/:id` | RevisarSolicitudFuncionario | Revisar, comentar y actualizar una solicitud. |
+| `/funcionario/solicitud/:id` | RevisarSolicitudFuncionario | Revisar, comentar, rechazar y actualizar una solicitud. |
 | `/funcionario/notificaciones` | NotificacionesFuncionario | Revisar notificaciones asociadas al rol funcionario. |
 
----
 
-## 14. Componentes principales refactorizados
 
-Durante el desarrollo se modularizaron las páginas principales para reducir repetición y mejorar mantenibilidad.
+## 14. Menús laterales
 
-| Grupo | Componentes principales | Uso |
-|---|---|---|
-| `common` | `EncabezadoAplicacion`, `BarraRol`, `LogoMunicipal`, `ContenedorPagina`, `ColorEstado` | Elementos reutilizados en pantallas internas. |
-| `auth` | `EncabezadoAuth`, `FormularioLogin`, `FormularioRegistro`, `FormularioCambiarPassword`, `CampoRegistro`, `CampoAuthConEtiqueta`, `CodigoVerificacion` | Login, registro y recuperación de contraseña. |
-| `solicitudes` | Formularios, tablas, modales, resumen, comentarios y documentación | Crear, editar, listar, revisar y detallar solicitudes. |
-| `notificaciones` | `ListaNotificaciones`, `ItemNotificacion` | Listado y acceso a detalle desde notificaciones. |
-| `ciudadano` | Tarjetas de perfil, empresa, contacto e información de trámites | Vistas informativas del solicitante. |
-| `funcionario` | Perfil funcionario, bandeja, historial y filas/tablas de gestión | Vistas de gestión del funcionario. |
+La aplicación utiliza `IonMenu` con `contentId="main-content"` y `menuId="menu-lateral"`. El menú mostrado depende del rol actual.
 
----
+### 14.1 Menú del solicitante
+
+Secciones principales:
+
+- Mi cuenta
+  - Perfil
+- Gestor de solicitudes
+  - Realizar nueva solicitud
+  - Solicitudes realizadas
+- Centro de Comunicación
+  - Bandeja de notificaciones
+  - Contacto y ayuda
+  - Información sobre solicitudes
+
+### 14.2 Menú del funcionario
+
+Secciones principales:
+
+- Mi cuenta
+  - Perfil
+  - Datos funcionario
+- Gestor de solicitudes
+  - Historial y gestor de solicitudes
+- Centro de Comunicación
+  - Bandeja de notificaciones
+  - Contacto con solicitantes
+
+Algunas opciones del menú funcionario se mantienen como elementos visuales de prototipo cuando aún no tienen una ruta propia asociada.
+
+
 
 ## 15. Casos de uso principales
 
 ### CU01 - Iniciar sesión
 
 **Actor:** Solicitante o Funcionario Municipal.  
-**Objetivo:** Acceder a las funcionalidades del sistema según rol.  
+**Objetivo:** Acceder a las funcionalidades del sistema según rol.
+
 **Flujo principal:**
 
 1. El usuario ingresa a `/login`.
 2. Ingresa correo y contraseña.
-3. Selecciona el tipo de usuario.
+3. Selecciona tipo de usuario.
 4. El sistema valida campos obligatorios.
-5. El sistema guarda el rol en `AuthContext` y `localStorage`.
+5. El sistema guarda el rol mediante `AuthContext`.
 6. El sistema redirige al panel correspondiente.
 
 **Resultado esperado:** El usuario accede a las rutas propias de su rol.
 
----
+
 
 ### CU02 - Crear una nueva solicitud
 
 **Actor:** Solicitante.  
-**Objetivo:** Registrar una solicitud municipal.  
+**Objetivo:** Registrar una solicitud municipal.
+
 **Flujo principal:**
 
 1. El solicitante ingresa a "Realizar nueva solicitud".
@@ -443,49 +547,55 @@ Durante el desarrollo se modularizaron las páginas principales para reducir rep
 3. Ingresa título y descripción.
 4. Revisa la advertencia sobre documentación.
 5. Envía la solicitud.
-6. El sistema valida los datos.
-7. El sistema guarda la solicitud en `localStorage`.
-8. El sistema redirige al historial.
+6. El sistema valida el formulario.
+7. El sistema crea la solicitud mediante `crearSolicitud.ts`.
+8. El sistema guarda la solicitud en `localStorage`.
+9. El sistema redirige al historial.
 
 **Resultado esperado:** La solicitud aparece en el historial con estado inicial "Pendiente".
 
----
 
-### CU03 - Consultar historial de solicitudes
+
+### CU03 - Consultar historial de solicitudes como solicitante
 
 **Actor:** Solicitante.  
-**Objetivo:** Revisar solicitudes ya ingresadas.  
+**Objetivo:** Revisar solicitudes ya ingresadas.
+
 **Flujo principal:**
 
 1. El solicitante ingresa a "Solicitudes realizadas".
 2. Visualiza tabla con ID, tipo, título, encargado, fecha, estado y acciones.
-3. Puede filtrar por ID, tipo, fecha, estado o título.
-4. Puede entrar al detalle, editar/complementar o eliminar una solicitud.
+3. Puede filtrar solicitudes.
+4. Puede entrar al detalle.
+5. Puede editar/complementar una solicitud.
+6. Puede eliminar una solicitud mediante modal de confirmación.
 
-**Resultado esperado:** El usuario puede dar seguimiento a sus solicitudes.
+**Resultado esperado:** El usuario puede dar seguimiento y gestionar sus solicitudes desde una tabla clara.
 
----
+
 
 ### CU04 - Revisar detalle de una solicitud
 
 **Actor:** Solicitante.  
-**Objetivo:** Conocer el estado y las observaciones de una solicitud.  
+**Objetivo:** Conocer el estado y las observaciones de una solicitud.
+
 **Flujo principal:**
 
 1. El solicitante presiona el botón de detalle.
 2. El sistema abre `/ciudadano/solicitud/:id`.
 3. Se muestra estado actual, encargado y última revisión.
 4. Se muestran comentarios del funcionario.
-5. El usuario puede presionar `?` para ver historial de revisión.
+5. El usuario puede revisar el historial de revisión.
 
 **Resultado esperado:** El solicitante entiende qué ocurrió con su trámite y qué observaciones existen.
 
----
+
 
 ### CU05 - Revisar solicitud como funcionario
 
 **Actor:** Funcionario Municipal.  
-**Objetivo:** Evaluar una solicitud y registrar una decisión.  
+**Objetivo:** Evaluar una solicitud y registrar una decisión.
+
 **Flujo principal:**
 
 1. El funcionario accede a la bandeja o historial.
@@ -493,35 +603,42 @@ Durante el desarrollo se modularizaron las páginas principales para reducir rep
 3. Revisa tipo, título, descripción y documentación simulada.
 4. Escribe un comentario si corresponde.
 5. Presiona "Actualizar solicitud" o "Rechazar solicitud".
-6. Selecciona el nuevo estado.
-7. Confirma el cambio.
-8. El sistema guarda estado, comentario, fecha y funcionario responsable.
+6. Selecciona el nuevo estado o confirma el rechazo.
+7. El sistema guarda estado, comentario, fecha y funcionario responsable.
+8. El sistema actualiza el historial de revisión.
 
 **Resultado esperado:** La solicitud queda actualizada y el solicitante puede ver el cambio desde su detalle.
 
----
+
 
 ### CU06 - Consultar notificaciones
 
-**Actor:** Solicitante.  
-**Objetivo:** Ver eventos importantes sobre solicitudes.  
-**Flujo principal:**
+**Actor:** Solicitante o Funcionario Municipal.  
+**Objetivo:** Ver eventos importantes sobre solicitudes.
+
+**Flujo solicitante:**
 
 1. El solicitante ingresa a notificaciones.
 2. Visualiza una lista de cambios relevantes.
-3. Presiona el botón `?` de una notificación.
-4. El sistema prepara la solicitud asociada.
-5. El sistema abre el detalle de la solicitud.
-6. Si la solicitud no existe en el prototipo, se crea una versión simulada para mantener el flujo.
+3. Presiona el botón de detalle de una notificación.
+4. El sistema prepara la solicitud asociada si es necesario.
+5. El sistema abre el detalle de la solicitud asociada.
+
+**Flujo funcionario:**
+
+1. El funcionario ingresa a notificaciones.
+2. Visualiza solicitudes nuevas o pendientes de atención.
+3. Puede abrir la solicitud asociada para revisarla.
 
 **Resultado esperado:** El usuario accede directamente al detalle del cambio informado.
 
----
+
 
 ### CU07 - Consultar requisitos de una solicitud
 
 **Actor:** Solicitante.  
-**Objetivo:** Conocer documentación requerida antes de ingresar una solicitud.  
+**Objetivo:** Conocer documentación requerida antes de ingresar una solicitud.
+
 **Flujo principal:**
 
 1. El usuario ingresa a "Información sobre solicitudes".
@@ -530,24 +647,22 @@ Durante el desarrollo se modularizaron las páginas principales para reducir rep
 
 **Resultado esperado:** El solicitante cuenta con información previa para evitar errores o rechazos.
 
----
 
-### CU08 - Recuperar contraseña
 
-**Actor:** Usuario público.  
-**Objetivo:** Simular recuperación o cambio de contraseña.  
+### CU08 - Contactar o consultar ayuda
+
+**Actor:** Solicitante.  
+**Objetivo:** Consultar información de contacto de funcionarios.
+
 **Flujo principal:**
 
-1. El usuario ingresa a `/recuperar`.
-2. Ingresa correo electrónico.
-3. Solicita código de verificación.
-4. Ingresa código y nueva contraseña.
-5. El sistema valida datos del formulario.
-6. El sistema redirige a `/login`.
+1. El solicitante ingresa a "Contacto y ayuda".
+2. Visualiza una lista de funcionarios simulados.
+3. Revisa nombre, teléfono y correo institucional.
 
-**Resultado esperado:** El flujo de recuperación queda validado de forma prototipal.
+**Resultado esperado:** El solicitante cuenta con canales de contacto visibles dentro del prototipo.
 
----
+
 
 ## 16. Task flows principales
 
@@ -584,7 +699,7 @@ Revisar antecedentes
 ↓
 Comentar solicitud
 ↓
-Actualizar estado
+Actualizar estado o rechazar
 ↓
 Guardar historial de revisión
 ↓
@@ -594,7 +709,7 @@ Volver a bandeja
 ### 16.3 Task Flow - Notificación y trazabilidad
 
 ```txt
-Solicitante recibe notificación simulada
+Solicitante revisa notificaciones
 ↓
 Presiona botón de detalle
 ↓
@@ -604,24 +719,22 @@ Solicitante ve estado actualizado
 ↓
 Solicitante revisa comentario del funcionario
 ↓
-Solicitante consulta historial mediante botón ?
+Solicitante consulta historial de revisión
 ```
 
 ### 16.4 Task Flow - Cambio de rol prototipal
 
 ```txt
-Vista solicitante
+Usuario presiona indicador de rol en encabezado
 ↓
-Presionar indicador de rol
+AuthContext actualiza rol_actual
 ↓
-AuthContext actualiza rol a funcionario
+AppRouter actualiza menú lateral
 ↓
-Sistema redirige a /funcionario/tramites
-↓
-Menú y vistas cambian al rol funcionario
+Sistema redirige a la vista principal del nuevo rol
 ```
 
----
+
 
 ## 17. Decisiones de diseño
 
@@ -647,31 +760,38 @@ Los estados se representan mediante badges de color para facilitar lectura rápi
 
 Se utilizan menús laterales distintos para solicitante y funcionario. Esto reduce ruido visual y evita mostrar opciones que no corresponden al usuario actual.
 
-### 17.4 Historial de revisión
+### 17.4 Encabezado común
 
-Se incorpora un botón `?` en la sección de última revisión para desplegar el historial. Esta decisión busca mantener la pantalla limpia sin ocultar información importante.
+Las páginas internas reutilizan `EncabezadoAplicacion`, que centraliza:
 
-### 17.5 Prototipado con datos locales
+- Botón de menú lateral.
+- Logo prototipal.
+- Título del sistema.
+- Acceso a notificaciones.
+- Acceso a perfil.
+- Indicador y cambio manual de rol.
+
+### 17.5 Formularios de autenticación modularizados
+
+Las pantallas de login, registro y recuperación de contraseña se separaron en formularios reutilizables y reglas de validación. Esto evita que las páginas de autenticación concentren toda la lógica visual y de validación.
+
+### 17.6 Prototipado con datos locales
 
 El uso de `localStorage` permite demostrar continuidad entre pantallas sin backend. Se considera una decisión válida para EP1, ya que el foco está en frontend, navegación y experiencia de usuario.
 
-### 17.6 Identificadores prototipales
+### 17.7 Identificadores prototipales
 
 Para esta entrega, los ID de solicitudes se mantienen con generación prototipal. En una versión madura, estos identificadores deben ser generados por backend o base de datos para garantizar unicidad.
 
-### 17.7 Encabezado común
 
-Las páginas internas utilizan un encabezado reutilizable que concentra navegación a notificaciones, perfil y cambio prototipal de rol. Esto evita duplicación de código y reduce inconsistencias visuales.
-
----
 
 ## 18. Relación con mockups
 
-Las pantallas implementadas se basan en los mockups diseñados en Figma. La implementación busca mantener:
+Las pantallas implementadas se basan en los mockups diseñados para el proyecto. La implementación busca mantener:
 
 - Estructura general de encabezado.
 - Menú lateral por rol.
-- Formularios de registro, login y solicitudes.
+- Formularios de login, registro, recuperación y solicitudes.
 - Tablas de historial.
 - Badges de estado.
 - Botones de acción.
@@ -679,15 +799,17 @@ Las pantallas implementadas se basan en los mockups diseñados en Figma. La impl
 - Notificaciones y acceso a detalle.
 - Información sobre requisitos.
 - Contacto y ayuda.
+- Perfil de solicitante y funcionario.
 
-Algunas diferencias se mantienen por decisiones de prototipo, por ejemplo:
+Algunas diferencias se mantienen por decisiones de prototipo:
 
 - Uso de datos simulados en lugar de datos reales.
 - Subida de documentación representada visualmente, sin carga real de archivos.
 - Cambio manual de rol como apoyo de demostración.
 - Generación de ID prototipal.
+- Algunas opciones visuales del menú funcionario todavía no tienen pantalla propia.
 
----
+
 
 ## 19. Instalación y ejecución
 
@@ -741,7 +863,15 @@ http://localhost:5173
 npm run build
 ```
 
----
+### Formatear código con Prettier
+
+Si Prettier está instalado:
+
+```bash
+npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
+```
+
+
 
 ## 20. Uso del sistema para demostración
 
@@ -749,31 +879,32 @@ npm run build
 
 1. Abrir la aplicación.
 2. Iniciar sesión como Solicitante.
-3. Revisar perfil.
+3. Revisar perfil y datos de empresa.
 4. Ir a "Realizar nueva solicitud".
 5. Crear una solicitud.
 6. Verla en "Solicitudes realizadas".
 7. Entrar al detalle.
-8. Revisar notificaciones.
-9. Abrir una notificación con el botón `?`.
-10. Consultar "Información sobre solicitudes".
-11. Consultar "Contacto y ayuda".
-12. Cambiar a funcionario desde el indicador de rol para validar continuidad del flujo.
+8. Editar/complementar una solicitud.
+9. Revisar notificaciones.
+10. Abrir una notificación con el botón de detalle.
+11. Consultar "Información sobre solicitudes".
+12. Consultar "Contacto y ayuda".
+13. Cambiar a rol funcionario desde el encabezado.
 
 ### 20.2 Flujo funcionario recomendado
 
 1. Iniciar sesión como Funcionario Municipal.
 2. Revisar perfil funcionario.
-3. Ingresar a historial o bandeja de solicitudes.
+3. Ingresar a bandeja o historial de solicitudes.
 4. Abrir una solicitud.
 5. Escribir comentario.
-6. Actualizar estado.
+6. Actualizar estado o rechazar solicitud.
 7. Confirmar cambio.
 8. Volver a bandeja.
 9. Verificar que la solicitud quedó actualizada.
 10. Cambiar a solicitante para revisar cómo se visualiza el cambio.
 
----
+
 
 ## 21. Comandos útiles
 
@@ -788,11 +919,11 @@ npm run dev
 # Compilar proyecto
 npm run build
 
-# Formatear código si se usa Prettier
+# Formatear frontend
 npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 ```
 
----
+
 
 ## 22. Limpieza de datos locales
 
@@ -802,46 +933,21 @@ El prototipo usa `localStorage`. Si se desea reiniciar las solicitudes guardadas
 localStorage.removeItem('solicitudes_db');
 ```
 
-Para reiniciar sesión y rol:
+Para reiniciar rol y sesión prototipal:
 
 ```js
 localStorage.removeItem('rol_actual');
+localStorage.removeItem('sesion_activa');
 ```
 
-Para limpiar todo el prototipo durante pruebas:
+Para limpiar todo el almacenamiento local del prototipo:
 
 ```js
 localStorage.clear();
 location.href = '/login';
 ```
 
----
-
-## 23. Pruebas manuales recomendadas
-
-Antes de entregar, se recomienda validar el siguiente flujo:
-
-- Login como solicitante.
-- Creación de solicitud.
-- Visualización en historial.
-- Edición/complemento de solicitud.
-- Detalle de solicitud.
-- Notificación y acceso a detalle.
-- Consulta de información de solicitudes.
-- Contacto y ayuda.
-- Cambio prototipal a funcionario.
-- Bandeja de funcionario.
-- Revisión y actualización de estado.
-- Visualización del cambio desde solicitante.
-- Login como funcionario desde `/login`.
-- Rutas protegidas por rol.
-- Recuperación de contraseña.
-- Registro de cuenta.
-- Compilación con `npm run build`.
-
----
-
-## 24. Limitaciones actuales
+## 23. Limitaciones actuales
 
 - La autenticación es simulada.
 - Los datos no se guardan en servidor.
@@ -850,13 +956,14 @@ Antes de entregar, se recomienda validar el siguiente flujo:
 - La generación de ID es prototipal.
 - El backend todavía no está conectado al frontend.
 - El cambio manual de rol se mantiene como recurso de demostración para EP1.
-- El sistema aún no valida usuarios reales ni permisos desde servidor.
+- El registro y la recuperación de contraseña validan datos, pero no crean usuarios reales ni envían correos.
+- Algunas opciones visuales del menú funcionario todavía no tienen ruta propia.
 
 Estas limitaciones son coherentes con el alcance de la entrega parcial, cuyo foco es el frontend, la navegación, el prototipo funcional y la estructura base del sistema.
 
----
 
-## 25. Proyección para próximas entregas
+
+## 24. Proyección para próximas entregas
 
 Para una versión posterior del sistema se propone:
 
@@ -867,34 +974,35 @@ Para una versión posterior del sistema se propone:
 - Generar ID únicos desde base de datos.
 - Implementar carga real de documentos.
 - Implementar notificaciones reales.
+- Enviar correos reales para recuperación de contraseña.
 - Mejorar permisos por rol desde backend.
 - Agregar auditoría de acciones.
 - Mejorar validación de formularios.
-- Centralizar lógica de solicitudes en servicios conectados a backend.
-- Reemplazar datos simulados por datos obtenidos desde API.
+- Centralizar servicios HTTP para comunicación con backend.
+- Corregir elementos visuales del menú que aún no tienen pantalla propia.
 
----
 
-## 26. Cumplimiento de pauta EP1
+
+## 25. Cumplimiento de pauta EP1
 
 | Criterio esperado | Evidencia en el proyecto |
 |---|---|
-| Uso de Ionic + React + TypeScript | Proyecto frontend en `client` construido con Ionic React y TS. |
+| Uso de Ionic + React + TypeScript | Proyecto frontend en `client` construido con Ionic React y TypeScript. |
 | Rutas públicas | Login, registro y recuperación. |
 | Rutas protegidas | `ProtectedRoute` para solicitante y funcionario. |
 | Dos roles diferenciados | Solicitante y Funcionario Municipal. |
 | Mínimo de pantallas implementadas | Se implementan más de cuatro pantallas funcionales. |
-| Componentes Ionic | Uso de `IonPage`, `IonHeader`, `IonToolbar`, `IonContent`, `IonMenu`, `IonButton`, `IonInput`, `IonSelect`, `IonModal`, etc. |
-| Organización modular | Carpetas `pages`, `components`, `routes`, `context`, `dominio`, `aplicacion` e `infraestructura`. |
-| Mockups asociados | Pantallas implementadas según Figma. |
-| Arquitectura de navegación | Documento en `docs/Arquitectura_Navegacion.md`. |
+| Componentes Ionic | Uso de `IonPage`, `IonHeader`, `IonToolbar`, `IonContent`, `IonMenu`, `IonButton`, `IonInput`, `IonSelect`, `IonModal`, entre otros. |
+| Organización modular | Carpetas `dominio`, `aplicacion`, `infraestructura`, `components`, `pages`, `routes` y `context`. |
+| Mockups asociados | Pantallas implementadas de acuerdo con el diseño del prototipo. |
+| Arquitectura de navegación | Rutas centralizadas en `src/routes/AppRouter.tsx` y protección en `ProtectedRoute.tsx`. |
 | Funcionalidades más allá de login/registro | Solicitudes, historial, revisión, notificaciones, contacto e información. |
-| Validaciones básicas | Login, registro, recuperación y creación/edición de solicitudes. |
+| Separación de responsabilidades | Casos de uso, reglas, entidades, simulación de datos y repositorio local separados. |
 | Uso de repositorio | Proyecto estructurado para entrega mediante GitHub. |
 
----
 
-## 27. Autores
+
+## 26. Autores
 
 Proyecto desarrollado para la asignatura **ICI4247/1 - Ingeniería Web y Móvil**.
 
@@ -905,10 +1013,10 @@ Integrantes:
 - Vicente Nills Quezada Gallardo
 - Ignacio Antonio Reyes Toledo
 
----
 
-## 28. Estado actual
 
-El proyecto se encuentra en estado de prototipo frontend funcional para EP1. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, notificaciones simuladas, consulta de requisitos, contacto municipal y visualización de trazabilidad por parte del solicitante.
+## 27. Estado actual
 
-La versión actual cuenta con una estructura más modular que separa páginas, componentes reutilizables, reglas de dominio, casos de uso, datos simulados y almacenamiento local. Esto deja el proyecto mejor preparado para una futura conexión con backend y base de datos.
+El proyecto se encuentra en estado de prototipo frontend funcional para EP1. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, visualización de trazabilidad por parte del solicitante y separación de roles mediante rutas protegidas.
+
+La versión actual incorpora una refactorización importante del frontend, separando páginas grandes en componentes reutilizables, casos de uso, reglas de dominio, entidades e infraestructura de almacenamiento/simulación de datos.
