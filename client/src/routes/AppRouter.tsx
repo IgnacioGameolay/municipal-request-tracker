@@ -52,7 +52,7 @@ export const AppRouter: React.FC = () => {
         <Route exact path="/login" component={LoginPage} />
         <Route exact path="/recuperar" component={CambiarPassword} />
         <Route exact path="/registro" component={RegisterPage} />
-
+        
         {/* Rutas protegidas del solicitante */}
         <ProtectedRoute
           exact
