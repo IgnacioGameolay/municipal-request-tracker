@@ -7,6 +7,7 @@ export interface Solicitud {
   fecha: string;
   estado: string;
   tipo?: string;
+  cliente?: string;
   descripcion?: string;
   descripcionAgregada?: string;
   comentariosFuncionario?: string;
