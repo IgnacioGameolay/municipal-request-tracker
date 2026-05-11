@@ -1,10 +1,10 @@
-import React from 'react';
-import { IonIcon } from '@ionic/react';
-import { createOutline, helpOutline, trashOutline } from 'ionicons/icons';
+import React from "react";
+import { IonIcon } from "@ionic/react";
+import { createOutline, helpOutline, trashOutline } from "ionicons/icons";
 
-import ColorEstado from '../common/ColorEstado';
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { normalizarFechaVisual } from '../../dominio/reglas/formatearFecha';
+import ColorEstado from "../common/ColorEstado";
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
 
 interface Props {
   solicitud: Solicitud;
@@ -17,26 +17,26 @@ const FilaSolicitud: React.FC<Props> = ({
   solicitud,
   onEditar,
   onDetalle,
-  onEliminar
+  onEliminar,
 }) => {
   return (
     <tr>
       <td style={estiloCelda}>{solicitud.id}</td>
-      <td style={estiloCelda}>{solicitud.tipo || 'Tipo 1'}</td>
+      <td style={estiloCelda}>{solicitud.tipo || "Tipo 1"}</td>
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>
 
-      <td style={{ padding: '13px 10px' }}>
+      <td style={{ padding: "13px 10px" }}>
         <ColorEstado estado={solicitud.estado} />
       </td>
 
-      <td style={{ padding: '13px 10px' }}>
+      <td style={{ padding: "13px 10px" }}>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '8px'
+            display: "flex",
+            justifyContent: "center",
+            gap: "8px",
           }}
         >
           <BotonTabla
@@ -76,7 +76,7 @@ const BotonTabla: React.FC<PropsBotonTabla> = ({
   color,
   titulo,
   icono,
-  onClick
+  onClick,
 }) => {
   return (
     <div
@@ -84,14 +84,14 @@ const BotonTabla: React.FC<PropsBotonTabla> = ({
       title={titulo}
       style={{
         backgroundColor: color,
-        color: 'white',
-        width: '26px',
-        height: '26px',
-        borderRadius: '4px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer'
+        color: "white",
+        width: "26px",
+        height: "26px",
+        borderRadius: "4px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        cursor: "pointer",
       }}
     >
       <IonIcon icon={icono} />
@@ -100,8 +100,8 @@ const BotonTabla: React.FC<PropsBotonTabla> = ({
 };
 
 const estiloCelda = {
-  padding: '13px 10px',
-  color: '#111'
+  padding: "13px 10px",
+  color: "#111",
 };
 
 export default FilaSolicitud;

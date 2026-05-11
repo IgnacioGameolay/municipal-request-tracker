@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   IonButton,
   IonIcon,
   IonInput,
   IonSelect,
-  IonSelectOption
-} from '@ionic/react';
-import { refreshOutline } from 'ionicons/icons';
+  IonSelectOption,
+} from "@ionic/react";
+import { refreshOutline } from "ionicons/icons";
 
-import type { Solicitud } from '../../dominio/entidades/Solicitud';
-import {
-  filtrarHistorialFuncionario
-} from '../../aplicacion/casosDeUso/filtrarHistorialFuncionario';
+import type { Solicitud } from "../../dominio/entidades/Solicitud";
+import { filtrarHistorialFuncionario } from "../../aplicacion/casosDeUso/filtrarHistorialFuncionario";
 
-import type {
-  FiltrosHistorialFuncionarioDatos
-} from '../../aplicacion/casosDeUso/filtrarHistorialFuncionario';
+import type { FiltrosHistorialFuncionarioDatos } from "../../aplicacion/casosDeUso/filtrarHistorialFuncionario";
 
 interface Props {
   solicitudes: Solicitud[];
@@ -24,14 +20,14 @@ interface Props {
 
 const FiltrosHistorialFuncionario: React.FC<Props> = ({
   solicitudes,
-  onFiltrar
+  onFiltrar,
 }) => {
-  const [filtroId, setFiltroId] = useState('');
-  const [filtroTipo, setFiltroTipo] = useState('');
-  const [ordenFecha, setOrdenFecha] = useState('');
-  const [filtroCliente, setFiltroCliente] = useState('');
-  const [filtroEstado, setFiltroEstado] = useState('');
-  const [filtroTitulo, setFiltroTitulo] = useState('');
+  const [filtroId, setFiltroId] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("");
+  const [ordenFecha, setOrdenFecha] = useState("");
+  const [filtroCliente, setFiltroCliente] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [filtroTitulo, setFiltroTitulo] = useState("");
 
   const buscar = () => {
     const filtros: FiltrosHistorialFuncionarioDatos = {
@@ -40,38 +36,38 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
       ordenFecha,
       cliente: filtroCliente,
       estado: filtroEstado,
-      titulo: filtroTitulo
+      titulo: filtroTitulo,
     };
 
     onFiltrar(filtrarHistorialFuncionario(solicitudes, filtros));
   };
 
   const limpiar = () => {
-    setFiltroId('');
-    setFiltroTipo('');
-    setOrdenFecha('');
-    setFiltroCliente('');
-    setFiltroEstado('');
-    setFiltroTitulo('');
+    setFiltroId("");
+    setFiltroTipo("");
+    setOrdenFecha("");
+    setFiltroCliente("");
+    setFiltroEstado("");
+    setFiltroTitulo("");
     onFiltrar(solicitudes);
   };
 
   return (
     <div
       style={{
-        backgroundColor: '#f4f5f8',
-        borderRadius: '8px',
-        padding: '20px',
-        marginBottom: '20px',
-        border: '1px solid #e0e0e0'
+        backgroundColor: "#f4f5f8",
+        borderRadius: "8px",
+        padding: "20px",
+        marginBottom: "20px",
+        border: "1px solid #e0e0e0",
       }}
     >
       <h3
         style={{
-          margin: '0 0 15px 0',
-          fontSize: '1rem',
-          color: '#333',
-          fontWeight: 'bold'
+          margin: "0 0 15px 0",
+          fontSize: "1rem",
+          color: "#333",
+          fontWeight: "bold",
         }}
       >
         Filtrar por
@@ -79,10 +75,10 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr 1fr',
-          gap: '20px',
-          marginBottom: '15px'
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr 1fr",
+          gap: "20px",
+          marginBottom: "15px",
         }}
       >
         <div>
@@ -90,7 +86,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
           <IonInput
             value={filtroId}
-            onIonChange={e => setFiltroId(e.detail.value || '')}
+            onIonChange={(e) => setFiltroId(e.detail.value || "")}
             style={estiloCampo}
           />
         </div>
@@ -101,7 +97,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
           <IonSelect
             interface="popover"
             value={filtroTipo}
-            onIonChange={e => setFiltroTipo(e.detail.value || '')}
+            onIonChange={(e) => setFiltroTipo(e.detail.value || "")}
             placeholder="Seleccione..."
             style={estiloCampo}
           >
@@ -118,7 +114,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
           <IonSelect
             interface="popover"
             value={ordenFecha}
-            onIonChange={e => setOrdenFecha(e.detail.value || '')}
+            onIonChange={(e) => setOrdenFecha(e.detail.value || "")}
             placeholder="Seleccione orden..."
             style={estiloCampo}
           >
@@ -132,7 +128,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
           <IonInput
             value={filtroCliente}
-            onIonChange={e => setFiltroCliente(e.detail.value || '')}
+            onIonChange={(e) => setFiltroCliente(e.detail.value || "")}
             style={estiloCampo}
           />
         </div>
@@ -140,18 +136,18 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
       <div
         style={{
-          display: 'flex',
-          gap: '20px',
-          alignItems: 'flex-end'
+          display: "flex",
+          gap: "20px",
+          alignItems: "flex-end",
         }}
       >
-        <div style={{ width: '200px' }}>
+        <div style={{ width: "200px" }}>
           <label style={estiloEtiqueta}>Estado</label>
 
           <IonSelect
             interface="popover"
             value={filtroEstado}
-            onIonChange={e => setFiltroEstado(e.detail.value || '')}
+            onIonChange={(e) => setFiltroEstado(e.detail.value || "")}
             placeholder="Seleccione..."
             style={estiloCampo}
           >
@@ -169,21 +165,21 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
           <IonInput
             value={filtroTitulo}
-            onIonChange={e => setFiltroTitulo(e.detail.value || '')}
+            onIonChange={(e) => setFiltroTitulo(e.detail.value || "")}
             style={estiloCampo}
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: "flex", gap: "10px" }}>
           <IonButton
             onClick={buscar}
             style={{
-              '--background': '#0088ff',
-              '--color': 'white',
-              textTransform: 'none',
-              fontWeight: 'bold',
-              height: '35px',
-              margin: 0
+              "--background": "#0088ff",
+              "--color": "white",
+              textTransform: "none",
+              fontWeight: "bold",
+              height: "35px",
+              margin: 0,
             }}
           >
             Buscar
@@ -192,14 +188,14 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
           <IonButton
             onClick={limpiar}
             style={{
-              '--background': '#ffcc00',
-              '--color': 'white',
-              height: '35px',
-              width: '45px',
-              margin: 0
+              "--background": "#ffcc00",
+              "--color": "white",
+              height: "35px",
+              width: "45px",
+              margin: 0,
             }}
           >
-            <IonIcon icon={refreshOutline} style={{ fontSize: '1.2rem' }} />
+            <IonIcon icon={refreshOutline} style={{ fontSize: "1.2rem" }} />
           </IonButton>
         </div>
       </div>
@@ -208,18 +204,18 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 };
 
 const estiloEtiqueta = {
-  display: 'block',
-  fontSize: '0.85rem',
-  color: '#555',
-  marginBottom: '5px'
+  display: "block",
+  fontSize: "0.85rem",
+  color: "#555",
+  marginBottom: "5px",
 };
 
 const estiloCampo = {
-  backgroundColor: '#fff',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-  minHeight: '35px',
-  width: '100%'
+  backgroundColor: "#fff",
+  border: "1px solid #ccc",
+  borderRadius: "4px",
+  minHeight: "35px",
+  width: "100%",
 };
 
 export default FiltrosHistorialFuncionario;

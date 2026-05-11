@@ -1,26 +1,24 @@
-import React from 'react';
+import React from "react";
 
-import type { ContactoFuncionario } from '../../dominio/entidades/ContactoFuncionario';
-import TarjetaContactoFuncionario from './TarjetaContactoFuncionario';
+import type { ContactoFuncionario } from "../../dominio/entidades/ContactoFuncionario";
+import TarjetaContactoFuncionario from "./TarjetaContactoFuncionario";
 
 interface Props {
   funcionarios: ContactoFuncionario[];
 }
 
-const ListaContactosFuncionarios: React.FC<Props> = ({
-  funcionarios
-}) => {
+const ListaContactosFuncionarios: React.FC<Props> = ({ funcionarios }) => {
   if (funcionarios.length === 0) {
     return (
       <div
         style={{
-          backgroundColor: '#eeeeee',
-          borderRadius: '8px',
-          padding: '40px',
-          textAlign: 'center'
+          backgroundColor: "#eeeeee",
+          borderRadius: "8px",
+          padding: "40px",
+          textAlign: "center",
         }}
       >
-        <p style={{ margin: 0, color: '#333', fontWeight: 'bold' }}>
+        <p style={{ margin: 0, color: "#333", fontWeight: "bold" }}>
           No hay contactos disponibles.
         </p>
       </div>
@@ -30,12 +28,12 @@ const ListaContactosFuncionarios: React.FC<Props> = ({
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '25px'
+        display: "flex",
+        flexDirection: "column",
+        gap: "25px",
       }}
     >
-      {funcionarios.map(funcionario => (
+      {funcionarios.map((funcionario) => (
         <TarjetaContactoFuncionario
           key={funcionario.id}
           funcionario={funcionario}

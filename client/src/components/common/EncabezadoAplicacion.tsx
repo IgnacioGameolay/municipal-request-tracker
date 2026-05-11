@@ -9,10 +9,12 @@ import {
   IonButton
 } from '@ionic/react';
 import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
+import { useHistory } from 'react-router-dom';
 
 import LogoMunicipal from './LogoMunicipal';
 import BarraRol from './BarraRol';
 import { RolUsuario } from '../../dominio/constantes/roles';
+import { useAuth } from '../../context/AuthContext';
 
 interface Props {
   rol: RolUsuario;
@@ -28,15 +30,32 @@ const EncabezadoAplicacion: React.FC<Props> = ({
   rutaNotificaciones,
   rutaPerfil,
   onNavegar,
-  permitirCambioManualRol = false,
-  onCambiarRolManual
+  permitirCambioManualRol = false
 }) => {
+  const history = useHistory();
+  const { cambiarRol } = useAuth();
+
   const irANotificaciones = () => {
     onNavegar(rutaNotificaciones);
   };
 
   const irAPerfil = () => {
     onNavegar(rutaPerfil);
+  };
+
+  const cambiarRolDesdeEncabezado = () => {
+    if (!permitirCambioManualRol) {
+      return;
+    }
+
+    if (rol === 'solicitante') {
+      cambiarRol('funcionario');
+      history.replace('/funcionario/tramites');
+      return;
+    }
+
+    cambiarRol('solicitante');
+    history.replace('/ciudadano/tramites');
   };
 
   return (
@@ -56,7 +75,13 @@ const EncabezadoAplicacion: React.FC<Props> = ({
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <LogoMunicipal />
 
-          <IonTitle style={{ fontWeight: 'bold', fontSize: '1.4rem', padding: 0 }}>
+          <IonTitle
+            style={{
+              fontWeight: 'bold',
+              fontSize: '1.4rem',
+              padding: 0
+            }}
+          >
             Gestor de solicitudes
           </IonTitle>
         </div>
@@ -105,7 +130,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
           <BarraRol
             rol={rol}
             permitirCambioManual={permitirCambioManualRol}
-            onClick={onCambiarRolManual}
+            onClick={cambiarRolDesdeEncabezado}
           />
         </IonButtons>
       </IonToolbar>

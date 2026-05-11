@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { IonContent, IonPage, useIonViewWillEnter } from '@ionic/react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import { useHistory, useParams } from "react-router-dom";
 
-import EncabezadoAplicacion from '../../components/common/EncabezadoAplicacion';
-import ContenedorPagina from '../../components/common/ContenedorPagina';
-import ResumenSolicitud from '../../components/solicitudes/ResumenSolicitud';
-import ComentariosSolicitud from '../../components/solicitudes/ComentariosSolicitud';
+import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
+import ContenedorPagina from "../../components/common/ContenedorPagina";
+import ResumenSolicitud from "../../components/solicitudes/ResumenSolicitud";
+import ComentariosSolicitud from "../../components/solicitudes/ComentariosSolicitud";
 
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { obtenerSolicitudPorId } from '../../infraestructura/almacenamiento/repositorioLocalSolicitudes';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { obtenerSolicitudPorId } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
 
 const DetalleSolicitud: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,9 +22,9 @@ const DetalleSolicitud: React.FC = () => {
   };
 
   const cambiarRolManual = () => {
-    localStorage.setItem('rol_actual', 'solicitante');
-    window.dispatchEvent(new Event('rolCambiado'));
-    history.push('/ciudadano/tramites');
+    localStorage.setItem("rol_actual", "solicitante");
+    window.dispatchEvent(new Event("rolCambiado"));
+    history.push("/ciudadano/tramites");
   };
 
   useEffect(() => {
@@ -47,9 +47,9 @@ const DetalleSolicitud: React.FC = () => {
           onCambiarRolManual={cambiarRolManual}
         />
 
-        <IonContent style={{ '--background': '#ffffff' }}>
+        <IonContent style={{ "--background": "#ffffff" }}>
           <ContenedorPagina>
-            <p style={{ color: '#333', fontSize: '1rem' }}>
+            <p style={{ color: "#333", fontSize: "1rem" }}>
               Cargando solicitud...
             </p>
           </ContenedorPagina>
@@ -69,14 +69,14 @@ const DetalleSolicitud: React.FC = () => {
         onCambiarRolManual={cambiarRolManual}
       />
 
-      <IonContent style={{ '--background': '#ffffff' }}>
+      <IonContent style={{ "--background": "#ffffff" }}>
         <ContenedorPagina>
           <h2
             style={{
-              color: '#000',
-              fontWeight: 'bold',
-              marginBottom: '25px',
-              fontSize: '1.8rem'
+              color: "#000",
+              fontWeight: "bold",
+              marginBottom: "25px",
+              fontSize: "1.8rem",
             }}
           >
             Información de la solicitud
@@ -88,18 +88,18 @@ const DetalleSolicitud: React.FC = () => {
 
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'flex-end'
+              display: "flex",
+              justifyContent: "flex-end",
             }}
           >
             <button
               onClick={() => history.goBack()}
               style={{
-                background: 'none',
-                border: 'none',
-                color: '#333',
-                fontSize: '1rem',
-                cursor: 'pointer'
+                background: "none",
+                border: "none",
+                color: "#333",
+                fontSize: "1rem",
+                cursor: "pointer",
               }}
             >
               Volver

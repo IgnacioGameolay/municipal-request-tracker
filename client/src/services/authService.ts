@@ -1,13 +1,13 @@
-import { Role } from '../context/AuthContext';
+import { Role } from "../context/AuthContext";
 
 export const guardarRolSesion = (role: Role) => {
-  localStorage.setItem('rol_actual', role);
+  localStorage.setItem("rol_actual", role);
 };
 
 export const obtenerRolSesion = (): Role | null => {
-  const role = localStorage.getItem('rol_actual');
+  const role = localStorage.getItem("rol_actual");
 
-  if (role === 'solicitante' || role === 'funcionario') {
+  if (role === "solicitante" || role === "funcionario") {
     return role;
   }
 
@@ -15,5 +15,5 @@ export const obtenerRolSesion = (): Role | null => {
 };
 
 export const cerrarSesion = () => {
-  localStorage.removeItem('rol_actual');
+  localStorage.removeItem("rol_actual");
 };

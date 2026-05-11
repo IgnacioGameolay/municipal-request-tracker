@@ -1,27 +1,24 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonPage
-} from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { IonContent, IonPage } from "@ionic/react";
+import { useHistory } from "react-router-dom";
 
-import EncabezadoAuth from '../../components/auth/EncabezadoAuth';
-import FormularioCambiarPassword from '../../components/auth/FormularioCambiarPassword';
+import EncabezadoAuth from "../../components/auth/EncabezadoAuth";
+import FormularioCambiarPassword from "../../components/auth/FormularioCambiarPassword";
 
 import {
   validarCorreoRecuperacion,
-  validarRecuperacionPassword
-} from '../../dominio/reglas/validarRecuperacionPassword';
+  validarRecuperacionPassword,
+} from "../../dominio/reglas/validarRecuperacionPassword";
 
 const CambiarPassword: React.FC = () => {
   const history = useHistory();
 
-  const [correo, setCorreo] = useState('');
-  const [codigo, setCodigo] = useState(['', '', '']);
-  const [nuevaPassword, setNuevaPassword] = useState('');
-  const [confirmarPassword, setConfirmarPassword] = useState('');
-  const [error, setError] = useState('');
-  const [mensajeExito, setMensajeExito] = useState('');
+  const [correo, setCorreo] = useState("");
+  const [codigo, setCodigo] = useState(["", "", ""]);
+  const [nuevaPassword, setNuevaPassword] = useState("");
+  const [confirmarPassword, setConfirmarPassword] = useState("");
+  const [error, setError] = useState("");
+  const [mensajeExito, setMensajeExito] = useState("");
 
   const cambiarCodigo = (indice: number, valor: string) => {
     const codigoActualizado = [...codigo];
@@ -34,12 +31,12 @@ const CambiarPassword: React.FC = () => {
 
     if (mensajeError) {
       setError(mensajeError);
-      setMensajeExito('');
+      setMensajeExito("");
       return;
     }
 
-    setError('');
-    setMensajeExito('Código enviado correctamente.');
+    setError("");
+    setMensajeExito("Código enviado correctamente.");
   };
 
   const continuar = () => {
@@ -47,20 +44,20 @@ const CambiarPassword: React.FC = () => {
       correo,
       codigo,
       nuevaPassword,
-      confirmarPassword
+      confirmarPassword,
     });
 
     if (mensajeError) {
       setError(mensajeError);
-      setMensajeExito('');
+      setMensajeExito("");
       return;
     }
 
-    setError('');
-    setMensajeExito('');
+    setError("");
+    setMensajeExito("");
 
     // En EP1 el cambio de contraseña es prototipal. La lógica real queda para backend para futuas entregas.
-    history.push('/login');
+    history.push("/login");
   };
 
   return (

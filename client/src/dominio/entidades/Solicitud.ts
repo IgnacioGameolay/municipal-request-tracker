@@ -1,4 +1,4 @@
-import { HistorialRevision } from './HistorialRevision';
+import { HistorialRevision } from "./HistorialRevision";
 
 export interface Solicitud {
   id: number;

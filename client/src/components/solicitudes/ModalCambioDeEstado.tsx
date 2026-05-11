@@ -1,8 +1,8 @@
-import React from 'react';
-import { IonModal, IonSelect, IonSelectOption } from '@ionic/react';
+import React from "react";
+import { IonModal, IonSelect, IonSelectOption } from "@ionic/react";
 
-import ColorEstado from '../common/ColorEstado';
-import { Solicitud } from '../../dominio/entidades/Solicitud';
+import ColorEstado from "../common/ColorEstado";
+import { Solicitud } from "../../dominio/entidades/Solicitud";
 
 interface Props {
   abierto: boolean;
@@ -19,35 +19,35 @@ const ModalCambioDeEstado: React.FC<Props> = ({
   estadoSeleccionado,
   onCambiarEstado,
   onConfirmar,
-  onCancelar
+  onCancelar,
 }) => {
   return (
     <IonModal
       isOpen={abierto}
       onDidDismiss={onCancelar}
       style={{
-        '--width': '400px',
-        '--height': '350px',
-        '--border-radius': '12px'
+        "--width": "400px",
+        "--height": "350px",
+        "--border-radius": "12px",
       }}
     >
       <div
         style={{
-          padding: '30px',
-          textAlign: 'center',
-          backgroundColor: '#f4f5f8',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between'
+          padding: "30px",
+          textAlign: "center",
+          backgroundColor: "#f4f5f8",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
         <h2
           style={{
-            color: '#000',
-            fontWeight: 'bold',
-            fontSize: '1.4rem',
-            marginTop: 0
+            color: "#000",
+            fontWeight: "bold",
+            fontSize: "1.4rem",
+            marginTop: 0,
           }}
         >
           Cambiar estado de la solicitud
@@ -55,19 +55,19 @@ const ModalCambioDeEstado: React.FC<Props> = ({
 
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            margin: '30px 0'
+            display: "flex",
+            justifyContent: "space-around",
+            margin: "30px 0",
           }}
         >
           <div>
             <span
               style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                color: '#333',
-                fontWeight: 'bold',
-                marginBottom: '10px'
+                display: "block",
+                fontSize: "0.8rem",
+                color: "#333",
+                fontWeight: "bold",
+                marginBottom: "10px",
               }}
             >
               Estado actual
@@ -79,11 +79,11 @@ const ModalCambioDeEstado: React.FC<Props> = ({
           <div>
             <span
               style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                color: '#333',
-                fontWeight: 'bold',
-                marginBottom: '10px'
+                display: "block",
+                fontSize: "0.8rem",
+                color: "#333",
+                fontWeight: "bold",
+                marginBottom: "10px",
               }}
             >
               Estado nuevo
@@ -93,14 +93,14 @@ const ModalCambioDeEstado: React.FC<Props> = ({
               interface="popover"
               value={estadoSeleccionado}
               placeholder="Seleccione..."
-              onIonChange={e => onCambiarEstado(e.detail.value!)}
+              onIonChange={(e) => onCambiarEstado(e.detail.value!)}
               style={{
-                backgroundColor: '#fff',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                minHeight: '30px',
-                padding: '0 10px',
-                fontSize: '0.8rem'
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                minHeight: "30px",
+                padding: "0 10px",
+                fontSize: "0.8rem",
               }}
             >
               <IonSelectOption value="Recibido">Recibido</IonSelectOption>
@@ -116,14 +116,14 @@ const ModalCambioDeEstado: React.FC<Props> = ({
           onClick={onConfirmar}
           disabled={!estadoSeleccionado}
           style={{
-            backgroundColor: estadoSeleccionado ? '#68cc24' : '#bfbfbf',
-            color: 'white',
-            fontWeight: 'bold',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '15px',
-            cursor: estadoSeleccionado ? 'pointer' : 'not-allowed',
-            fontSize: '1.1rem'
+            backgroundColor: estadoSeleccionado ? "#68cc24" : "#bfbfbf",
+            color: "white",
+            fontWeight: "bold",
+            border: "none",
+            borderRadius: "4px",
+            padding: "15px",
+            cursor: estadoSeleccionado ? "pointer" : "not-allowed",
+            fontSize: "1.1rem",
           }}
         >
           Confirmar cambios
@@ -132,11 +132,11 @@ const ModalCambioDeEstado: React.FC<Props> = ({
         <button
           onClick={onCancelar}
           style={{
-            background: 'none',
-            border: 'none',
-            color: '#888',
-            cursor: 'pointer',
-            padding: '10px'
+            background: "none",
+            border: "none",
+            color: "#888",
+            cursor: "pointer",
+            padding: "10px",
           }}
         >
           Cancelar

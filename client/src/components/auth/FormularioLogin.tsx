@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 import {
   IonButton,
   IonInput,
   IonRouterLink,
   IonSelect,
   IonSelectOption,
-  IonText
-} from '@ionic/react';
+  IonText,
+} from "@ionic/react";
 
-import type { Role } from '../../context/AuthContext';
+import type { Role } from "../../context/AuthContext";
 
 interface Props {
   correo: string;
@@ -29,23 +29,23 @@ const FormularioLogin: React.FC<Props> = ({
   onCambiarCorreo,
   onCambiarPassword,
   onCambiarRol,
-  onIngresar
+  onIngresar,
 }) => {
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        maxWidth: '400px',
-        margin: '40px auto 0 auto'
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        maxWidth: "400px",
+        margin: "40px auto 0 auto",
       }}
     >
       <h2
         style={{
-          fontWeight: '900',
-          marginBottom: '30px',
-          color: '#000'
+          fontWeight: "900",
+          marginBottom: "30px",
+          color: "#000",
         }}
       >
         Iniciar sesión
@@ -55,7 +55,7 @@ const FormularioLogin: React.FC<Props> = ({
         placeholder="Correo electrónico"
         type="email"
         value={correo}
-        onIonInput={e => onCambiarCorreo(e.detail.value ?? '')}
+        onIonInput={(e) => onCambiarCorreo(e.detail.value ?? "")}
         style={estiloCampo}
       />
 
@@ -63,20 +63,18 @@ const FormularioLogin: React.FC<Props> = ({
         placeholder="Contraseña"
         type="password"
         value={password}
-        onIonInput={e => onCambiarPassword(e.detail.value ?? '')}
+        onIonInput={(e) => onCambiarPassword(e.detail.value ?? "")}
         style={estiloCampo}
       />
 
       <IonSelect
         value={rolSeleccionado}
         placeholder="Tipo de usuario"
-        onIonChange={e => onCambiarRol(e.detail.value as Role)}
+        onIonChange={(e) => onCambiarRol(e.detail.value as Role)}
         interface="popover"
         style={estiloSelector}
       >
-        <IonSelectOption value="solicitante">
-          Solicitante
-        </IonSelectOption>
+        <IonSelectOption value="solicitante">Solicitante</IonSelectOption>
 
         <IonSelectOption value="funcionario">
           Funcionario municipal
@@ -87,9 +85,9 @@ const FormularioLogin: React.FC<Props> = ({
         <IonText
           color="danger"
           style={{
-            width: '100%',
-            marginBottom: '15px',
-            fontSize: '0.85rem'
+            width: "100%",
+            marginBottom: "15px",
+            fontSize: "0.85rem",
           }}
         >
           {error}
@@ -100,15 +98,15 @@ const FormularioLogin: React.FC<Props> = ({
         expand="block"
         onClick={onIngresar}
         style={{
-          '--background': '#a3a8ff',
-          '--box-shadow': 'none',
-          '--border-radius': '4px',
-          width: '100%',
-          fontWeight: 'bold',
-          textTransform: 'none',
-          fontSize: '1rem',
-          height: '45px',
-          marginBottom: '15px'
+          "--background": "#a3a8ff",
+          "--box-shadow": "none",
+          "--border-radius": "4px",
+          width: "100%",
+          fontWeight: "bold",
+          textTransform: "none",
+          fontSize: "1rem",
+          height: "45px",
+          marginBottom: "15px",
         }}
       >
         Ingresar
@@ -117,10 +115,10 @@ const FormularioLogin: React.FC<Props> = ({
       <IonRouterLink
         routerLink="/recuperar"
         style={{
-          fontSize: '0.8rem',
-          color: '#666',
-          marginBottom: '20px',
-          textDecoration: 'none'
+          fontSize: "0.8rem",
+          color: "#666",
+          marginBottom: "20px",
+          textDecoration: "none",
         }}
       >
         ¿Olvidaste tu contraseña?
@@ -130,14 +128,14 @@ const FormularioLogin: React.FC<Props> = ({
         expand="block"
         routerLink="/registro"
         style={{
-          '--background': '#7377ad',
-          '--box-shadow': 'none',
-          '--border-radius': '4px',
-          width: '100%',
-          fontWeight: 'bold',
-          textTransform: 'none',
-          fontSize: '0.9rem',
-          height: '40px'
+          "--background": "#7377ad",
+          "--box-shadow": "none",
+          "--border-radius": "4px",
+          width: "100%",
+          fontWeight: "bold",
+          textTransform: "none",
+          fontSize: "0.9rem",
+          height: "40px",
         }}
       >
         Crear una cuenta
@@ -147,25 +145,25 @@ const FormularioLogin: React.FC<Props> = ({
 };
 
 const estiloCampo = {
-  backgroundColor: '#f2f2f2',
-  border: '1px solid #d1d1d1',
-  borderRadius: '4px',
-  marginBottom: '15px',
-  paddingLeft: '15px',
-  width: '100%',
-  height: '45px',
-  color: '#666'
+  backgroundColor: "#f2f2f2",
+  border: "1px solid #d1d1d1",
+  borderRadius: "4px",
+  marginBottom: "15px",
+  paddingLeft: "15px",
+  width: "100%",
+  height: "45px",
+  color: "#666",
 };
 
 const estiloSelector = {
-  backgroundColor: '#f2f2f2',
-  border: '1px solid #d1d1d1',
-  borderRadius: '4px',
-  marginBottom: '15px',
-  paddingLeft: '15px',
-  width: '100%',
-  minHeight: '45px',
-  color: '#666'
+  backgroundColor: "#f2f2f2",
+  border: "1px solid #d1d1d1",
+  borderRadius: "4px",
+  marginBottom: "15px",
+  paddingLeft: "15px",
+  width: "100%",
+  minHeight: "45px",
+  color: "#666",
 };
 
 export default FormularioLogin;

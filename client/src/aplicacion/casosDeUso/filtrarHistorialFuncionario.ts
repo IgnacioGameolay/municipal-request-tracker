@@ -1,6 +1,6 @@
-import type { Solicitud } from '../../dominio/entidades/Solicitud';
-import { normalizarEstado } from '../../dominio/reglas/normalizarEstado';
-import { obtenerMilisegundosFecha } from '../../dominio/reglas/formatearFecha';
+import type { Solicitud } from "../../dominio/entidades/Solicitud";
+import { normalizarEstado } from "../../dominio/reglas/normalizarEstado";
+import { obtenerMilisegundosFecha } from "../../dominio/reglas/formatearFecha";
 
 export interface FiltrosHistorialFuncionarioDatos {
   id: string;
@@ -13,55 +13,54 @@ export interface FiltrosHistorialFuncionarioDatos {
 
 export const filtrarHistorialFuncionario = (
   solicitudes: Solicitud[],
-  filtros: FiltrosHistorialFuncionarioDatos
+  filtros: FiltrosHistorialFuncionarioDatos,
 ): Solicitud[] => {
   let resultado = [...solicitudes];
 
   if (filtros.id.trim()) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.id.toString().includes(filtros.id.trim())
+    resultado = resultado.filter((solicitud) =>
+      solicitud.id.toString().includes(filtros.id.trim()),
     );
   }
 
   if (filtros.tipo) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.tipo === filtros.tipo
+    resultado = resultado.filter(
+      (solicitud) => solicitud.tipo === filtros.tipo,
     );
   }
 
   if (filtros.estado) {
-    resultado = resultado.filter(solicitud =>
-      normalizarEstado(solicitud.estado) === normalizarEstado(filtros.estado)
+    resultado = resultado.filter(
+      (solicitud) =>
+        normalizarEstado(solicitud.estado) === normalizarEstado(filtros.estado),
     );
   }
 
   if (filtros.titulo.trim()) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+    resultado = resultado.filter((solicitud) =>
+      solicitud.titulo.toLowerCase().includes(filtros.titulo.toLowerCase()),
     );
   }
 
   if (filtros.cliente.trim()) {
-    resultado = resultado.filter(solicitud =>
-      (solicitud.cliente || '')
+    resultado = resultado.filter((solicitud) =>
+      (solicitud.cliente || "")
         .toLowerCase()
-        .includes(filtros.cliente.toLowerCase())
+        .includes(filtros.cliente.toLowerCase()),
     );
   }
 
-  if (filtros.ordenFecha === 'recientes') {
+  if (filtros.ordenFecha === "recientes") {
     resultado.sort(
       (a, b) =>
-        obtenerMilisegundosFecha(b.fecha) -
-        obtenerMilisegundosFecha(a.fecha)
+        obtenerMilisegundosFecha(b.fecha) - obtenerMilisegundosFecha(a.fecha),
     );
   }
 
-  if (filtros.ordenFecha === 'antiguas') {
+  if (filtros.ordenFecha === "antiguas") {
     resultado.sort(
       (a, b) =>
-        obtenerMilisegundosFecha(a.fecha) -
-        obtenerMilisegundosFecha(b.fecha)
+        obtenerMilisegundosFecha(a.fecha) - obtenerMilisegundosFecha(b.fecha),
     );
   }
 

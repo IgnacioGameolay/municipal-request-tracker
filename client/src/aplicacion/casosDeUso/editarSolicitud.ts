@@ -1,9 +1,9 @@
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { formatearFechaActual } from '../../dominio/reglas/formatearFecha';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { formatearFechaActual } from "../../dominio/reglas/formatearFecha";
 import {
   obtenerSolicitudesGuardadas,
-  guardarSolicitudes
-} from '../../infraestructura/almacenamiento/repositorioLocalSolicitudes';
+  guardarSolicitudes,
+} from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
 
 interface DatosEditarSolicitud {
   id: string;
@@ -14,12 +14,12 @@ interface DatosEditarSolicitud {
 export const editarSolicitud = ({
   id,
   descripcionOriginal,
-  descripcionAgregada
+  descripcionAgregada,
 }: DatosEditarSolicitud): Solicitud | null => {
   const solicitudes = obtenerSolicitudesGuardadas();
 
   const index = solicitudes.findIndex(
-    solicitud => solicitud.id.toString() === id
+    (solicitud) => solicitud.id.toString() === id,
   );
 
   if (index === -1) {
@@ -28,12 +28,11 @@ export const editarSolicitud = ({
 
   const fechaEdicion = formatearFechaActual();
 
-  const descripcionActualizada =
-    `${descripcionOriginal}\n\n[Agregado el ${fechaEdicion}]: ${descripcionAgregada.trim()}`;
+  const descripcionActualizada = `${descripcionOriginal}\n\n[Agregado el ${fechaEdicion}]: ${descripcionAgregada.trim()}`;
 
   const solicitudActualizada: Solicitud = {
     ...solicitudes[index],
-    descripcion: descripcionActualizada
+    descripcion: descripcionActualizada,
   };
 
   solicitudes[index] = solicitudActualizada;

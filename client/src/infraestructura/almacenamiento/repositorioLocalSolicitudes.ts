@@ -1,6 +1,6 @@
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { solicitudesSimuladas } from '../simulacionDatos/solicitudesSimuladas';
-import { CLAVES_ALMACENAMIENTO } from './clavesAlmacenamiento';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { solicitudesSimuladas } from "../simulacionDatos/solicitudesSimuladas";
+import { CLAVES_ALMACENAMIENTO } from "./clavesAlmacenamiento";
 
 export const obtenerSolicitudesGuardadas = (): Solicitud[] => {
   const datos = localStorage.getItem(CLAVES_ALMACENAMIENTO.solicitudes);
@@ -14,11 +14,12 @@ export const obtenerSolicitudesGuardadas = (): Solicitud[] => {
 
   const solicitudesCombinadas = [
     ...solicitudesSimuladas.filter(
-      ejemplo => !solicitudesGuardadas.some(
-        guardada => guardada.id.toString() === ejemplo.id.toString()
-      )
+      (ejemplo) =>
+        !solicitudesGuardadas.some(
+          (guardada) => guardada.id.toString() === ejemplo.id.toString(),
+        ),
     ),
-    ...solicitudesGuardadas
+    ...solicitudesGuardadas,
   ];
 
   guardarSolicitudes(solicitudesCombinadas);
@@ -29,12 +30,12 @@ export const obtenerSolicitudesGuardadas = (): Solicitud[] => {
 export const guardarSolicitudes = (solicitudes: Solicitud[]) => {
   localStorage.setItem(
     CLAVES_ALMACENAMIENTO.solicitudes,
-    JSON.stringify(solicitudes)
+    JSON.stringify(solicitudes),
   );
 };
 
 export const obtenerSolicitudPorId = (id: string) => {
   return obtenerSolicitudesGuardadas().find(
-    solicitud => solicitud.id.toString() === id
+    (solicitud) => solicitud.id.toString() === id,
   );
 };

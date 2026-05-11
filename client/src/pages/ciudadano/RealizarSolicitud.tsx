@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonToast } from '@ionic/react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { useHistory, useParams } from "react-router-dom";
 
-import EncabezadoAplicacion from '../../components/common/EncabezadoAplicacion';
-import ContenedorPagina from '../../components/common/ContenedorPagina';
-import FormularioCrearYEditarSolicitudes from '../../components/solicitudes/FormularioCrearYEditarSolicitudes';
-import DocumentacionSolicitud from '../../components/solicitudes/DocumentacionSolicitud';
-import AccionesEnFomularioSolicitud from '../../components/solicitudes/AccionesEnFomularioSolicitud';
+import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
+import ContenedorPagina from "../../components/common/ContenedorPagina";
+import FormularioCrearYEditarSolicitudes from "../../components/solicitudes/FormularioCrearYEditarSolicitudes";
+import DocumentacionSolicitud from "../../components/solicitudes/DocumentacionSolicitud";
+import AccionesEnFomularioSolicitud from "../../components/solicitudes/AccionesEnFomularioSolicitud";
 
-import { validarFormularioSolicitud } from '../../dominio/reglas/validarFormularioSolicitud';
-import { obtenerSolicitudPorId } from '../../infraestructura/almacenamiento/repositorioLocalSolicitudes';
-import { crearSolicitud } from '../../aplicacion/casosDeUso/crearSolicitud';
-import { editarSolicitud } from '../../aplicacion/casosDeUso/editarSolicitud';
+import { validarFormularioSolicitud } from "../../dominio/reglas/validarFormularioSolicitud";
+import { obtenerSolicitudPorId } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
+import { crearSolicitud } from "../../aplicacion/casosDeUso/crearSolicitud";
+import { editarSolicitud } from "../../aplicacion/casosDeUso/editarSolicitud";
 
-const DESCRIPCION_EDICION_VACIA = "Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.";
+const DESCRIPCION_EDICION_VACIA =
+  "Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.";
 
 const RealizarSolicitud: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,11 +22,11 @@ const RealizarSolicitud: React.FC = () => {
 
   const esEdicion = !!id;
 
-  const [tipo, setTipo] = useState('');
-  const [titulo, setTitulo] = useState('');
-  const [descripcionOriginal, setDescripcionOriginal] = useState('');
-  const [descripcionAgregada, setDescripcionAgregada] = useState('');
-  const [mensajeError, setMensajeError] = useState('');
+  const [tipo, setTipo] = useState("");
+  const [titulo, setTitulo] = useState("");
+  const [descripcionOriginal, setDescripcionOriginal] = useState("");
+  const [descripcionAgregada, setDescripcionAgregada] = useState("");
+  const [mensajeError, setMensajeError] = useState("");
 
   const cargarSolicitudEdicion = () => {
     if (!esEdicion) {
@@ -35,28 +36,29 @@ const RealizarSolicitud: React.FC = () => {
     const solicitudEncontrada = obtenerSolicitudPorId(id);
 
     if (!solicitudEncontrada) {
-      setMensajeError('No se encontró la solicitud que quieres editar.');
+      setMensajeError("No se encontró la solicitud que quieres editar.");
       return;
     }
 
     setTitulo(solicitudEncontrada.titulo);
-    setTipo(solicitudEncontrada.tipo || 'Tipo 1');
+    setTipo(solicitudEncontrada.tipo || "Tipo 1");
     setDescripcionOriginal(
-      solicitudEncontrada.descripcion || DESCRIPCION_EDICION_VACIA
+      solicitudEncontrada.descripcion || DESCRIPCION_EDICION_VACIA,
     );
   };
 
   const cambiarRolManual = () => {
-    const rolActual = localStorage.getItem('rol_actual') || 'solicitante';
-    const nuevoRol = rolActual === 'solicitante' ? 'funcionario' : 'solicitante';
+    const rolActual = localStorage.getItem("rol_actual") || "solicitante";
+    const nuevoRol =
+      rolActual === "solicitante" ? "funcionario" : "solicitante";
 
-    localStorage.setItem('rol_actual', nuevoRol);
-    window.dispatchEvent(new Event('rolCambiado'));
+    localStorage.setItem("rol_actual", nuevoRol);
+    window.dispatchEvent(new Event("rolCambiado"));
 
     history.push(
-      nuevoRol === 'solicitante'
-        ? '/ciudadano/tramites'
-        : '/funcionario/tramites'
+      nuevoRol === "solicitante"
+        ? "/ciudadano/tramites"
+        : "/funcionario/tramites",
     );
   };
 
@@ -66,7 +68,7 @@ const RealizarSolicitud: React.FC = () => {
       titulo,
       descripcionOriginal,
       descripcionAgregada,
-      esEdicion
+      esEdicion,
     });
 
     if (error) {
@@ -78,22 +80,22 @@ const RealizarSolicitud: React.FC = () => {
       const solicitudActualizada = editarSolicitud({
         id,
         descripcionOriginal,
-        descripcionAgregada
+        descripcionAgregada,
       });
 
       if (!solicitudActualizada) {
-        setMensajeError('No se pudo editar la solicitud.');
+        setMensajeError("No se pudo editar la solicitud.");
         return;
       }
     } else {
       crearSolicitud({
         tipo,
         titulo,
-        descripcion: descripcionOriginal
+        descripcion: descripcionOriginal,
       });
     }
 
-    history.push('/ciudadano/historial');
+    history.push("/ciudadano/historial");
   };
 
   useEffect(() => {
@@ -104,10 +106,10 @@ const RealizarSolicitud: React.FC = () => {
 
   useEffect(() => {
     if (!esEdicion) {
-      setTipo('');
-      setTitulo('');
-      setDescripcionOriginal('');
-      setDescripcionAgregada('');
+      setTipo("");
+      setTitulo("");
+      setDescripcionOriginal("");
+      setDescripcionAgregada("");
     }
   }, [esEdicion]);
 
@@ -122,32 +124,32 @@ const RealizarSolicitud: React.FC = () => {
         onCambiarRolManual={cambiarRolManual}
       />
 
-      <IonContent style={{ '--background': '#ffffff' }}>
+      <IonContent style={{ "--background": "#ffffff" }}>
         <ContenedorPagina>
           <div
             style={{
-              maxWidth: '900px',
-              margin: '0 auto',
-              paddingBottom: '20px'
+              maxWidth: "900px",
+              margin: "0 auto",
+              paddingBottom: "20px",
             }}
           >
             <h2
               style={{
-                color: '#000',
-                fontWeight: 'bold',
-                marginBottom: '20px',
-                fontSize: '1.8rem'
+                color: "#000",
+                fontWeight: "bold",
+                marginBottom: "20px",
+                fontSize: "1.8rem",
               }}
             >
-              {esEdicion ? 'Editar solicitud' : 'Realizar nueva solicitud'}
+              {esEdicion ? "Editar solicitud" : "Realizar nueva solicitud"}
             </h2>
 
             <div
               style={{
-                backgroundColor: '#f4f5f8',
-                borderRadius: '8px',
-                padding: '30px',
-                border: '1px solid #e0e0e0'
+                backgroundColor: "#f4f5f8",
+                borderRadius: "8px",
+                padding: "30px",
+                border: "1px solid #e0e0e0",
               }}
             >
               <FormularioCrearYEditarSolicitudes
@@ -174,12 +176,12 @@ const RealizarSolicitud: React.FC = () => {
         </ContenedorPagina>
 
         <IonToast
-          isOpen={mensajeError !== ''}
+          isOpen={mensajeError !== ""}
           message={mensajeError}
           duration={2500}
           color="danger"
           position="bottom"
-          onDidDismiss={() => setMensajeError('')}
+          onDidDismiss={() => setMensajeError("")}
         />
       </IonContent>
     </IonPage>

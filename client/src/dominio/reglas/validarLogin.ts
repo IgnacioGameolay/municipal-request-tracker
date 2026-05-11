@@ -7,15 +7,15 @@ interface DatosLogin {
 export const validarLogin = ({
   correo,
   password,
-  rolSeleccionado
+  rolSeleccionado,
 }: DatosLogin): string => {
   if (!correo.trim() || !password.trim()) {
-    return 'Debes ingresar correo electrónico y contraseña.';
+    return "Debes ingresar correo electrónico y contraseña.";
   }
 
   if (!rolSeleccionado) {
-    return 'Debes seleccionar el tipo de usuario.';
+    return "Debes seleccionar el tipo de usuario.";
   }
 
-  return '';
+  return "";
 };

@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import FilaHistorialFuncionario from './FilaHistorialFuncionario';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import FilaHistorialFuncionario from "./FilaHistorialFuncionario";
 
 interface Props {
   solicitudes: Solicitud[];
@@ -10,31 +10,33 @@ interface Props {
 
 const TablaHistorialFuncionario: React.FC<Props> = ({
   solicitudes,
-  onComentar
+  onComentar,
 }) => {
   if (solicitudes.length === 0) {
     return (
       <div
         style={{
-          backgroundColor: '#f4f5f8',
-          borderRadius: '8px',
-          height: '400px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          border: '1px solid #e0e0e0'
+          backgroundColor: "#f4f5f8",
+          borderRadius: "8px",
+          height: "400px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          border: "1px solid #e0e0e0",
         }}
       >
         <p
           style={{
-            fontWeight: 'bold',
-            color: '#000',
-            textAlign: 'center',
+            fontWeight: "bold",
+            color: "#000",
+            textAlign: "center",
             margin: 0,
-            fontSize: '1rem'
+            fontSize: "1rem",
           }}
         >
-          No hay datos que<br />mostrar
+          No hay datos que
+          <br />
+          mostrar
         </p>
       </div>
     );
@@ -43,26 +45,26 @@ const TablaHistorialFuncionario: React.FC<Props> = ({
   return (
     <div
       style={{
-        backgroundColor: '#f4f5f8',
-        borderRadius: '8px',
-        border: '1px solid #e0e0e0',
-        padding: '20px',
-        overflowX: 'auto'
+        backgroundColor: "#f4f5f8",
+        borderRadius: "8px",
+        border: "1px solid #e0e0e0",
+        padding: "20px",
+        overflowX: "auto",
       }}
     >
       <table
         style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          textAlign: 'center',
-          fontSize: '0.9rem'
+          width: "100%",
+          borderCollapse: "collapse",
+          textAlign: "center",
+          fontSize: "0.9rem",
         }}
       >
         <thead>
           <tr
             style={{
-              borderBottom: '2px solid #ddd',
-              color: '#000'
+              borderBottom: "2px solid #ddd",
+              color: "#000",
             }}
           >
             <th style={estiloCabecera}>Nro. Solicitud</th>
@@ -75,7 +77,7 @@ const TablaHistorialFuncionario: React.FC<Props> = ({
         </thead>
 
         <tbody>
-          {solicitudes.map(solicitud => (
+          {solicitudes.map((solicitud) => (
             <FilaHistorialFuncionario
               key={solicitud.id}
               solicitud={solicitud}
@@ -89,7 +91,7 @@ const TablaHistorialFuncionario: React.FC<Props> = ({
 };
 
 const estiloCabecera = {
-  padding: '15px 10px'
+  padding: "15px 10px",
 };
 
 export default TablaHistorialFuncionario;

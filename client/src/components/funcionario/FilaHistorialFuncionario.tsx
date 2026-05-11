@@ -1,10 +1,10 @@
-import React from 'react';
-import { IonIcon } from '@ionic/react';
-import { createOutline } from 'ionicons/icons';
+import React from "react";
+import { IonIcon } from "@ionic/react";
+import { createOutline } from "ionicons/icons";
 
-import ColorEstado from '../common/ColorEstado';
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { normalizarFechaVisual } from '../../dominio/reglas/formatearFecha';
+import ColorEstado from "../common/ColorEstado";
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
 
 interface Props {
   solicitud: Solicitud;
@@ -13,42 +13,42 @@ interface Props {
 
 const FilaHistorialFuncionario: React.FC<Props> = ({
   solicitud,
-  onComentar
+  onComentar,
 }) => {
   return (
-    <tr style={{ borderBottom: '1px solid #ddd' }}>
+    <tr style={{ borderBottom: "1px solid #ddd" }}>
       <td style={estiloCelda}>{solicitud.id}</td>
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>
 
-      <td style={{ padding: '15px 10px' }}>
+      <td style={{ padding: "15px 10px" }}>
         <ColorEstado estado={solicitud.estado} />
       </td>
 
       <td
         style={{
-          padding: '15px 10px',
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '8px'
+          padding: "15px 10px",
+          display: "flex",
+          justifyContent: "center",
+          gap: "8px",
         }}
       >
         <button
           onClick={() => onComentar(solicitud.id)}
           title="Comentar solicitud"
           style={{
-            backgroundColor: '#0088ff',
-            color: 'white',
-            padding: '5px 15px',
-            borderRadius: '4px',
-            border: 'none',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            gap: '5px'
+            backgroundColor: "#0088ff",
+            color: "white",
+            padding: "5px 15px",
+            borderRadius: "4px",
+            border: "none",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer",
+            fontWeight: "bold",
+            gap: "5px",
           }}
         >
           <IonIcon icon={createOutline} />
@@ -60,8 +60,8 @@ const FilaHistorialFuncionario: React.FC<Props> = ({
 };
 
 const estiloCelda = {
-  padding: '15px 10px',
-  color: '#333'
+  padding: "15px 10px",
+  color: "#333",
 };
 
 export default FilaHistorialFuncionario;

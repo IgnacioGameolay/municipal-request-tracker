@@ -1,45 +1,42 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonPage
-} from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { IonContent, IonPage } from "@ionic/react";
+import { useHistory } from "react-router-dom";
 
-import EncabezadoAuth from '../../components/auth/EncabezadoAuth';
-import FormularioRegistro from '../../components/auth/FormularioRegistro';
+import EncabezadoAuth from "../../components/auth/EncabezadoAuth";
+import FormularioRegistro from "../../components/auth/FormularioRegistro";
 
 import {
   DatosRegistro,
-  validarRegistro
-} from '../../dominio/reglas/validarRegistro';
+  validarRegistro,
+} from "../../dominio/reglas/validarRegistro";
 
 const datosInicialesRegistro: DatosRegistro = {
-  nombre: '',
-  apellido: '',
-  rut: '',
-  region: '',
-  comuna: '',
-  correo: '',
-  password: '',
-  confirmarPassword: '',
-  aceptaTerminos: false
+  nombre: "",
+  apellido: "",
+  rut: "",
+  region: "",
+  comuna: "",
+  correo: "",
+  password: "",
+  confirmarPassword: "",
+  aceptaTerminos: false,
 };
 
 const RegisterPage: React.FC = () => {
   const history = useHistory();
 
   const [datosRegistro, setDatosRegistro] = useState<DatosRegistro>(
-    datosInicialesRegistro
+    datosInicialesRegistro,
   );
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const cambiarCampo = (
     campo: keyof DatosRegistro,
-    valor: string | boolean
+    valor: string | boolean,
   ) => {
     setDatosRegistro({
       ...datosRegistro,
-      [campo]: valor
+      [campo]: valor,
     });
   };
 
@@ -51,10 +48,10 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    setError('');
+    setError("");
 
     // En EP1 el registro es prototipal. La persistencia real queda para backend en un futuro.
-    history.push('/login');
+    history.push("/login");
   };
 
   return (

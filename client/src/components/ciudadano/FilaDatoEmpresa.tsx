@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Props {
   etiqueta: string;
@@ -9,29 +9,27 @@ interface Props {
 const FilaDatoEmpresa: React.FC<Props> = ({
   etiqueta,
   valor,
-  anchoEtiqueta = '230px'
+  anchoEtiqueta = "230px",
 }) => {
   return (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '30px',
-        flexWrap: 'wrap'
+        display: "flex",
+        alignItems: "center",
+        gap: "30px",
+        flexWrap: "wrap",
       }}
     >
       <strong
         style={{
-          color: '#555',
-          minWidth: anchoEtiqueta
+          color: "#555",
+          minWidth: anchoEtiqueta,
         }}
       >
         {etiqueta}
       </strong>
 
-      <span style={{ color: '#666' }}>
-        {valor}
-      </span>
+      <span style={{ color: "#666" }}>{valor}</span>
     </div>
   );
 };

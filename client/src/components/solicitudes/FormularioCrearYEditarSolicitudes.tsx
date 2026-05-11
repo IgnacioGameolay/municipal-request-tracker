@@ -1,9 +1,5 @@
-import React from 'react';
-import {
-  IonInput,
-  IonSelect,
-  IonSelectOption
-} from '@ionic/react';
+import React from "react";
+import { IonInput, IonSelect, IonSelectOption } from "@ionic/react";
 
 interface Props {
   tipo: string;
@@ -26,26 +22,26 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
   onCambiarTipo,
   onCambiarTitulo,
   onCambiarDescripcionOriginal,
-  onCambiarDescripcionAgregada
+  onCambiarDescripcionAgregada,
 }) => {
   return (
     <>
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: "20px" }}>
         <label style={estiloEtiqueta}>Tipo de solicitud</label>
 
         <IonSelect
           interface="popover"
           value={tipo}
           placeholder="Seleccione..."
-          onIonChange={e => onCambiarTipo(e.detail.value || '')}
+          onIonChange={(e) => onCambiarTipo(e.detail.value || "")}
           disabled={esEdicion}
           style={{
-            backgroundColor: esEdicion ? '#d3d3d3' : '#fff',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            minHeight: '40px',
-            width: '200px',
-            paddingLeft: '10px'
+            backgroundColor: esEdicion ? "#d3d3d3" : "#fff",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            minHeight: "40px",
+            width: "200px",
+            paddingLeft: "10px",
           }}
         >
           <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
@@ -55,20 +51,20 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
         </IonSelect>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
+      <div style={{ marginBottom: "20px" }}>
         <label style={estiloEtiqueta}>Título de la solicitud</label>
 
         <IonInput
           value={titulo}
-          onIonChange={e => onCambiarTitulo(e.detail.value || '')}
+          onIonChange={(e) => onCambiarTitulo(e.detail.value || "")}
           disabled={esEdicion}
           style={{
-            backgroundColor: esEdicion ? '#d3d3d3' : '#fff',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            minHeight: '40px',
-            paddingLeft: '10px',
-            color: esEdicion ? '#555' : '#000'
+            backgroundColor: esEdicion ? "#d3d3d3" : "#fff",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            minHeight: "40px",
+            paddingLeft: "10px",
+            color: esEdicion ? "#555" : "#000",
           }}
         />
       </div>
@@ -76,10 +72,10 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
       {esEdicion ? (
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '20px',
-            marginBottom: '30px'
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "20px",
+            marginBottom: "30px",
           }}
         >
           <div>
@@ -89,15 +85,15 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
               value={descripcionOriginal}
               disabled
               style={{
-                width: '100%',
-                height: '200px',
-                backgroundColor: '#d3d3d3',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '10px',
-                resize: 'none',
-                color: '#555',
-                fontFamily: 'inherit'
+                width: "100%",
+                height: "200px",
+                backgroundColor: "#d3d3d3",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                padding: "10px",
+                resize: "none",
+                color: "#555",
+                fontFamily: "inherit",
               }}
             />
           </div>
@@ -110,38 +106,38 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
             <textarea
               placeholder="(Descripción agregada) Faltó incluir unos documentos, los adjunto ahora."
               value={descripcionAgregada}
-              onChange={e => onCambiarDescripcionAgregada(e.target.value)}
+              onChange={(e) => onCambiarDescripcionAgregada(e.target.value)}
               style={{
-                width: '100%',
-                height: '200px',
-                backgroundColor: '#fff',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                padding: '10px',
-                resize: 'none',
-                color: '#000',
-                fontFamily: 'inherit'
+                width: "100%",
+                height: "200px",
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                padding: "10px",
+                resize: "none",
+                color: "#000",
+                fontFamily: "inherit",
               }}
             />
           </div>
         </div>
       ) : (
-        <div style={{ marginBottom: '30px' }}>
+        <div style={{ marginBottom: "30px" }}>
           <label style={estiloEtiqueta}>Descripción de la solicitud</label>
 
           <textarea
             value={descripcionOriginal}
-            onChange={e => onCambiarDescripcionOriginal(e.target.value)}
+            onChange={(e) => onCambiarDescripcionOriginal(e.target.value)}
             style={{
-              width: '100%',
-              height: '150px',
-              backgroundColor: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-              padding: '10px',
-              resize: 'none',
-              color: '#000',
-              fontFamily: 'inherit'
+              width: "100%",
+              height: "150px",
+              backgroundColor: "#fff",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              padding: "10px",
+              resize: "none",
+              color: "#000",
+              fontFamily: "inherit",
             }}
           />
         </div>
@@ -151,11 +147,11 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
 };
 
 const estiloEtiqueta = {
-  display: 'block',
-  fontSize: '0.9rem',
-  color: '#333',
-  marginBottom: '8px',
-  fontWeight: '500'
+  display: "block",
+  fontSize: "0.9rem",
+  color: "#333",
+  marginBottom: "8px",
+  fontWeight: "500",
 };
 
 export default FormularioCrearYEditarSolicitudes;

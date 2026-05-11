@@ -1,6 +1,8 @@
-import React from 'react';
-import { Route, Redirect, RouteProps } from 'react-router-dom';
-import { useAuth, Role } from '../context/AuthContext';
+import React from "react";
+import { Route, Redirect, RouteProps } from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
+import type { Role } from "../context/AuthContext";
 
 interface ProtectedRouteProps extends RouteProps {
   component: React.ComponentType<any>;
@@ -24,9 +26,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
         if (role !== allowedRole) {
           const fallbackPath =
-            role === 'funcionario'
-              ? '/funcionario/tramites'
-              : '/ciudadano/tramites';
+            role === "funcionario"
+              ? "/funcionario/tramites"
+              : "/ciudadano/tramites";
 
           return <Redirect to={fallbackPath} />;
         }

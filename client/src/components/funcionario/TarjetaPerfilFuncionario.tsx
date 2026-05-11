@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { Funcionario } from '../../dominio/entidades/Funcionario';
-import AvatarFuncionario from './AvatarFuncionario';
-import CampoDatoFuncionario from './CampoDatoFuncionario';
+import { Funcionario } from "../../dominio/entidades/Funcionario";
+import AvatarFuncionario from "./AvatarFuncionario";
+import CampoDatoFuncionario from "./CampoDatoFuncionario";
 
 interface Props {
   funcionario: Funcionario;
@@ -12,17 +12,17 @@ const TarjetaPerfilFuncionario: React.FC<Props> = ({ funcionario }) => {
   return (
     <div
       style={{
-        backgroundColor: '#eeeeee',
-        borderRadius: '8px',
-        padding: '30px'
+        backgroundColor: "#eeeeee",
+        borderRadius: "8px",
+        padding: "30px",
       }}
     >
       <h3
         style={{
-          color: '#666',
+          color: "#666",
           marginTop: 0,
-          marginBottom: '25px',
-          fontSize: '1.1rem'
+          marginBottom: "25px",
+          fontSize: "1.1rem",
         }}
       >
         Datos personales
@@ -30,30 +30,24 @@ const TarjetaPerfilFuncionario: React.FC<Props> = ({ funcionario }) => {
 
       <div
         style={{
-          display: 'flex',
-          gap: '40px',
-          flexWrap: 'wrap'
+          display: "flex",
+          gap: "40px",
+          flexWrap: "wrap",
         }}
       >
         <AvatarFuncionario />
 
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr',
-            gap: '20px',
-            flex: 1
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr",
+            gap: "20px",
+            flex: 1,
           }}
         >
-          <CampoDatoFuncionario
-            etiqueta="Nombre"
-            valor={funcionario.nombre}
-          />
+          <CampoDatoFuncionario etiqueta="Nombre" valor={funcionario.nombre} />
 
-          <CampoDatoFuncionario
-            etiqueta="Rut"
-            valor={funcionario.rut}
-          />
+          <CampoDatoFuncionario etiqueta="Rut" valor={funcionario.rut} />
 
           <CampoDatoFuncionario
             etiqueta="Teléfono"

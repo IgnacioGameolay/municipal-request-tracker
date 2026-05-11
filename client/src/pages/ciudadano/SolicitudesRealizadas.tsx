@@ -1,25 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonToast, useIonViewWillEnter } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import {
+  IonContent,
+  IonPage,
+  IonToast,
+  useIonViewWillEnter,
+} from "@ionic/react";
+import { useHistory } from "react-router-dom";
 
-import EncabezadoAplicacion from '../../components/common/EncabezadoAplicacion';
-import FiltrarSolicitudes from '../../components/solicitudes/FiltrarSolicitudes';
-import TablaSolicitudes from '../../components/solicitudes/TablaSolicitudes';
-import ModalEliminarSolicitud from '../../components/solicitudes/ModalEliminarSolicitud';
+import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
+import FiltrarSolicitudes from "../../components/solicitudes/FiltrarSolicitudes";
+import TablaSolicitudes from "../../components/solicitudes/TablaSolicitudes";
+import ModalEliminarSolicitud from "../../components/solicitudes/ModalEliminarSolicitud";
 
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { obtenerSolicitudesGuardadas } from '../../infraestructura/almacenamiento/repositorioLocalSolicitudes';
-import { eliminarSolicitud } from '../../aplicacion/casosDeUso/eliminarSolicitud';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { obtenerSolicitudesGuardadas } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
+import { eliminarSolicitud } from "../../aplicacion/casosDeUso/eliminarSolicitud";
 
 const SolicitudesRealizadas: React.FC = () => {
   const history = useHistory();
 
-  const [todasLasSolicitudes, setTodasLasSolicitudes] = useState<Solicitud[]>([]);
+  const [todasLasSolicitudes, setTodasLasSolicitudes] = useState<Solicitud[]>(
+    [],
+  );
   const [solicitudesMostrar, setSolicitudesMostrar] = useState<Solicitud[]>([]);
 
   const [mostrarAlertaBorrar, setMostrarAlertaBorrar] = useState(false);
   const [solicitudABorrar, setSolicitudABorrar] = useState<number | null>(null);
-  const [mensajeToast, setMensajeToast] = useState('');
+  const [mensajeToast, setMensajeToast] = useState("");
 
   const cargarSolicitudes = () => {
     const solicitudes = obtenerSolicitudesGuardadas();
@@ -29,9 +36,9 @@ const SolicitudesRealizadas: React.FC = () => {
   };
 
   const cambiarRolManual = () => {
-    localStorage.setItem('rol_actual', 'solicitante');
-    window.dispatchEvent(new Event('rolCambiado'));
-    history.push('/ciudadano/tramites');
+    localStorage.setItem("rol_actual", "solicitante");
+    window.dispatchEvent(new Event("rolCambiado"));
+    history.push("/ciudadano/tramites");
   };
 
   const abrirModalBorrar = (id: number) => {
@@ -55,7 +62,7 @@ const SolicitudesRealizadas: React.FC = () => {
     setSolicitudesMostrar(solicitudesActualizadas);
     setSolicitudABorrar(null);
     setMostrarAlertaBorrar(false);
-    setMensajeToast('Solicitud eliminada correctamente');
+    setMensajeToast("Solicitud eliminada correctamente");
   };
 
   useEffect(() => {
@@ -77,23 +84,23 @@ const SolicitudesRealizadas: React.FC = () => {
         onCambiarRolManual={cambiarRolManual}
       />
 
-      <IonContent style={{ '--background': '#ffffff' }}>
+      <IonContent style={{ "--background": "#ffffff" }}>
         <div
           style={{
-            maxWidth: '1220px',
-            margin: '0 auto',
-            paddingTop: '10px',
-            paddingBottom: '30px',
-            paddingLeft: '20px',
-            paddingRight: '20px'
+            maxWidth: "1220px",
+            margin: "0 auto",
+            paddingTop: "10px",
+            paddingBottom: "30px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
           }}
         >
           <h2
             style={{
-              color: '#000',
-              fontWeight: '500',
-              marginBottom: '10px',
-              fontSize: '1.8rem'
+              color: "#000",
+              fontWeight: "500",
+              marginBottom: "10px",
+              fontSize: "1.8rem",
             }}
           >
             Solicitudes
@@ -120,7 +127,7 @@ const SolicitudesRealizadas: React.FC = () => {
 
         <IonToast
           isOpen={!!mensajeToast}
-          onDidDismiss={() => setMensajeToast('')}
+          onDidDismiss={() => setMensajeToast("")}
           message={mensajeToast}
           duration={2000}
           color="dark"

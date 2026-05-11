@@ -1,29 +1,30 @@
-import React, { useState } from 'react';
-import { IonContent, IonPage } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { IonContent, IonPage } from "@ionic/react";
+import { useHistory } from "react-router-dom";
 
-import EncabezadoAplicacion from '../../components/common/EncabezadoAplicacion';
-import ContenedorPagina from '../../components/common/ContenedorPagina';
-import SelectorTipoTramite from '../../components/ciudadano/SelectorTipoTramite';
-import DocumentosRequeridosTramite from '../../components/ciudadano/DocumentosRequeridosTramite';
-import ResumenInformacionTramite from '../../components/ciudadano/ResumenInformacionTramite';
+import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
+import ContenedorPagina from "../../components/common/ContenedorPagina";
+import SelectorTipoTramite from "../../components/ciudadano/SelectorTipoTramite";
+import DocumentosRequeridosTramite from "../../components/ciudadano/DocumentosRequeridosTramite";
+import ResumenInformacionTramite from "../../components/ciudadano/ResumenInformacionTramite";
 
-import { informacionTramitesSimulados } from '../../infraestructura/simulacionDatos/informacionTramitesSimulados';
+import { informacionTramitesSimulados } from "../../infraestructura/simulacionDatos/informacionTramitesSimulados";
 
 const InfoSolicitudes: React.FC = () => {
   const history = useHistory();
 
-  const [tipoTramite, setTipoTramite] = useState('');
+  const [tipoTramite, setTipoTramite] = useState("");
 
   const cambiarRolManual = () => {
-    localStorage.setItem('rol_actual', 'funcionario');
-    window.dispatchEvent(new Event('rolCambiado'));
-    history.push('/funcionario/tramites');
+    localStorage.setItem("rol_actual", "funcionario");
+    window.dispatchEvent(new Event("rolCambiado"));
+    history.push("/funcionario/tramites");
   };
 
   const informacionSeleccionada =
-    informacionTramitesSimulados.find(tramite => tramite.tipo === tipoTramite) ||
-    informacionTramitesSimulados[0];
+    informacionTramitesSimulados.find(
+      (tramite) => tramite.tipo === tipoTramite,
+    ) || informacionTramitesSimulados[0];
 
   return (
     <IonPage>
@@ -36,22 +37,22 @@ const InfoSolicitudes: React.FC = () => {
         onCambiarRolManual={cambiarRolManual}
       />
 
-      <IonContent style={{ '--background': '#ffffff' }}>
+      <IonContent style={{ "--background": "#ffffff" }}>
         <ContenedorPagina>
           <div
             style={{
-              maxWidth: '1100px',
-              margin: '0 auto',
-              paddingTop: '10px',
-              paddingBottom: '40px'
+              maxWidth: "1100px",
+              margin: "0 auto",
+              paddingTop: "10px",
+              paddingBottom: "40px",
             }}
           >
             <h2
               style={{
-                color: '#000',
-                fontWeight: 'bold',
-                marginBottom: '20px',
-                fontSize: '1.8rem'
+                color: "#000",
+                fontWeight: "bold",
+                marginBottom: "20px",
+                fontSize: "1.8rem",
               }}
             >
               Información sobre solicitudes
@@ -59,14 +60,16 @@ const InfoSolicitudes: React.FC = () => {
 
             <div
               style={{
-                backgroundColor: '#eeeeee',
-                borderRadius: '8px',
-                padding: '30px',
-                color: '#000'
+                backgroundColor: "#eeeeee",
+                borderRadius: "8px",
+                padding: "30px",
+                color: "#000",
               }}
             >
               <SelectorTipoTramite
-                tipos={informacionTramitesSimulados.map(tramite => tramite.tipo)}
+                tipos={informacionTramitesSimulados.map(
+                  (tramite) => tramite.tipo,
+                )}
                 tipoSeleccionado={tipoTramite}
                 onSeleccionarTipo={setTipoTramite}
               />

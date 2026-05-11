@@ -1,61 +1,89 @@
-import React, { createContext, useContext, ReactNode, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type Role = 'solicitante' | 'funcionario';
 
-interface AuthState {
+interface AuthContextType {
   isAuthenticated: boolean;
   role: Role | null;
   login: (role: Role) => void;
   logout: () => void;
+  cambiarRol: (role: Role) => void;
 }
 
-const AuthContext = createContext<AuthState | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const getInitialRole = (): Role | null => {
-  const storedRole = localStorage.getItem('rol_actual');
+const obtenerRolGuardado = (): Role | null => {
+  const rol = localStorage.getItem('rol_actual');
 
-  if (storedRole === 'solicitante' || storedRole === 'funcionario') {
-    return storedRole;
+  if (rol === 'solicitante' || rol === 'funcionario') {
+    return rol;
   }
 
   return null;
 };
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const initialRole = getInitialRole();
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children
+}) => {
+  const [role, setRole] = useState<Role | null>(obtenerRolGuardado());
 
-  const [role, setRole] = useState<Role | null>(initialRole);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(initialRole !== null);
+  const isAuthenticated = role !== null;
 
-  const login = (selectedRole: Role) => {
-    localStorage.setItem('rol_actual', selectedRole);
-    setRole(selectedRole);
-    setIsAuthenticated(true);
-
+  const guardarRol = (nuevoRol: Role) => {
+    localStorage.setItem('rol_actual', nuevoRol);
+    setRole(nuevoRol);
     window.dispatchEvent(new Event('rolCambiado'));
+  };
+
+  const login = (nuevoRol: Role) => {
+    guardarRol(nuevoRol);
+  };
+
+  const cambiarRol = (nuevoRol: Role) => {
+    guardarRol(nuevoRol);
   };
 
   const logout = () => {
     localStorage.removeItem('rol_actual');
     setRole(null);
-    setIsAuthenticated(false);
-
     window.dispatchEvent(new Event('rolCambiado'));
   };
 
+  useEffect(() => {
+    const sincronizarRol = () => {
+      setRole(obtenerRolGuardado());
+    };
+
+    window.addEventListener('rolCambiado', sincronizarRol);
+    window.addEventListener('storage', sincronizarRol);
+
+    return () => {
+      window.removeEventListener('rolCambiado', sincronizarRol);
+      window.removeEventListener('storage', sincronizarRol);
+    };
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        role,
+        login,
+        logout,
+        cambiarRol
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = (): AuthState => {
-  const context = useContext(AuthContext);
+export const useAuth = () => {
+  const contexto = useContext(AuthContext);
 
-  if (!context) {
-    throw new Error('useAuth debe utilizarse dentro de AuthProvider');
+  if (!contexto) {
+    throw new Error('useAuth debe usarse dentro de AuthProvider');
   }
 
-  return context;
+  return contexto;
 };

@@ -1,36 +1,33 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonPage
-} from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { IonContent, IonPage } from "@ionic/react";
+import { useHistory } from "react-router-dom";
 
-import { useAuth } from '../../context/AuthContext';
-import type { Role } from '../../context/AuthContext';
+import { useAuth } from "../../context/AuthContext";
+import type { Role } from "../../context/AuthContext";
 
-import EncabezadoAuth from '../../components/auth/EncabezadoAuth';
-import FormularioLogin from '../../components/auth/FormularioLogin';
+import EncabezadoAuth from "../../components/auth/EncabezadoAuth";
+import FormularioLogin from "../../components/auth/FormularioLogin";
 
-import { validarLogin } from '../../dominio/reglas/validarLogin';
+import { validarLogin } from "../../dominio/reglas/validarLogin";
 import {
   obtenerRutaInicioPorRol,
-  RolSesion
-} from '../../aplicacion/casosDeUso/obtenerRutaInicioPorRol';
+  RolSesion,
+} from "../../aplicacion/casosDeUso/obtenerRutaInicioPorRol";
 
 const LoginPage: React.FC = () => {
   const history = useHistory();
   const { login } = useAuth();
 
-  const [correo, setCorreo] = useState('');
-  const [password, setPassword] = useState('');
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
   const [rolSeleccionado, setRolSeleccionado] = useState<Role | undefined>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const ingresar = () => {
     const mensajeError = validarLogin({
       correo,
       password,
-      rolSeleccionado
+      rolSeleccionado,
     });
 
     if (mensajeError) {
@@ -42,12 +39,10 @@ const LoginPage: React.FC = () => {
       return;
     }
 
-    setError('');
+    setError("");
     login(rolSeleccionado);
 
-    history.push(
-      obtenerRutaInicioPorRol(rolSeleccionado as RolSesion)
-    );
+    history.push(obtenerRutaInicioPorRol(rolSeleccionado as RolSesion));
   };
 
   return (

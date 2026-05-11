@@ -1,6 +1,6 @@
-import { Solicitud } from '../../dominio/entidades/Solicitud';
-import { normalizarEstado } from '../../dominio/reglas/normalizarEstado';
-import { normalizarFechaVisual } from '../../dominio/reglas/formatearFecha';
+import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { normalizarEstado } from "../../dominio/reglas/normalizarEstado";
+import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
 
 export interface FiltrosFuncionario {
   nroSolicitud: string;
@@ -12,13 +12,13 @@ export interface FiltrosFuncionario {
 
 const fechaInputAVisual = (fechaInput: string) => {
   if (!fechaInput) {
-    return '';
+    return "";
   }
 
-  const [anio, mes, dia] = fechaInput.split('-');
+  const [anio, mes, dia] = fechaInput.split("-");
 
   if (!anio || !mes || !dia) {
-    return '';
+    return "";
   }
 
   return `${dia}-${mes}-${anio}`;
@@ -26,40 +26,40 @@ const fechaInputAVisual = (fechaInput: string) => {
 
 export const filtrarSolicitudesFuncionario = (
   solicitudes: Solicitud[],
-  filtros: FiltrosFuncionario
+  filtros: FiltrosFuncionario,
 ): Solicitud[] => {
   let resultado = [...solicitudes];
 
   if (filtros.nroSolicitud.trim()) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.id.toString().includes(filtros.nroSolicitud.trim())
+    resultado = resultado.filter((solicitud) =>
+      solicitud.id.toString().includes(filtros.nroSolicitud.trim()),
     );
   }
 
   if (filtros.identificador.trim()) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.id.toString().includes(filtros.identificador.trim())
+    resultado = resultado.filter((solicitud) =>
+      solicitud.id.toString().includes(filtros.identificador.trim()),
     );
   }
 
   if (filtros.estado) {
     resultado = resultado.filter(
-      solicitud =>
-        normalizarEstado(solicitud.estado) === normalizarEstado(filtros.estado)
+      (solicitud) =>
+        normalizarEstado(solicitud.estado) === normalizarEstado(filtros.estado),
     );
   }
 
   if (filtros.titulo.trim()) {
-    resultado = resultado.filter(solicitud =>
-      solicitud.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+    resultado = resultado.filter((solicitud) =>
+      solicitud.titulo.toLowerCase().includes(filtros.titulo.toLowerCase()),
     );
   }
 
   if (filtros.fecha) {
     const fechaBuscada = fechaInputAVisual(filtros.fecha);
 
-    resultado = resultado.filter(solicitud =>
-      normalizarFechaVisual(solicitud.fecha).startsWith(fechaBuscada)
+    resultado = resultado.filter((solicitud) =>
+      normalizarFechaVisual(solicitud.fecha).startsWith(fechaBuscada),
     );
   }
 

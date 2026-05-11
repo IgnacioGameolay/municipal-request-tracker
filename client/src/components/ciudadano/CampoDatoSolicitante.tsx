@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Props {
   etiqueta: string;
@@ -9,23 +9,21 @@ interface Props {
 const CampoDatoSolicitante: React.FC<Props> = ({
   etiqueta,
   valor,
-  columnas = 1
+  columnas = 1,
 }) => {
   return (
     <div style={{ gridColumn: `span ${columnas}` }}>
       <strong
         style={{
-          display: 'block',
-          color: '#333',
-          marginBottom: '5px'
+          display: "block",
+          color: "#333",
+          marginBottom: "5px",
         }}
       >
         {etiqueta}
       </strong>
 
-      <span style={{ color: '#666' }}>
-        {valor}
-      </span>
+      <span style={{ color: "#666" }}>{valor}</span>
     </div>
   );
 };

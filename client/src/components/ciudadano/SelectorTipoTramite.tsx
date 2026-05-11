@@ -1,8 +1,5 @@
-import React from 'react';
-import {
-  IonSelect,
-  IonSelectOption
-} from '@ionic/react';
+import React from "react";
+import { IonSelect, IonSelectOption } from "@ionic/react";
 
 interface Props {
   tipos: string[];
@@ -13,17 +10,17 @@ interface Props {
 const SelectorTipoTramite: React.FC<Props> = ({
   tipos,
   tipoSeleccionado,
-  onSeleccionarTipo
+  onSeleccionarTipo,
 }) => {
   return (
-    <div style={{ marginBottom: '35px' }}>
+    <div style={{ marginBottom: "35px" }}>
       <label
         style={{
-          display: 'block',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          marginBottom: '15px',
-          color: '#000'
+          display: "block",
+          fontSize: "1rem",
+          fontWeight: "bold",
+          marginBottom: "15px",
+          color: "#000",
         }}
       >
         Seleccione tipo de trámite:
@@ -33,18 +30,18 @@ const SelectorTipoTramite: React.FC<Props> = ({
         interface="popover"
         value={tipoSeleccionado}
         placeholder="Seleccione..."
-        onIonChange={e => onSeleccionarTipo(e.detail.value || '')}
+        onIonChange={(e) => onSeleccionarTipo(e.detail.value || "")}
         style={{
-          backgroundColor: '#ffffff',
-          border: '1px solid #999',
-          borderRadius: '6px',
-          width: '200px',
-          minHeight: '40px',
-          paddingLeft: '5px',
-          color: '#333'
+          backgroundColor: "#ffffff",
+          border: "1px solid #999",
+          borderRadius: "6px",
+          width: "200px",
+          minHeight: "40px",
+          paddingLeft: "5px",
+          color: "#333",
         }}
       >
-        {tipos.map(tipo => (
+        {tipos.map((tipo) => (
           <IonSelectOption key={tipo} value={tipo}>
             {tipo}
           </IonSelectOption>

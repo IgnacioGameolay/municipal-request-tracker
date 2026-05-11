@@ -1,5 +1,5 @@
-import React from 'react';
-import { IonAlert } from '@ionic/react';
+import React from "react";
+import { IonAlert } from "@ionic/react";
 
 interface Props {
   abierto: boolean;
@@ -10,7 +10,7 @@ interface Props {
 const ModalEliminarSolicitud: React.FC<Props> = ({
   abierto,
   onCancelar,
-  onConfirmar
+  onConfirmar,
 }) => {
   return (
     <IonAlert
@@ -20,15 +20,15 @@ const ModalEliminarSolicitud: React.FC<Props> = ({
       message="¿Estás seguro? No se podrá recuperar la solicitud una vez borrada."
       buttons={[
         {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: onCancelar
+          text: "Cancelar",
+          role: "cancel",
+          handler: onCancelar,
         },
         {
-          text: 'Sí, eliminar',
-          role: 'destructive',
-          handler: onConfirmar
-        }
+          text: "Sí, eliminar",
+          role: "destructive",
+          handler: onConfirmar,
+        },
       ]}
     />
   );
