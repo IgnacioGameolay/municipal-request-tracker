@@ -5,7 +5,8 @@ import {
   IonTitle,
   IonButtons,
   IonIcon,
-  IonMenuButton
+  IonMenuButton,
+  IonButton
 } from '@ionic/react';
 import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
 
@@ -30,6 +31,14 @@ const EncabezadoAplicacion: React.FC<Props> = ({
   permitirCambioManualRol = false,
   onCambiarRolManual
 }) => {
+  const irANotificaciones = () => {
+    onNavegar(rutaNotificaciones);
+  };
+
+  const irAPerfil = () => {
+    onNavegar(rutaPerfil);
+  };
+
   return (
     <IonHeader className="ion-no-border">
       <IonToolbar
@@ -61,25 +70,37 @@ const EncabezadoAplicacion: React.FC<Props> = ({
             alignItems: 'center'
           }}
         >
-          <IonIcon
-            icon={notificationsOutline}
-            onClick={() => onNavegar(rutaNotificaciones)}
+          <IonButton
+            fill="clear"
+            onClick={irANotificaciones}
             style={{
-              fontSize: '1.5rem',
-              marginRight: '15px',
-              cursor: 'pointer'
+              '--color': 'white',
+              '--padding-start': '6px',
+              '--padding-end': '6px',
+              marginRight: '8px'
             }}
-          />
+          >
+            <IonIcon
+              icon={notificationsOutline}
+              style={{ fontSize: '1.5rem' }}
+            />
+          </IonButton>
 
-          <IonIcon
-            icon={personCircleOutline}
-            onClick={() => onNavegar(rutaPerfil)}
+          <IonButton
+            fill="clear"
+            onClick={irAPerfil}
             style={{
-              fontSize: '1.8rem',
-              marginRight: '15px',
-              cursor: 'pointer'
+              '--color': 'white',
+              '--padding-start': '6px',
+              '--padding-end': '6px',
+              marginRight: '8px'
             }}
-          />
+          >
+            <IonIcon
+              icon={personCircleOutline}
+              style={{ fontSize: '1.8rem' }}
+            />
+          </IonButton>
 
           <BarraRol
             rol={rol}
