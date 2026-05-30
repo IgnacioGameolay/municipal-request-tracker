@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   IonContent,
   IonPage,
+  IonSpinner,
   IonToast,
   useIonViewWillEnter,
 } from "@ionic/react";
@@ -13,8 +14,12 @@ import TablaSolicitudes from "../../components/solicitudes/TablaSolicitudes";
 import ModalEliminarSolicitud from "../../components/solicitudes/ModalEliminarSolicitud";
 
 import { Solicitud } from "../../dominio/entidades/Solicitud";
-import { obtenerSolicitudesGuardadas } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
-import { eliminarSolicitud } from "../../aplicacion/casosDeUso/eliminarSolicitud";
+import {
+  eliminarSolicitud as eliminarSolicitudApi,
+  obtenerSolicitudes,
+} from "../../services/solicitudesApi";
+import { mapSolicitudesApiToSolicitudes } from "../../services/solicitudesMapper";
+import { ApiClientError } from "../../services/apiClient";
 
 const SolicitudesRealizadas: React.FC = () => {
   const history = useHistory();
@@ -25,14 +30,38 @@ const SolicitudesRealizadas: React.FC = () => {
   const [solicitudesMostrar, setSolicitudesMostrar] = useState<Solicitud[]>([]);
 
   const [mostrarAlertaBorrar, setMostrarAlertaBorrar] = useState(false);
-  const [solicitudABorrar, setSolicitudABorrar] = useState<number | null>(null);
+  const [solicitudABorrar, setSolicitudABorrar] =
+    useState<Solicitud["id"] | null>(null);
+
   const [mensajeToast, setMensajeToast] = useState("");
+  const [errorCarga, setErrorCarga] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  const cargarSolicitudes = () => {
-    const solicitudes = obtenerSolicitudesGuardadas();
+  const cargarSolicitudes = async () => {
+    try {
+      setCargando(true);
+      setErrorCarga("");
 
-    setTodasLasSolicitudes(solicitudes);
-    setSolicitudesMostrar(solicitudes);
+      const solicitudesApi = await obtenerSolicitudes();
+      const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
+
+      setTodasLasSolicitudes(solicitudes);
+      setSolicitudesMostrar(solicitudes);
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setErrorCarga(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setErrorCarga(error.message);
+        return;
+      }
+
+      setErrorCarga("No se pudieron cargar las solicitudes.");
+    } finally {
+      setCargando(false);
+    }
   };
 
   const cambiarRolManual = () => {
@@ -41,7 +70,7 @@ const SolicitudesRealizadas: React.FC = () => {
     history.push("/ciudadano/tramites");
   };
 
-  const abrirModalBorrar = (id: number) => {
+  const abrirModalBorrar = (id: Solicitud["id"]) => {
     setSolicitudABorrar(id);
     setMostrarAlertaBorrar(true);
   };
@@ -51,26 +80,39 @@ const SolicitudesRealizadas: React.FC = () => {
     setMostrarAlertaBorrar(false);
   };
 
-  const confirmarBorrado = () => {
+  const confirmarBorrado = async () => {
     if (solicitudABorrar === null) {
       return;
     }
 
-    const solicitudesActualizadas = eliminarSolicitud(solicitudABorrar);
+    try {
+      await eliminarSolicitudApi(String(solicitudABorrar));
 
-    setTodasLasSolicitudes(solicitudesActualizadas);
-    setSolicitudesMostrar(solicitudesActualizadas);
-    setSolicitudABorrar(null);
-    setMostrarAlertaBorrar(false);
-    setMensajeToast("Solicitud eliminada correctamente");
+      const solicitudesActualizadas = todasLasSolicitudes.filter(
+        (solicitud) => solicitud.id !== solicitudABorrar,
+      );
+
+      setTodasLasSolicitudes(solicitudesActualizadas);
+      setSolicitudesMostrar(solicitudesActualizadas);
+      setSolicitudABorrar(null);
+      setMostrarAlertaBorrar(false);
+      setMensajeToast("Solicitud eliminada correctamente");
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeToast(error.message);
+        return;
+      }
+
+      setMensajeToast("No se pudo eliminar la solicitud.");
+    }
   };
 
   useEffect(() => {
-    cargarSolicitudes();
+    void cargarSolicitudes();
   }, []);
 
   useIonViewWillEnter(() => {
-    cargarSolicitudes();
+    void cargarSolicitudes();
   });
 
   return (
@@ -106,17 +148,50 @@ const SolicitudesRealizadas: React.FC = () => {
             Solicitudes
           </h2>
 
-          <FiltrarSolicitudes
-            solicitudes={todasLasSolicitudes}
-            onFiltrar={setSolicitudesMostrar}
-          />
+          {cargando && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "30px",
+              }}
+            >
+              <IonSpinner name="crescent" />
+            </div>
+          )}
 
-          <TablaSolicitudes
-            solicitudes={solicitudesMostrar}
-            onEditar={(id) => history.push(`/ciudadano/editar-solicitud/${id}`)}
-            onDetalle={(id) => history.push(`/ciudadano/solicitud/${id}`)}
-            onEliminar={abrirModalBorrar}
-          />
+          {errorCarga && !cargando && (
+            <div
+              style={{
+                backgroundColor: "#ffe5e5",
+                color: "#a00000",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                border: "1px solid #ffb3b3",
+              }}
+            >
+              {errorCarga}
+            </div>
+          )}
+
+          {!cargando && !errorCarga && (
+            <>
+              <FiltrarSolicitudes
+                solicitudes={todasLasSolicitudes}
+                onFiltrar={setSolicitudesMostrar}
+              />
+
+              <TablaSolicitudes
+                solicitudes={solicitudesMostrar}
+                onEditar={(id) =>
+                  history.push(`/ciudadano/editar-solicitud/${id}`)
+                }
+                onDetalle={(id) => history.push(`/ciudadano/solicitud/${id}`)}
+                onEliminar={abrirModalBorrar}
+              />
+            </>
+          )}
         </div>
 
         <ModalEliminarSolicitud

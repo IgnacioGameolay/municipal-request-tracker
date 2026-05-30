@@ -9,12 +9,45 @@ import DocumentacionSolicitud from "../../components/solicitudes/DocumentacionSo
 import AccionesEnFomularioSolicitud from "../../components/solicitudes/AccionesEnFomularioSolicitud";
 
 import { validarFormularioSolicitud } from "../../dominio/reglas/validarFormularioSolicitud";
-import { obtenerSolicitudPorId } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
-import { crearSolicitud } from "../../aplicacion/casosDeUso/crearSolicitud";
-import { editarSolicitud } from "../../aplicacion/casosDeUso/editarSolicitud";
+import {
+  actualizarSolicitud,
+  crearSolicitud,
+  obtenerSolicitudPorId,
+} from "../../services/solicitudesApi";
+import { ApiClientError } from "../../services/apiClient";
 
 const DESCRIPCION_EDICION_VACIA =
   "Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.";
+
+function obtenerComunaUsuarioActual(): string {
+  try {
+    const usuarioGuardado = localStorage.getItem("usuario_actual");
+
+    if (!usuarioGuardado) {
+      return "No especificada";
+    }
+
+    const usuario = JSON.parse(usuarioGuardado) as { comuna?: string };
+
+    return usuario.comuna || "No especificada";
+  } catch {
+    return "No especificada";
+  }
+}
+
+function construirDescripcionEditada(
+  descripcionOriginal: string,
+  descripcionAgregada: string,
+): string {
+  const original = descripcionOriginal.trim();
+  const agregado = descripcionAgregada.trim();
+
+  if (!agregado) {
+    return original;
+  }
+
+  return `${original}\n\nInformación adicional del solicitante:\n${agregado}`;
+}
 
 const RealizarSolicitud: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,25 +60,7 @@ const RealizarSolicitud: React.FC = () => {
   const [descripcionOriginal, setDescripcionOriginal] = useState("");
   const [descripcionAgregada, setDescripcionAgregada] = useState("");
   const [mensajeError, setMensajeError] = useState("");
-
-  const cargarSolicitudEdicion = () => {
-    if (!esEdicion) {
-      return;
-    }
-
-    const solicitudEncontrada = obtenerSolicitudPorId(id);
-
-    if (!solicitudEncontrada) {
-      setMensajeError("No se encontró la solicitud que quieres editar.");
-      return;
-    }
-
-    setTitulo(solicitudEncontrada.titulo);
-    setTipo(solicitudEncontrada.tipo || "Tipo 1");
-    setDescripcionOriginal(
-      solicitudEncontrada.descripcion || DESCRIPCION_EDICION_VACIA,
-    );
-  };
+  const [guardando, setGuardando] = useState(false);
 
   const cambiarRolManual = () => {
     const rolActual = localStorage.getItem("rol_actual") || "solicitante";
@@ -62,7 +77,7 @@ const RealizarSolicitud: React.FC = () => {
     );
   };
 
-  const guardarFormulario = () => {
+  const guardarFormulario = async () => {
     const error = validarFormularioSolicitud({
       tipo,
       titulo,
@@ -76,32 +91,73 @@ const RealizarSolicitud: React.FC = () => {
       return;
     }
 
-    if (esEdicion) {
-      const solicitudActualizada = editarSolicitud({
-        id,
-        descripcionOriginal,
-        descripcionAgregada,
-      });
+    try {
+      setGuardando(true);
+      setMensajeError("");
 
-      if (!solicitudActualizada) {
-        setMensajeError("No se pudo editar la solicitud.");
+      if (esEdicion) {
+        await actualizarSolicitud(id, {
+          titulo: titulo.trim(),
+          categoria: tipo.trim(),
+          descripcion: construirDescripcionEditada(
+            descripcionOriginal,
+            descripcionAgregada,
+          ),
+        });
+      } else {
+        await crearSolicitud({
+          titulo: titulo.trim(),
+          categoria: tipo.trim(),
+          descripcion: descripcionOriginal.trim(),
+          direccion: "Dirección no especificada",
+          comuna: obtenerComunaUsuarioActual(),
+          prioridad: "media",
+        });
+      }
+
+      history.push("/ciudadano/historial");
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
         return;
       }
-    } else {
-      crearSolicitud({
-        tipo,
-        titulo,
-        descripcion: descripcionOriginal,
-      });
-    }
 
-    history.push("/ciudadano/historial");
+      if (error instanceof Error) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudo guardar la solicitud.");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   useEffect(() => {
-    if (esEdicion) {
-      cargarSolicitudEdicion();
-    }
+    const cargarSolicitudEdicion = async () => {
+      if (!esEdicion) {
+        return;
+      }
+
+      try {
+        const solicitudEncontrada = await obtenerSolicitudPorId(id);
+
+        setTitulo(solicitudEncontrada.titulo);
+        setTipo(solicitudEncontrada.categoria || "Tipo 1");
+        setDescripcionOriginal(
+          solicitudEncontrada.descripcion || DESCRIPCION_EDICION_VACIA,
+        );
+      } catch (error) {
+        if (error instanceof ApiClientError) {
+          setMensajeError(error.message);
+          return;
+        }
+
+        setMensajeError("No se encontró la solicitud que quieres editar.");
+      }
+    };
+
+    void cargarSolicitudEdicion();
   }, [id, esEdicion]);
 
   useEffect(() => {
@@ -150,6 +206,8 @@ const RealizarSolicitud: React.FC = () => {
                 borderRadius: "8px",
                 padding: "30px",
                 border: "1px solid #e0e0e0",
+                opacity: guardando ? 0.7 : 1,
+                pointerEvents: guardando ? "none" : "auto",
               }}
             >
               <FormularioCrearYEditarSolicitudes
