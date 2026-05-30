@@ -3,45 +3,51 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { prisma } from "../config/prisma.js";
-import { documentos } from "../data/mockDB.js";
 import {
-  DocumentoSolicitud,
   MAX_DOCUMENTOS_POR_SOLICITUD,
 } from "../models/documento.model.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
 
-
-function obtenerParametroRuta(
-  req: AuthRequest,
-  nombre: string,
+function obtenerParametroId(
+  valor: string | string[] | undefined,
 ): string | null {
-  const valor = req.params[nombre];
-
-  if (Array.isArray(valor)) {
-    return valor[0] ?? null;
+  if (typeof valor === "string" && valor.trim() !== "") {
+    return valor;
   }
 
-  if (typeof valor === "string") {
-    return valor;
+  if (Array.isArray(valor) && typeof valor[0] === "string") {
+    return valor[0];
   }
 
   return null;
 }
 
+function eliminarArchivoSiExiste(rutaArchivo?: string) {
+  if (!rutaArchivo) {
+    return;
+  }
 
-
-
+  try {
+    if (fs.existsSync(rutaArchivo)) {
+      fs.unlinkSync(rutaArchivo);
+    }
+  } catch (error) {
+    console.error("No se pudo eliminar archivo:", rutaArchivo, error);
+  }
+}
 
 async function obtenerSolicitudValida(req: AuthRequest, res: Response) {
-  const { id } = req.params;
-
   if (!req.user) {
-    errorResponse(res, 401, "Debes iniciar sesión");
+    errorResponse(res, 401, "Debes iniciar sesión", [
+      { code: "missing_user" },
+    ]);
     return null;
   }
 
-  if (!id || typeof id !== "string") {
+  const solicitudId = obtenerParametroId(req.params.id);
+
+  if (!solicitudId) {
     errorResponse(res, 400, "ID de solicitud inválido", [
       { field: "id", code: "invalid_param" },
     ]);
@@ -49,7 +55,7 @@ async function obtenerSolicitudValida(req: AuthRequest, res: Response) {
   }
 
   const solicitud = await prisma.solicitud.findUnique({
-    where: { id },
+    where: { id: solicitudId },
   });
 
   if (!solicitud) {
@@ -68,15 +74,221 @@ async function obtenerSolicitudValida(req: AuthRequest, res: Response) {
 
   return solicitud;
 }
-export async function listarDocumentosSolicitud(req: AuthRequest, res: Response) {
+
+export async function listarDocumentosSolicitud(
+  req: AuthRequest,
+  res: Response,
+) {
   const solicitud = await obtenerSolicitudValida(req, res);
+
+  if (!solicitud) {
+    return;
+  }
+
+  const documentos = await prisma.documentoSolicitud.findMany({
+    where: {
+      solicitudId: solicitud.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return successResponse(
+    res,
+    200,
+    "Documentos obtenidos correctamente",
+    documentos,
+  );
 }
-export async function subirDocumentoSolicitud(req: AuthRequest, res: Response) {
+
+export async function subirDocumentoSolicitud(
+  req: AuthRequest,
+  res: Response,
+) {
   const solicitud = await obtenerSolicitudValida(req, res);
+
+  if (!solicitud) {
+    eliminarArchivoSiExiste(req.file?.path);
+    return;
+  }
+
+  if (!req.user) {
+    eliminarArchivoSiExiste(req.file?.path);
+
+    return errorResponse(res, 401, "Debes iniciar sesión", [
+      { code: "missing_user" },
+    ]);
+  }
+
+  if (!req.file) {
+    return errorResponse(res, 400, "Debes adjuntar un archivo", [
+      { field: "documento", code: "required" },
+    ]);
+  }
+
+  const totalDocumentos = await prisma.documentoSolicitud.count({
+    where: {
+      solicitudId: solicitud.id,
+    },
+  });
+
+  if (totalDocumentos >= MAX_DOCUMENTOS_POR_SOLICITUD) {
+    eliminarArchivoSiExiste(req.file.path);
+
+    return errorResponse(
+      res,
+      400,
+      `No se pueden adjuntar más de ${MAX_DOCUMENTOS_POR_SOLICITUD} documentos por solicitud`,
+      [{ field: "documento", code: "max_documents" }],
+    );
+  }
+
+  const nuevoDocumento = await prisma.$transaction(async (tx) => {
+    const documento = await tx.documentoSolicitud.create({
+      data: {
+        solicitudId: solicitud.id,
+        subidoPorUsuarioId: req.user!.id,
+        nombreOriginal: req.file!.originalname,
+        nombreAlmacenado: req.file!.filename,
+        mimeType: req.file!.mimetype,
+        sizeBytes: req.file!.size,
+        ruta: req.file!.path,
+      },
+    });
+
+    await tx.historialSolicitud.create({
+      data: {
+        solicitudId: solicitud.id,
+        usuarioActorId: req.user!.id,
+        accion: "subida_documento",
+        estadoAnterior: solicitud.estado,
+        estadoNuevo: solicitud.estado,
+        comentario: `Documento incorporado al expediente: ${req.file!.originalname}`,
+      },
+    });
+
+    return documento;
+  });
+
+  return successResponse(
+    res,
+    201,
+    "Documento incorporado correctamente al expediente de la solicitud",
+    nuevoDocumento,
+  );
 }
-export async function descargarDocumentoSolicitud(req: AuthRequest, res: Response) {
+
+export async function descargarDocumentoSolicitud(
+  req: AuthRequest,
+  res: Response,
+) {
   const solicitud = await obtenerSolicitudValida(req, res);
+
+  if (!solicitud) {
+    return;
+  }
+
+  const documentoId = obtenerParametroId(req.params.documentoId);
+
+  if (!documentoId) {
+    return errorResponse(res, 400, "ID de documento inválido", [
+      { field: "documentoId", code: "invalid_param" },
+    ]);
+  }
+
+  const documento = await prisma.documentoSolicitud.findFirst({
+    where: {
+      id: documentoId,
+      solicitudId: solicitud.id,
+    },
+  });
+
+  if (!documento) {
+    return errorResponse(res, 404, "Documento no encontrado", [
+      { field: "documentoId", code: "not_found" },
+    ]);
+  }
+
+  const rutaAbsoluta = path.resolve(documento.ruta);
+
+  if (!fs.existsSync(rutaAbsoluta)) {
+    return errorResponse(res, 404, "El archivo físico no existe en el servidor", [
+      { field: "documentoId", code: "file_missing" },
+    ]);
+  }
+
+  return res.download(rutaAbsoluta, documento.nombreOriginal);
 }
-export async function eliminarDocumentoSolicitud(req: AuthRequest, res: Response) {
+
+export async function eliminarDocumentoSolicitud(
+  req: AuthRequest,
+  res: Response,
+) {
   const solicitud = await obtenerSolicitudValida(req, res);
+
+  if (!solicitud) {
+    return;
+  }
+
+  if (!req.user) {
+    return errorResponse(res, 401, "Debes iniciar sesión", [
+      { code: "missing_user" },
+    ]);
+  }
+
+  const documentoId = obtenerParametroId(req.params.documentoId);
+
+  if (!documentoId) {
+    return errorResponse(res, 400, "ID de documento inválido", [
+      { field: "documentoId", code: "invalid_param" },
+    ]);
+  }
+
+  const documento = await prisma.documentoSolicitud.findFirst({
+    where: {
+      id: documentoId,
+      solicitudId: solicitud.id,
+    },
+  });
+
+  if (!documento) {
+    return errorResponse(res, 404, "Documento no encontrado", [
+      { field: "documentoId", code: "not_found" },
+    ]);
+  }
+
+  if (
+    req.user.rol !== "funcionario" &&
+    documento.subidoPorUsuarioId !== req.user.id
+  ) {
+    return errorResponse(res, 403, "No tienes permisos para eliminar este documento", [
+      { code: "forbidden" },
+    ]);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.historialSolicitud.create({
+      data: {
+        solicitudId: solicitud.id,
+        usuarioActorId: req.user!.id,
+        accion: "eliminacion_documento",
+        estadoAnterior: solicitud.estado,
+        estadoNuevo: solicitud.estado,
+        comentario: `Documento eliminado del expediente: ${documento.nombreOriginal}`,
+      },
+    });
+
+    await tx.documentoSolicitud.delete({
+      where: {
+        id: documento.id,
+      },
+    });
+  });
+
+  eliminarArchivoSiExiste(documento.ruta);
+
+  return successResponse(res, 200, "Documento eliminado correctamente", {
+    id: documentoId,
+  });
 }
