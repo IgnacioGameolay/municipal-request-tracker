@@ -26,6 +26,8 @@ import {
 } from "../../services/solicitudesApi";
 import { mapSolicitudApiToSolicitud } from "../../services/solicitudesMapper";
 import { ApiClientError } from "../../services/apiClient";
+import DocumentosSolicitud from "../../components/solicitudes/DocumentosSolicitud";
+
 
 function mapEstadoVisualToApi(estadoVisual: string): EstadoSolicitud | null {
   const estadoNormalizado = estadoVisual.trim().toLowerCase();
@@ -256,6 +258,13 @@ const RevisarSolicitudFuncionario: React.FC = () => {
                 />
 
                 <DocumentacionSolicitud />
+
+                <DocumentosSolicitud
+                  solicitudId={id}
+                  titulo="Documentos adjuntos al expediente"
+                  permitirSubida={false}
+                  permitirEliminar={false}
+                />
 
                 <RevisionSolicitud
                   onRechazar={() => setMostrarModalRechazar(true)}

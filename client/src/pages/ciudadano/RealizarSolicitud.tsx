@@ -15,6 +15,8 @@ import {
   obtenerSolicitudPorId,
 } from "../../services/solicitudesApi";
 import { ApiClientError } from "../../services/apiClient";
+import SelectorDocumentosPendientes from "../../components/solicitudes/SelectorDocumentosPendientes";
+import { subirDocumentoSolicitud } from "../../services/documentosApi";
 
 const DESCRIPCION_EDICION_VACIA =
   "Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.";
@@ -61,6 +63,7 @@ const RealizarSolicitud: React.FC = () => {
   const [descripcionAgregada, setDescripcionAgregada] = useState("");
   const [mensajeError, setMensajeError] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [archivosPendientes, setArchivosPendientes] = useState<File[]>([]);
 
   const cambiarRolManual = () => {
     const rolActual = localStorage.getItem("rol_actual") || "solicitante";
@@ -95,8 +98,10 @@ const RealizarSolicitud: React.FC = () => {
       setGuardando(true);
       setMensajeError("");
 
+      let solicitudIdParaDocumentos = id;
+
       if (esEdicion) {
-        await actualizarSolicitud(id, {
+        const solicitudActualizada = await actualizarSolicitud(id, {
           titulo: titulo.trim(),
           categoria: tipo.trim(),
           descripcion: construirDescripcionEditada(
@@ -104,8 +109,10 @@ const RealizarSolicitud: React.FC = () => {
             descripcionAgregada,
           ),
         });
+
+        solicitudIdParaDocumentos = solicitudActualizada.id;
       } else {
-        await crearSolicitud({
+        const solicitudCreada = await crearSolicitud({
           titulo: titulo.trim(),
           categoria: tipo.trim(),
           descripcion: descripcionOriginal.trim(),
@@ -113,7 +120,15 @@ const RealizarSolicitud: React.FC = () => {
           comuna: obtenerComunaUsuarioActual(),
           prioridad: "media",
         });
+
+        solicitudIdParaDocumentos = solicitudCreada.id;
       }
+
+      for (const archivo of archivosPendientes) {
+        await subirDocumentoSolicitud(String(solicitudIdParaDocumentos), archivo);
+      }
+
+      setArchivosPendientes([]);
 
       history.push("/ciudadano/historial");
     } catch (error) {
@@ -166,6 +181,7 @@ const RealizarSolicitud: React.FC = () => {
       setTitulo("");
       setDescripcionOriginal("");
       setDescripcionAgregada("");
+      setArchivosPendientes([]);
     }
   }, [esEdicion]);
 
@@ -220,6 +236,13 @@ const RealizarSolicitud: React.FC = () => {
                 onCambiarTitulo={setTitulo}
                 onCambiarDescripcionOriginal={setDescripcionOriginal}
                 onCambiarDescripcionAgregada={setDescripcionAgregada}
+              />
+
+              <SelectorDocumentosPendientes
+                archivos={archivosPendientes}
+                onCambiarArchivos={setArchivosPendientes}
+                onError={setMensajeError}
+                disabled={guardando}
               />
 
               <DocumentacionSolicitud />

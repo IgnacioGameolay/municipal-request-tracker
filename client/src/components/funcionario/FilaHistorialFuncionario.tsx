@@ -8,7 +8,7 @@ import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
 
 interface Props {
   solicitud: Solicitud;
-  onComentar: (id: number) => void;
+  onComentar: (id: Solicitud["id"]) => void;
 }
 
 const FilaHistorialFuncionario: React.FC<Props> = ({

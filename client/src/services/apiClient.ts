@@ -23,7 +23,7 @@ export class ApiClientError extends Error {
   }
 }
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 export function getToken(): string | null {
   return localStorage.getItem("auth_token");

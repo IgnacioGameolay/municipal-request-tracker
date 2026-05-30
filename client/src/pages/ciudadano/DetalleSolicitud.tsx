@@ -17,6 +17,8 @@ import { Solicitud } from "../../dominio/entidades/Solicitud";
 import { obtenerSolicitudPorId } from "../../services/solicitudesApi";
 import { mapSolicitudApiToSolicitud } from "../../services/solicitudesMapper";
 import { ApiClientError } from "../../services/apiClient";
+import DocumentosSolicitud from "../../components/solicitudes/DocumentosSolicitud";
+
 
 const DetalleSolicitud: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -123,8 +125,14 @@ const DetalleSolicitud: React.FC = () => {
             <>
               <ResumenSolicitud solicitud={solicitud} />
 
-              <ComentariosSolicitud solicitud={solicitud} />
+              <DocumentosSolicitud
+                solicitudId={id}
+                titulo="Documentos adjuntos al expediente"
+                permitirSubida
+                permitirEliminar
+              />
 
+              <ComentariosSolicitud solicitud={solicitud} />
               <div
                 style={{
                   display: "flex",

@@ -1,250 +1,278 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
-  IonButtons,
   IonIcon,
-  IonMenuButton,
+  IonPage,
+  IonSpinner,
+  IonToast,
+  useIonViewWillEnter,
 } from "@ionic/react";
-import {
-  notificationsOutline,
-  personCircleOutline,
-  helpOutline,
-} from "ionicons/icons";
+import { useHistory } from "react-router-dom";
+import { helpOutline } from "ionicons/icons";
 
-interface Solicitud {
-  id: number;
-  titulo: string;
-  fecha: string;
-  estado: string;
+import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
+import ContenedorPagina from "../../components/common/ContenedorPagina";
+
+import {
+  obtenerSolicitudes,
+  SolicitudApi,
+} from "../../services/solicitudesApi";
+import { ApiClientError } from "../../services/apiClient";
+
+function formatearFecha(fechaIso: string): string {
+  const fecha = new Date(fechaIso);
+
+  if (Number.isNaN(fecha.getTime())) {
+    return fechaIso;
+  }
+
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const anio = fecha.getFullYear();
+
+  let hora = fecha.getHours();
+  const minutos = String(fecha.getMinutes()).padStart(2, "0");
+  const periodo = hora >= 12 ? "pm" : "am";
+
+  hora = hora % 12;
+  hora = hora === 0 ? 12 : hora;
+
+  return `${dia}-${mes}-${anio} ${String(hora).padStart(2, "0")}:${minutos} ${periodo}`;
+}
+
+function textoEstado(estado: SolicitudApi["estado"]): string {
+  const estados: Record<SolicitudApi["estado"], string> = {
+    pendiente: "Pendiente",
+    en_revision: "En revisión",
+    resuelta: "Resuelta",
+    rechazada: "Rechazada",
+  };
+
+  return estados[estado];
 }
 
 const NotificacionesFuncionario: React.FC = () => {
   const history = useHistory();
-  const [notificaciones, setNotificaciones] = useState<Solicitud[]>([]);
+
+  const [notificaciones, setNotificaciones] = useState<SolicitudApi[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
+  const cargarNotificaciones = async () => {
+    try {
+      setCargando(true);
+      setMensajeError("");
+
+      const solicitudes = await obtenerSolicitudes();
+
+      const solicitudesQueRequierenAtencion = solicitudes
+        .filter(
+          (solicitud) =>
+            solicitud.estado === "pendiente" ||
+            solicitud.estado === "en_revision",
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+
+      setNotificaciones(solicitudesQueRequierenAtencion);
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudieron cargar las notificaciones.");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  const cambiarRolManual = () => {
+    localStorage.setItem("rol_actual", "solicitante");
+    window.dispatchEvent(new Event("rolCambiado"));
+    history.push("/ciudadano/tramites");
+  };
 
   useEffect(() => {
-    // Leemos la base de datos y filtramos las que necesitan atención inicial
-    const dataGuardada = localStorage.getItem("solicitudes_db");
-    if (dataGuardada) {
-      const db: Solicitud[] = JSON.parse(dataGuardada);
-      const solicitudesNuevas = db.filter(
-        (s) => s.estado === "Pendiente" || s.estado === "Recibido",
-      );
-      // Ordenamos para que las más nuevas salgan arriba (simulando notificaciones)
-      solicitudesNuevas.reverse();
-      setNotificaciones(solicitudesNuevas);
-    }
+    void cargarNotificaciones();
   }, []);
+
+  useIonViewWillEnter(() => {
+    void cargarNotificaciones();
+  });
 
   return (
     <IonPage>
-      <IonHeader className="ion-no-border">
-        <IonToolbar
-          style={{
-            "--background": "#0084D8",
-            color: "white",
-            "--padding-end": "0",
-            "--min-height": "56px",
-          }}
-        >
-          <IonButtons slot="start">
-            <IonMenuButton style={{ color: "white" }} />
-          </IonButtons>
-
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div
-              style={{
-                width: "30px",
-                height: "30px",
-                backgroundColor: "white",
-                borderRadius: "4px",
-                marginRight: "10px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#0da6f2",
-                fontSize: "10px",
-                fontWeight: "bold",
-              }}
-            >
-              LOGO
-            </div>
-            <IonTitle
-              style={{ fontWeight: "bold", fontSize: "1.4rem", padding: 0 }}
-            >
-              Gestor de solicitudes
-            </IonTitle>
-          </div>
-
-          <IonButtons
-            slot="end"
-            style={{
-              margin: "0",
-              height: "56px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <IonIcon
-              icon={notificationsOutline}
-              style={{
-                fontSize: "1.5rem",
-                marginRight: "15px",
-                cursor: "pointer",
-              }}
-            />
-            <IonIcon
-              icon={personCircleOutline}
-              style={{
-                fontSize: "1.8rem",
-                marginRight: "15px",
-                cursor: "pointer",
-              }}
-            />
-
-            <div
-              onClick={() => {
-                localStorage.setItem("rol_actual", "solicitante");
-                window.dispatchEvent(new Event("rolCambiado"));
-                window.location.href = "/ciudadano/tramites";
-              }}
-              style={{
-                backgroundColor: "#e53935", // Rojo Funcionario
-                color: "white",
-                padding: "0 25px",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                cursor: "pointer",
-              }}
-            >
-              Rol: Funcionario Municipal
-            </div>
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
+      <EncabezadoAplicacion
+        rol="funcionario"
+        rutaNotificaciones="/funcionario/notificaciones"
+        rutaPerfil="/funcionario/tramites"
+        onNavegar={(ruta) => history.push(ruta)}
+        permitirCambioManualRol
+        onCambiarRolManual={cambiarRolManual}
+      />
 
       <IonContent style={{ "--background": "#ffffff" }}>
-        <div
-          style={{
-            maxWidth: "1100px",
-            margin: "0 auto",
-            paddingTop: "30px",
-            paddingBottom: "30px",
-            paddingLeft: "20px",
-            paddingRight: "20px",
-          }}
-        >
-          <h2
+        <ContenedorPagina>
+          <div
             style={{
-              color: "#000",
-              fontWeight: "bold",
-              marginBottom: "25px",
-              fontSize: "1.8rem",
+              maxWidth: "1100px",
+              margin: "0 auto",
             }}
           >
-            Bandeja de notificaciones
-          </h2>
-
-          {notificaciones.length === 0 ? (
-            <div
+            <h2
               style={{
-                backgroundColor: "#f4f5f8",
-                borderRadius: "8px",
-                height: "150px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                border: "1px solid #eee",
+                color: "#000",
+                fontWeight: "bold",
+                marginBottom: "25px",
+                fontSize: "1.8rem",
               }}
             >
-              <p style={{ color: "#555", fontWeight: "500" }}>
-                No tienes solicitudes nuevas pendientes de revisión.
-              </p>
-            </div>
-          ) : (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-            >
-              {notificaciones.map((noti) => (
-                <div
-                  key={noti.id}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "#f4f5f8",
-                    borderRadius: "8px",
-                    padding: "15px 25px",
-                    border: "1px solid #eee",
-                  }}
-                >
-                  {/* TEXTO DE LA NOTIFICACIÓN */}
-                  <span
-                    style={{
-                      color: "#333",
-                      fontSize: "0.95rem",
-                      fontWeight: "500",
-                    }}
-                  >
-                    Has recibido una nueva solicitud:{" "}
-                    <strong style={{ color: "#0da6f2" }}>
-                      "{noti.titulo}"
-                    </strong>{" "}
-                    (ID: {noti.id})
-                  </span>
+              Bandeja de notificaciones
+            </h2>
 
-                  {/* Fecha y boton*/}
+            {cargando && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "30px",
+                }}
+              >
+                <IonSpinner name="crescent" />
+              </div>
+            )}
+
+            {!cargando && mensajeError && (
+              <div
+                style={{
+                  backgroundColor: "#ffe5e5",
+                  color: "#a00000",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                  border: "1px solid #ffb3b3",
+                }}
+              >
+                {mensajeError}
+              </div>
+            )}
+
+            {!cargando && !mensajeError && notificaciones.length === 0 && (
+              <div
+                style={{
+                  backgroundColor: "#f4f5f8",
+                  borderRadius: "8px",
+                  height: "150px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  border: "1px solid #eee",
+                }}
+              >
+                <p style={{ color: "#555", fontWeight: "500" }}>
+                  No tienes solicitudes nuevas pendientes de revisión.
+                </p>
+              </div>
+            )}
+
+            {!cargando && !mensajeError && notificaciones.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                {notificaciones.map((noti) => (
                   <div
+                    key={noti.id}
                     style={{
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "20px",
+                      backgroundColor: "#f4f5f8",
+                      borderRadius: "8px",
+                      padding: "15px 25px",
+                      border: "1px solid #eee",
                     }}
                   >
                     <span
                       style={{
-                        color: "#555",
-                        fontSize: "0.9rem",
+                        color: "#333",
+                        fontSize: "0.95rem",
                         fontWeight: "500",
                       }}
                     >
-                      {noti.fecha}
+                      Solicitud requiere atención:{" "}
+                      <strong style={{ color: "#0da6f2" }}>
+                        "{noti.titulo}"
+                      </strong>{" "}
+                      <span style={{ color: "#666" }}>
+                        ({textoEstado(noti.estado)} · ID: {noti.id})
+                      </span>
                     </span>
 
                     <div
-                      onClick={() =>
-                        history.push(`/funcionario/solicitud/${noti.id}`)
-                      }
-                      title="Ver Detalles de Solicitud"
                       style={{
-                        backgroundColor: "#ffcc00",
-                        color: "white",
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "6px",
                         display: "flex",
-                        justifyContent: "center",
                         alignItems: "center",
-                        cursor: "pointer",
-                        fontSize: "1.2rem",
+                        gap: "20px",
                       }}
                     >
-                      <IonIcon icon={helpOutline} />
+                      <span
+                        style={{
+                          color: "#555",
+                          fontSize: "0.9rem",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {formatearFecha(noti.createdAt)}
+                      </span>
+
+                      <div
+                        onClick={() =>
+                          history.push(`/funcionario/solicitud/${noti.id}`)
+                        }
+                        title="Ver detalles de solicitud"
+                        style={{
+                          backgroundColor: "#ffcc00",
+                          color: "white",
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "6px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          fontSize: "1.2rem",
+                        }}
+                      >
+                        <IonIcon icon={helpOutline} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </ContenedorPagina>
+
+        <IonToast
+          isOpen={mensajeError !== ""}
+          message={mensajeError}
+          duration={2500}
+          color="danger"
+          position="bottom"
+          onDidDismiss={() => setMensajeError("")}
+        />
       </IonContent>
     </IonPage>
   );
