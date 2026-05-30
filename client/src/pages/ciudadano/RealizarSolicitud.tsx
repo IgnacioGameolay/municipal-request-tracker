@@ -157,6 +157,14 @@ const RealizarSolicitud: React.FC = () => {
       try {
         const solicitudEncontrada = await obtenerSolicitudPorId(id);
 
+        if (solicitudEncontrada.estado !== "pendiente") {
+          setMensajeError(
+            "Solo puedes editar solicitudes pendientes. Esta solicitud ya está en revisión, resuelta o rechazada.",
+          );
+          history.replace("/ciudadano/historial");
+          return;
+        }
+
         setTitulo(solicitudEncontrada.titulo);
         setTipo(solicitudEncontrada.categoria || "Tipo 1");
         setDescripcionOriginal(
@@ -173,7 +181,7 @@ const RealizarSolicitud: React.FC = () => {
     };
 
     void cargarSolicitudEdicion();
-  }, [id, esEdicion]);
+  }, [id, esEdicion, history]);
 
   useEffect(() => {
     if (!esEdicion) {

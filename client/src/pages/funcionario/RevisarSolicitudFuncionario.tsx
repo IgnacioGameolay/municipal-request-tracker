@@ -118,51 +118,62 @@ const RevisarSolicitudFuncionario: React.FC = () => {
   };
 
   const confirmarActualizacion = async (estadoFinalVisual: string) => {
-    if (!estadoFinalVisual) {
-      setMensajeError("Debes seleccionar un estado nuevo.");
-      return;
-    }
+  if (guardando) {
+    return;
+  }
 
-    const estadoApi = mapEstadoVisualToApi(estadoFinalVisual);
+  if (!estadoFinalVisual) {
+    setMensajeError("Debes seleccionar un estado nuevo.");
+    return;
+  }
 
-    if (!estadoApi) {
-      setMensajeError(`Estado no válido: ${estadoFinalVisual}`);
-      return;
-    }
+  const estadoApi = mapEstadoVisualToApi(estadoFinalVisual);
 
-    try {
-      setGuardando(true);
-      setMensajeError("");
+  if (!estadoApi) {
+    setMensajeError(`Estado no válido: ${estadoFinalVisual}`);
+    return;
+  }
 
-      const solicitudActualizadaApi = await cambiarEstadoSolicitud(id, {
-        estado: estadoApi,
-        comentarioFuncionario: comentario,
-      });
+  try {
+    setGuardando(true);
+    setMensajeError("");
 
-      const solicitudActualizadaVista =
-        mapSolicitudApiToSolicitud(solicitudActualizadaApi);
+    const solicitudActualizadaApi = await cambiarEstadoSolicitud(id, {
+      estado: estadoApi,
+      comentarioFuncionario: comentario,
+    });
 
-      setSolicitud(solicitudActualizadaVista);
-      setComentario("");
-      cerrarModales();
+    const solicitudActualizadaVista =
+      mapSolicitudApiToSolicitud(solicitudActualizadaApi);
 
+    setSolicitud(solicitudActualizadaVista);
+    setComentario("");
+    setEstadoSeleccionado("");
+
+    setMostrarModalActualizar(false);
+    setMostrarModalRechazar(false);
+
+    setTimeout(() => {
       history.push("/funcionario/bandeja");
-    } catch (error) {
-      if (error instanceof ApiClientError) {
-        setMensajeError(error.message);
-        return;
-      }
+    }, 150);
+  } catch (error) {
+    console.error("Error actualizando estado:", error);
 
-      if (error instanceof Error) {
-        setMensajeError(error.message);
-        return;
-      }
-
-      setMensajeError("No se pudo actualizar la solicitud.");
-    } finally {
-      setGuardando(false);
+    if (error instanceof ApiClientError) {
+      setMensajeError(error.message);
+      return;
     }
-  };
+
+    if (error instanceof Error) {
+      setMensajeError(error.message);
+      return;
+    }
+
+    setMensajeError("No se pudo actualizar la solicitud.");
+  } finally {
+    setGuardando(false);
+  }
+};
 
   useEffect(() => {
     void cargarSolicitud();
@@ -278,6 +289,7 @@ const RevisarSolicitudFuncionario: React.FC = () => {
           {solicitud && (
             <>
               <ModalCambioDeEstado
+                key={mostrarModalActualizar ? "modal-abierto" : "modal-cerrado"}
                 abierto={mostrarModalActualizar}
                 solicitud={solicitud}
                 estadoSeleccionado={estadoSeleccionado}

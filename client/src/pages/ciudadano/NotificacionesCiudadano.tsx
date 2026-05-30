@@ -1,5 +1,11 @@
-import React from "react";
-import { IonContent, IonPage } from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import {
+  IonContent,
+  IonPage,
+  IonSpinner,
+  IonToast,
+  useIonViewWillEnter,
+} from "@ionic/react";
 import { useHistory } from "react-router-dom";
 
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
@@ -7,11 +13,58 @@ import ContenedorPagina from "../../components/common/ContenedorPagina";
 import ListaNotificacion from "../../components/notificaciones/ListaNotificacion";
 
 import { Notificacion } from "../../dominio/entidades/Notificacion";
-import { notificacionesSimuladas } from "../../infraestructura/simulacionDatos/notificacionesSimuladas";
-import { prepararSolicitudNotificacion } from "../../aplicacion/casosDeUso/prepararSolicitudNotificacion";
+import {
+  NotificacionApi,
+  marcarNotificacionLeida,
+  obtenerNotificaciones,
+} from "../../services/notificaciones";
+import { ApiClientError } from "../../services/apiClient";
+
+function mapNotificacionApiToNotificacion(api: NotificacionApi): Notificacion {
+  return {
+    id: api.id,
+    idSolicitud: api.solicitudId ?? "",
+    titulo: api.titulo,
+    mensaje: api.mensaje,
+    fecha: api.createdAt,
+    leida: api.leida,
+  } as unknown as Notificacion;
+}
 
 const NotificacionesCiudadano: React.FC = () => {
   const history = useHistory();
+
+  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
+  const cargarNotificaciones = async () => {
+    try {
+      setCargando(true);
+      setMensajeError("");
+
+      const notificacionesApi = await obtenerNotificaciones();
+      const notificacionesVista = notificacionesApi.map(
+        mapNotificacionApiToNotificacion,
+      );
+
+      setNotificaciones(notificacionesVista);
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudieron cargar las notificaciones.");
+    } finally {
+      setCargando(false);
+    }
+  };
 
   const cambiarRolManual = () => {
     localStorage.setItem("rol_actual", "solicitante");
@@ -19,10 +72,33 @@ const NotificacionesCiudadano: React.FC = () => {
     history.push("/ciudadano/tramites");
   };
 
-  const verDetalleSolicitud = (notificacion: Notificacion) => {
-    prepararSolicitudNotificacion(notificacion);
-    history.push(`/ciudadano/solicitud/${notificacion.idSolicitud}`);
+  const verDetalleSolicitud = async (notificacion: Notificacion) => {
+    try {
+      await marcarNotificacionLeida(String(notificacion.id));
+
+      if (!notificacion.idSolicitud) {
+        setMensajeError("La notificación no tiene una solicitud asociada.");
+        return;
+      }
+
+      history.push(`/ciudadano/solicitud/${notificacion.idSolicitud}`);
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      history.push(`/ciudadano/solicitud/${notificacion.idSolicitud}`);
+    }
   };
+
+  useEffect(() => {
+    void cargarNotificaciones();
+  }, []);
+
+  useIonViewWillEnter(() => {
+    void cargarNotificaciones();
+  });
 
   return (
     <IonPage>
@@ -48,11 +124,63 @@ const NotificacionesCiudadano: React.FC = () => {
             Notificaciones
           </h2>
 
-          <ListaNotificacion
-            notificaciones={notificacionesSimuladas}
-            onVerDetalle={verDetalleSolicitud}
-          />
+          {cargando && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "30px",
+              }}
+            >
+              <IonSpinner name="crescent" />
+            </div>
+          )}
+
+          {!cargando && mensajeError && (
+            <div
+              style={{
+                backgroundColor: "#ffe5e5",
+                color: "#a00000",
+                padding: "12px 16px",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                border: "1px solid #ffb3b3",
+              }}
+            >
+              {mensajeError}
+            </div>
+          )}
+
+          {!cargando && !mensajeError && notificaciones.length === 0 && (
+            <div
+              style={{
+                backgroundColor: "#f4f5f8",
+                borderRadius: "8px",
+                padding: "18px",
+                color: "#555",
+                border: "1px solid #eee",
+              }}
+            >
+              No tienes notificaciones por el momento.
+            </div>
+          )}
+
+          {!cargando && !mensajeError && notificaciones.length > 0 && (
+            <ListaNotificacion
+              notificaciones={notificaciones}
+              onVerDetalle={verDetalleSolicitud}
+            />
+          )}
         </ContenedorPagina>
+
+        <IonToast
+          isOpen={mensajeError !== ""}
+          message={mensajeError}
+          duration={2500}
+          color="danger"
+          position="bottom"
+          onDidDismiss={() => setMensajeError("")}
+        />
       </IonContent>
     </IonPage>
   );
