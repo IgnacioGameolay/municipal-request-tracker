@@ -1,37 +1,63 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { type SignOptions } from "jsonwebtoken";
-import { usuarios } from "../data/mockDB.js";
-import { RolUsuario, Usuario, UsuarioPublico } from "../models/usuario.model.js";
+
+import { prisma } from "../config/prisma.js";
+import { RolUsuario } from "../models/usuario.model.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 
-function toPublicUser(usuario: Usuario): UsuarioPublico {
-  const { passwordHash, ...publicUser } = usuario;
-  return publicUser;
+interface UsuarioToken {
+  id: string;
+  email: string;
+  rol: RolUsuario;
 }
-function generateToken(usuario: Usuario) {
+
+function generateToken(usuario: UsuarioToken) {
   const secret = process.env.JWT_SECRET;
 
   if (!secret) {
     throw new Error("JWT_SECRET no configurado");
   }
 
-  const expiresIn = (process.env.JWT_EXPIRES_IN || "2h") as SignOptions["expiresIn"];
+  const expiresIn = (process.env.JWT_EXPIRES_IN ||
+    "2h") as SignOptions["expiresIn"];
 
   const options: SignOptions = {
-    expiresIn
+    expiresIn,
   };
 
   return jwt.sign(
     {
       id: usuario.id,
       email: usuario.email,
-      rol: usuario.rol
+      rol: usuario.rol,
     },
     secret,
-    options
+    options,
   );
+}
+
+function toPublicUser(usuario: {
+  id: string;
+  nombre: string;
+  rut: string;
+  email: string;
+  region: string;
+  comuna: string;
+  rol: string;
+  createdAt: Date;
+}) {
+  return {
+    id: usuario.id,
+    nombre: usuario.nombre,
+    rut: usuario.rut,
+    email: usuario.email,
+    region: usuario.region,
+    comuna: usuario.comuna,
+    rol: usuario.rol,
+    createdAt: usuario.createdAt,
+  };
 }
 
 export async function register(req: Request, res: Response) {
@@ -42,7 +68,6 @@ export async function register(req: Request, res: Response) {
     password,
     region,
     comuna,
-    rol
   } = req.body;
 
   const errors = [];
@@ -63,7 +88,7 @@ export async function register(req: Request, res: Response) {
     errors.push({
       field: "password",
       code: "min_length",
-      message: "La contraseña debe tener al menos 6 caracteres"
+      message: "La contraseña debe tener al menos 6 caracteres",
     });
   }
 
@@ -76,39 +101,49 @@ export async function register(req: Request, res: Response) {
   }
 
   if (errors.length > 0) {
-    return errorResponse(res, 400, "El registro contiene datos inválidos", errors);
+    return errorResponse(
+      res,
+      400,
+      "El registro contiene datos inválidos",
+      errors,
+    );
   }
 
-  const emailNormalizado = email.trim().toLowerCase();
-  const existe = usuarios.some((u) => u.email === emailNormalizado);
+  const emailNormalizado = String(email).trim().toLowerCase();
+
+  const existe = await prisma.usuario.findUnique({
+    where: { email: emailNormalizado },
+  });
 
   if (existe) {
     return errorResponse(res, 409, "Ya existe un usuario con ese correo", [
-      { field: "email", code: "already_exists" }
+      { field: "email", code: "already_exists" },
     ]);
   }
 
-  const rolFinal: RolUsuario = rol === "funcionario" ? "funcionario" : "ciudadano";
+  const passwordHash = await bcrypt.hash(password, 10);
 
-  const nuevoUsuario: Usuario = {
-    id: `u${Date.now()}`,
-    nombre: nombre.trim(),
-    rut: rut.trim(),
-    email: emailNormalizado,
-    passwordHash: await bcrypt.hash(password, 10),
-    region: region.trim(),
-    comuna: comuna.trim(),
-    rol: rolFinal,
-    createdAt: new Date().toISOString()
-  };
+  const nuevoUsuario = await prisma.usuario.create({
+    data: {
+      nombre: nombre.trim(),
+      rut: rut.trim(),
+      email: emailNormalizado,
+      passwordHash,
+      region: region.trim(),
+      comuna: comuna.trim(),
+      rol: "ciudadano",
+    },
+  });
 
-  usuarios.push(nuevoUsuario);
-
-  const token = generateToken(nuevoUsuario);
+  const token = generateToken({
+    id: nuevoUsuario.id,
+    email: nuevoUsuario.email,
+    rol: nuevoUsuario.rol as RolUsuario,
+  });
 
   return successResponse(res, 201, "Usuario registrado correctamente", {
     user: toPublicUser(nuevoUsuario),
-    token
+    token,
   });
 }
 
@@ -118,17 +153,19 @@ export async function login(req: Request, res: Response) {
   if (!email || !password) {
     return errorResponse(res, 400, "Correo y contraseña son obligatorios", [
       { field: "email", code: "required" },
-      { field: "password", code: "required" }
+      { field: "password", code: "required" },
     ]);
   }
 
-  const usuario = usuarios.find(
-    (u) => u.email === String(email).trim().toLowerCase()
-  );
+  const emailNormalizado = String(email).trim().toLowerCase();
+
+  const usuario = await prisma.usuario.findUnique({
+    where: { email: emailNormalizado },
+  });
 
   if (!usuario) {
     return errorResponse(res, 401, "Credenciales incorrectas", [
-      { code: "invalid_credentials" }
+      { code: "invalid_credentials" },
     ]);
   }
 
@@ -136,20 +173,26 @@ export async function login(req: Request, res: Response) {
 
   if (!passwordValida) {
     return errorResponse(res, 401, "Credenciales incorrectas", [
-      { code: "invalid_credentials" }
+      { code: "invalid_credentials" },
     ]);
   }
 
-  const token = generateToken(usuario);
+  const token = generateToken({
+    id: usuario.id,
+    email: usuario.email,
+    rol: usuario.rol as RolUsuario,
+  });
 
   return successResponse(res, 200, "Inicio de sesión correcto", {
     user: toPublicUser(usuario),
-    token
+    token,
   });
 }
 
-export function me(req: AuthRequest, res: Response) {
-  const usuario = usuarios.find((u) => u.id === req.user?.id);
+export async function me(req: AuthRequest, res: Response) {
+  const usuario = await prisma.usuario.findUnique({
+    where: { id: req.user?.id },
+  });
 
   if (!usuario) {
     return errorResponse(res, 404, "Usuario no encontrado");

@@ -1,51 +1,126 @@
 import { Response } from "express";
-import { solicitudes, notificaciones } from "../data/mockDB.js";
-import {
-  EstadoSolicitud,
-  PrioridadSolicitud,
-  Solicitud
-} from "../models/solicitud.model.js";
+import { prisma } from "../config/prisma.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
 
-function puedeVerSolicitud(req: AuthRequest, solicitud: Solicitud) {
+const estadosValidos = [
+  "pendiente",
+  "en_revision",
+  "resuelta",
+  "rechazada",
+] as const;
+
+const prioridadesValidas = ["baja", "media", "alta"] as const;
+
+type EstadoSolicitud = (typeof estadosValidos)[number];
+type PrioridadSolicitud = (typeof prioridadesValidas)[number];
+
+function obtenerParametroId(
+  valor: string | string[] | undefined,
+): string | null {
+  if (typeof valor === "string" && valor.trim() !== "") {
+    return valor;
+  }
+
+  if (Array.isArray(valor) && typeof valor[0] === "string") {
+    return valor[0];
+  }
+
+  return null;
+}
+
+function esEstadoValido(estado: unknown): estado is EstadoSolicitud {
+  return typeof estado === "string" && estadosValidos.includes(estado as EstadoSolicitud);
+}
+
+function esPrioridadValida(prioridad: unknown): prioridad is PrioridadSolicitud {
+  return (
+    typeof prioridad === "string" &&
+    prioridadesValidas.includes(prioridad as PrioridadSolicitud)
+  );
+}
+
+function puedeVerSolicitud(
+  req: AuthRequest,
+  solicitud: { usuarioId: string },
+): boolean {
   if (!req.user) return false;
-  if (req.user.rol === "funcionario") return true;
+
+  if (req.user.rol === "funcionario") {
+    return true;
+  }
+
   return solicitud.usuarioId === req.user.id;
 }
 
-export function listarSolicitudes(req: AuthRequest, res: Response) {
+export async function listarSolicitudes(req: AuthRequest, res: Response) {
   if (!req.user) {
     return errorResponse(res, 401, "Debes iniciar sesión");
   }
 
-  const data =
+  const solicitudes =
     req.user.rol === "funcionario"
-      ? solicitudes
-      : solicitudes.filter((s) => s.usuarioId === req.user?.id);
+      ? await prisma.solicitud.findMany({
+          orderBy: { createdAt: "desc" },
+        })
+      : await prisma.solicitud.findMany({
+          where: { usuarioId: req.user.id },
+          orderBy: { createdAt: "desc" },
+        });
 
-  return successResponse(res, 200, "Solicitudes obtenidas correctamente", data);
+  return successResponse(
+    res,
+    200,
+    "Solicitudes obtenidas correctamente",
+    solicitudes,
+  );
 }
+export async function obtenerSolicitudPorId(req: AuthRequest, res: Response) {
+  const id = obtenerParametroId(req.params.id);
 
-export function obtenerSolicitudPorId(req: AuthRequest, res: Response) {
-  const { id } = req.params;
-
-  const solicitud = solicitudes.find((s) => s.id === id);
-
-  if (!solicitud) {
-    return errorResponse(res, 404, "Solicitud no encontrada", [
-      { field: "id", code: "not_found" }
+  if (!id) {
+    return errorResponse(res, 400, "ID de solicitud inválido", [
+      { field: "id", code: "invalid_param" },
     ]);
   }
 
-  if (!puedeVerSolicitud(req, solicitud)) {
-    return errorResponse(res, 403, "No tienes permisos para ver esta solicitud");
-  }
+  try {
+    const solicitud = await prisma.solicitud.findUnique({
+      where: { id },
+    });
 
-  return successResponse(res, 200, "Solicitud obtenida correctamente", solicitud);
+    if (!solicitud) {
+      return errorResponse(res, 404, "Solicitud no encontrada", [
+        { field: "id", code: "not_found" },
+      ]);
+    }
+
+    if (!puedeVerSolicitud(req, solicitud)) {
+      return errorResponse(
+        res,
+        403,
+        "No tienes permisos para ver esta solicitud",
+        [{ code: "forbidden" }],
+      );
+    }
+
+    return successResponse(
+      res,
+      200,
+      "Solicitud obtenida correctamente",
+      solicitud,
+    );
+  } catch (error) {
+    console.error("Error en obtenerSolicitudPorId:", error);
+
+    return errorResponse(res, 500, "Error al obtener la solicitud", [
+      { code: "database_error" },
+    ]);
+  }
 }
 
-export function crearSolicitud(req: AuthRequest, res: Response) {
+
+export async function crearSolicitud(req: AuthRequest, res: Response) {
   if (!req.user) {
     return errorResponse(res, 401, "Debes iniciar sesión");
   }
@@ -56,7 +131,7 @@ export function crearSolicitud(req: AuthRequest, res: Response) {
     descripcion,
     direccion,
     comuna,
-    prioridad
+    prioridad,
   } = req.body;
 
   const errors = [];
@@ -85,161 +160,91 @@ export function crearSolicitud(req: AuthRequest, res: Response) {
     return errorResponse(res, 400, "La solicitud contiene datos inválidos", errors);
   }
 
-  const prioridadFinal: PrioridadSolicitud =
-    prioridad === "alta" || prioridad === "baja" || prioridad === "media"
-      ? prioridad
-      : "media";
+  const prioridadFinal: PrioridadSolicitud = esPrioridadValida(prioridad)
+    ? prioridad
+    : "media";
 
-  const now = new Date().toISOString();
+  const solicitudCreada = await prisma.$transaction(async (tx) => {
+    const nuevaSolicitud = await tx.solicitud.create({
+      data: {
+        usuarioId: req.user!.id,
+        titulo: titulo.trim(),
+        categoria: categoria.trim(),
+        descripcion: descripcion.trim(),
+        direccion: direccion.trim(),
+        comuna: comuna.trim(),
+        prioridad: prioridadFinal,
+        estado: "pendiente",
+      },
+    });
 
-  const nuevaSolicitud: Solicitud = {
-    id: `s${Date.now()}`,
-    usuarioId: req.user.id,
-    titulo: titulo.trim(),
-    categoria: categoria.trim(),
-    descripcion: descripcion.trim(),
-    direccion: direccion.trim(),
-    comuna: comuna.trim(),
-    estado: "pendiente",
-    prioridad: prioridadFinal,
-    createdAt: now,
-    updatedAt: now
-  };
+    await tx.notificacion.create({
+      data: {
+        usuarioId: req.user!.id,
+        solicitudId: nuevaSolicitud.id,
+        titulo: "Solicitud creada",
+        mensaje: `Tu solicitud "${nuevaSolicitud.titulo}" fue registrada correctamente.`,
+        leida: false,
+      },
+    });
 
-  solicitudes.push(nuevaSolicitud);
+    await tx.historialSolicitud.create({
+      data: {
+        solicitudId: nuevaSolicitud.id,
+        usuarioActorId: req.user!.id,
+        accion: "creacion_solicitud",
+        estadoAnterior: null,
+        estadoNuevo: "pendiente",
+        comentario: "Solicitud creada por el ciudadano.",
+      },
+    });
 
-  notificaciones.push({
-    id: `n${Date.now()}`,
-    usuarioId: req.user.id,
-    solicitudId: nuevaSolicitud.id,
-    titulo: "Solicitud creada",
-    mensaje: `Tu solicitud "${nuevaSolicitud.titulo}" fue registrada correctamente.`,
-    leida: false,
-    createdAt: now
+    return nuevaSolicitud;
   });
 
-  return successResponse(res, 201, "Solicitud creada correctamente", nuevaSolicitud);
+  return successResponse(
+    res,
+    201,
+    "Solicitud creada correctamente",
+    solicitudCreada,
+  );
 }
 
-export function actualizarSolicitud(req: AuthRequest, res: Response) {
-  const { id } = req.params;
-  const solicitud = solicitudes.find((s) => s.id === id);
+export async function actualizarSolicitud(req: AuthRequest, res: Response) {
+  const id = obtenerParametroId(req.params.id);
 
-  if (!solicitud) {
-    return errorResponse(res, 404, "Solicitud no encontrada");
-  }
-
-  if (!puedeVerSolicitud(req, solicitud)) {
-    return errorResponse(res, 403, "No tienes permisos para editar esta solicitud");
-  }
-
-  if (req.user?.rol !== "funcionario" && solicitud.estado === "resuelta") {
-    return errorResponse(res, 409, "No puedes editar una solicitud resuelta");
-  }
-
-  const {
-    titulo,
-    categoria,
-    descripcion,
-    direccion,
-    comuna,
-    prioridad
-  } = req.body;
-
-  if (titulo !== undefined && typeof titulo === "string") {
-    solicitud.titulo = titulo.trim();
-  }
-
-  if (categoria !== undefined && typeof categoria === "string") {
-    solicitud.categoria = categoria.trim();
-  }
-
-  if (descripcion !== undefined && typeof descripcion === "string") {
-    solicitud.descripcion = descripcion.trim();
-  }
-
-  if (direccion !== undefined && typeof direccion === "string") {
-    solicitud.direccion = direccion.trim();
-  }
-
-  if (comuna !== undefined && typeof comuna === "string") {
-    solicitud.comuna = comuna.trim();
-  }
-
-  if (
-    prioridad === "baja" ||
-    prioridad === "media" ||
-    prioridad === "alta"
-  ) {
-    solicitud.prioridad = prioridad;
-  }
-
-  solicitud.updatedAt = new Date().toISOString();
-
-  return successResponse(res, 200, "Solicitud actualizada correctamente", solicitud);
-}
-
-export function actualizarEstadoSolicitud(req: AuthRequest, res: Response) {
-  const { id } = req.params;
-  const { estado, comentarioFuncionario } = req.body;
-
-  const estadosValidos: EstadoSolicitud[] = [
-    "pendiente",
-    "en_revision",
-    "resuelta",
-    "rechazada"
-  ];
-
-  if (!estadosValidos.includes(estado)) {
-    return errorResponse(res, 400, "Estado inválido", [
-      { field: "estado", code: "invalid_value" }
+  if (!id) {
+    return errorResponse(res, 400, "ID de solicitud inválido", [
+      { field: "id", code: "invalid_param" },
     ]);
   }
 
-  const solicitud = solicitudes.find((s) => s.id === id);
-
-  if (!solicitud) {
-    return errorResponse(res, 404, "Solicitud no encontrada");
-  }
-
-  solicitud.estado = estado;
-  solicitud.comentarioFuncionario =
-    typeof comentarioFuncionario === "string"
-      ? comentarioFuncionario.trim()
-      : solicitud.comentarioFuncionario;
-  solicitud.funcionarioId = req.user?.id;
-  solicitud.updatedAt = new Date().toISOString();
-
-  notificaciones.push({
-    id: `n${Date.now()}`,
-    usuarioId: solicitud.usuarioId,
-    solicitudId: solicitud.id,
-    titulo: "Estado actualizado",
-    mensaje: `Tu solicitud "${solicitud.titulo}" cambió a estado: ${estado}.`,
-    leida: false,
-    createdAt: new Date().toISOString()
+  const solicitud = await prisma.solicitud.findUnique({
+    where: { id },
   });
-
-  return successResponse(res, 200, "Estado actualizado correctamente", solicitud);
 }
 
-export function eliminarSolicitud(req: AuthRequest, res: Response) {
-  const { id } = req.params;
-  const index = solicitudes.findIndex((s) => s.id === id);
+export async function actualizarEstadoSolicitud(req: AuthRequest, res: Response) {
+  const id = obtenerParametroId(req.params.id);
+  const { estado, comentarioFuncionario } = req.body;
 
-  if (index === -1) {
-    return errorResponse(res, 404, "Solicitud no encontrada");
+  if (!id) {
+    return errorResponse(res, 400, "ID de solicitud inválido", [
+      { field: "id", code: "invalid_param" },
+    ]);
+  }
+}
+
+export async function eliminarSolicitud(req: AuthRequest, res: Response) {
+  const id = obtenerParametroId(req.params.id);
+
+  if (!id) {
+    return errorResponse(res, 400, "ID de solicitud inválido", [
+      { field: "id", code: "invalid_param" },
+    ]);
   }
 
-  const solicitud = solicitudes[index];
-
-  if (!puedeVerSolicitud(req, solicitud)) {
-    return errorResponse(res, 403, "No tienes permisos para eliminar esta solicitud");
-  }
-
-  solicitudes.splice(index, 1);
-
-  return successResponse(res, 200, "Solicitud eliminada correctamente", {
-    id
+  const solicitud = await prisma.solicitud.findUnique({
+    where: { id },
   });
 }
