@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { IonContent, IonPage } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 
+import { useAuth } from "../../context/AuthContext";
+import type { Role } from "../../context/AuthContext";
+
 import EncabezadoAuth from "../../components/auth/EncabezadoAuth";
 import FormularioRegistro from "../../components/auth/FormularioRegistro";
 
@@ -9,6 +12,14 @@ import {
   DatosRegistro,
   validarRegistro,
 } from "../../dominio/reglas/validarRegistro";
+
+import { register as registerApi } from "../../services/authApi";
+import { ApiClientError } from "../../services/apiClient";
+
+import {
+  obtenerRutaInicioPorRol,
+  RolSesion,
+} from "../../aplicacion/casosDeUso/obtenerRutaInicioPorRol";
 
 const datosInicialesRegistro: DatosRegistro = {
   nombre: "",
@@ -24,6 +35,7 @@ const datosInicialesRegistro: DatosRegistro = {
 
 const RegisterPage: React.FC = () => {
   const history = useHistory();
+  const { login: loginContext } = useAuth();
 
   const [datosRegistro, setDatosRegistro] = useState<DatosRegistro>(
     datosInicialesRegistro,
@@ -40,7 +52,7 @@ const RegisterPage: React.FC = () => {
     });
   };
 
-  const crearCuenta = () => {
+  const crearCuenta = async () => {
     const mensajeError = validarRegistro(datosRegistro);
 
     if (mensajeError) {
@@ -48,10 +60,39 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    setError("");
+    try {
+      setError("");
 
-    // En EP1 el registro es prototipal. La persistencia real queda para backend en un futuro.
-    history.push("/login");
+      const nombreCompleto = `${datosRegistro.nombre} ${datosRegistro.apellido}`.trim();
+
+      await registerApi({
+        nombre: nombreCompleto,
+        rut: datosRegistro.rut,
+        email: datosRegistro.correo,
+        password: datosRegistro.password,
+        region: datosRegistro.region,
+        comuna: datosRegistro.comuna,
+        rol: "ciudadano",
+      });
+
+      const rolFrontend: Role = "solicitante";
+
+      loginContext(rolFrontend);
+
+      history.push(obtenerRutaInicioPorRol(rolFrontend as RolSesion));
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setError(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setError(error.message);
+        return;
+      }
+
+      setError("No se pudo crear la cuenta. Intenta nuevamente.");
+    }
   };
 
   return (
