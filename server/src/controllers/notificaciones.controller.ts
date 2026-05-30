@@ -1,32 +1,95 @@
 import { Response } from "express";
-import { notificaciones } from "../data/mockDB.js";
+
+import { prisma } from "../config/prisma.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
 
-export function listarNotificaciones(req: AuthRequest, res: Response) {
-  if (!req.user) {
-    return errorResponse(res, 401, "Debes iniciar sesión");
+function obtenerParametroId(
+  valor: string | string[] | undefined,
+): string | null {
+  if (typeof valor === "string" && valor.trim() !== "") {
+    return valor;
   }
 
-  const data = notificaciones.filter((n) => n.usuarioId === req.user?.id);
+  if (Array.isArray(valor) && typeof valor[0] === "string") {
+    return valor[0];
+  }
 
-  return successResponse(res, 200, "Notificaciones obtenidas correctamente", data);
+  return null;
 }
 
-export function marcarNotificacionLeida(req: AuthRequest, res: Response) {
-  const { id } = req.params;
+export async function listarNotificaciones(req: AuthRequest, res: Response) {
+  if (!req.user) {
+    return errorResponse(res, 401, "Debes iniciar sesión", [
+      { code: "missing_user" },
+    ]);
+  }
 
-  const notificacion = notificaciones.find((n) => n.id === id);
+  const notificaciones = await prisma.notificacion.findMany({
+    where: {
+      usuarioId: req.user.id,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return successResponse(
+    res,
+    200,
+    "Notificaciones obtenidas correctamente",
+    notificaciones,
+  );
+}
+
+export async function marcarNotificacionLeida(
+  req: AuthRequest,
+  res: Response,
+) {
+  if (!req.user) {
+    return errorResponse(res, 401, "Debes iniciar sesión", [
+      { code: "missing_user" },
+    ]);
+  }
+
+  const id = obtenerParametroId(req.params.id);
+
+  if (!id) {
+    return errorResponse(res, 400, "ID de notificación inválido", [
+      { field: "id", code: "invalid_param" },
+    ]);
+  }
+
+  const notificacion = await prisma.notificacion.findUnique({
+    where: { id },
+  });
 
   if (!notificacion) {
-    return errorResponse(res, 404, "Notificación no encontrada");
+    return errorResponse(res, 404, "Notificación no encontrada", [
+      { field: "id", code: "not_found" },
+    ]);
   }
 
-  if (notificacion.usuarioId !== req.user?.id) {
-    return errorResponse(res, 403, "No tienes permisos para modificar esta notificación");
+  if (notificacion.usuarioId !== req.user.id) {
+    return errorResponse(
+      res,
+      403,
+      "No tienes permisos para modificar esta notificación",
+      [{ code: "forbidden" }],
+    );
   }
 
-  notificacion.leida = true;
+  const notificacionActualizada = await prisma.notificacion.update({
+    where: { id },
+    data: {
+      leida: true,
+    },
+  });
 
-  return successResponse(res, 200, "Notificación marcada como leída", notificacion);
+  return successResponse(
+    res,
+    200,
+    "Notificación marcada como leída",
+    notificacionActualizada,
+  );
 }
