@@ -5,9 +5,9 @@ import FilaSolicitud from "./FilaSolicitud";
 
 interface Props {
   solicitudes: Solicitud[];
-  onEditar: (id: number) => void;
-  onDetalle: (id: number) => void;
-  onEliminar: (id: number) => void;
+  onEditar: (id: Solicitud["id"]) => void;
+  onDetalle: (id: Solicitud["id"]) => void;
+  onEliminar: (id: Solicitud["id"]) => void;
 }
 
 const TablaSolicitudes: React.FC<Props> = ({

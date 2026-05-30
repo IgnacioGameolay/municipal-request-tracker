@@ -1,7 +1,9 @@
 import { HistorialRevision } from "./HistorialRevision";
 
+export type SolicitudId = string | number;
+
 export interface Solicitud {
-  id: number;
+  id: SolicitudId;
   titulo: string;
   encargado: string;
   fecha: string;

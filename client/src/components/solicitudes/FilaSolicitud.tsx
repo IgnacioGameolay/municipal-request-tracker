@@ -5,12 +5,11 @@ import { createOutline, helpOutline, trashOutline } from "ionicons/icons";
 import ColorEstado from "../common/ColorEstado";
 import { Solicitud } from "../../dominio/entidades/Solicitud";
 import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
-
 interface Props {
   solicitud: Solicitud;
-  onEditar: (id: number) => void;
-  onDetalle: (id: number) => void;
-  onEliminar: (id: number) => void;
+  onEditar: (id: Solicitud["id"]) => void;
+  onDetalle: (id: Solicitud["id"]) => void;
+  onEliminar: (id: Solicitud["id"]) => void;
 }
 
 const FilaSolicitud: React.FC<Props> = ({
