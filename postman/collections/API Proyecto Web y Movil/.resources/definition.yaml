@@ -1,0 +1,21 @@
+$kind: collection
+name: API Proyecto Web y Móvil
+description: |-
+  Colección completa de endpoints para el proyecto de Ingeniería Web y Móvil.
+  
+  Esta API REST permite gestionar solicitudes ciudadanas, autenticación de usuarios
+  y notificaciones. Todos los endpoints (excepto /health, /auth/login y /auth/register)
+  requieren autenticación mediante Bearer Token JWT.
+  
+  **Base URL:** {{baseUrl}}
+  
+  **Autenticación:** Bearer Token — usa la variable {{token}} que se guarda automáticamente al hacer login.
+variables:
+  - key: baseUrl
+    value: 'http://localhost:3000'
+  - key: token
+    value: ''
+  - key: solicitudId
+    value: ''
+  - key: notificacionId
+    value: ''

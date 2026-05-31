@@ -1,0 +1,19 @@
+$kind: http-request
+name: Eliminar Solicitud
+method: DELETE
+url: '{{baseUrl}}/solicitudes/{{solicitudId}}'
+order: 6000
+description: |-
+  Elimina permanentemente una solicitud del sistema.
+  
+  **Requiere autenticación:** Bearer Token `{{token}}`
+  
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud a eliminar.
+  
+  ⚠️ **Esta acción es irreversible.** Al eliminar una solicitud, también se
+  eliminan en cascada sus documentos, notificaciones, historial y mensajes asociados.
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'

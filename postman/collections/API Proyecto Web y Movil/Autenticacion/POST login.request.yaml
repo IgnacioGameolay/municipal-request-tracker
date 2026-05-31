@@ -1,0 +1,24 @@
+$kind: http-request
+name: Iniciar Sesión
+method: POST
+url: '{{baseUrl}}/auth/login'
+order: 1000
+description: |-
+  Autentica a un usuario (ciudadano o funcionario) y retorna un token JWT.
+  
+  **No requiere autenticación previa.**
+  
+  Guarda el token recibido en la variable de entorno `{{token}}` para usarlo
+  en los demás endpoints protegidos.
+  
+  **Roles disponibles:** `ciudadano`, `funcionario`
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "usuario@ejemplo.com",
+      "password": "contraseña123"
+    }

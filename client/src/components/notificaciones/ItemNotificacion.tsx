@@ -3,7 +3,24 @@ import { IonIcon } from "@ionic/react";
 import { helpOutline } from "ionicons/icons";
 
 import { Notificacion } from "../../dominio/entidades/Notificacion";
-import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
+
+// Función auxiliar para formatear la fecha que viene de la base de datos
+function formatearFechaCorto(fechaIso: string): string {
+  const fecha = new Date(fechaIso);
+  if (Number.isNaN(fecha.getTime())) return fechaIso;
+  
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const anio = fecha.getFullYear();
+  let hora = fecha.getHours();
+  const minutos = String(fecha.getMinutes()).padStart(2, "0");
+  const periodo = hora >= 12 ? "pm" : "am";
+  
+  hora = hora % 12;
+  hora = hora === 0 ? 12 : hora;
+  
+  return `${dia}-${mes}-${anio} ${String(hora).padStart(2, "0")}:${minutos} ${periodo}`;
+}
 
 interface Props {
   notificacion: Notificacion;
@@ -24,20 +41,35 @@ const ItemNotificacion: React.FC<Props> = ({ notificacion, onVerDetalle }) => {
         border: "1px solid #eee",
       }}
     >
-      <span
+      {/* Contenedor para el título y el mensaje */}
+      <div
         style={{
-          color: "#333",
-          fontSize: "0.95rem",
-          fontWeight: "500",
-          lineHeight: "1.4",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px"
         }}
       >
-        {notificacion.textoPrincipal}
-        <span style={{ color: "#0da6f2", fontWeight: "bold" }}>
-          {notificacion.funcionario}
+        <span
+          style={{
+            color: "#0da6f2",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            lineHeight: "1.4",
+          }}
+        >
+          {notificacion.titulo}
         </span>
-        {notificacion.textoSecundario}
-      </span>
+        <span
+          style={{
+            color: "#333",
+            fontSize: "0.95rem",
+            fontWeight: "500",
+            lineHeight: "1.4",
+          }}
+        >
+          {notificacion.mensaje}
+        </span>
+      </div>
 
       <span
         style={{
@@ -47,7 +79,7 @@ const ItemNotificacion: React.FC<Props> = ({ notificacion, onVerDetalle }) => {
           whiteSpace: "nowrap",
         }}
       >
-        {normalizarFechaVisual(notificacion.fecha)}
+        {formatearFechaCorto(String(notificacion.fecha))}
       </span>
 
       <button

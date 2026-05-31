@@ -168,6 +168,19 @@ export async function subirDocumentoSolicitud(
       },
     });
 
+    // [Paso 5] - Notificar al funcionario cuando el solicitante sube lo que se le pidió
+    if (req.user!.rol !== "funcionario" && solicitud.funcionarioId) {
+      await tx.notificacion.create({
+        data: {
+          usuarioId: solicitud.funcionarioId,
+          solicitudId: solicitud.id,
+          titulo: "Solicitud modificada",
+          mensaje: `El solicitante ha subido el documento requerido (${req.file!.originalname}) a la solicitud "${solicitud.titulo}".`,
+          leida: false,
+        },
+      });
+    }
+
     return documento;
   });
 

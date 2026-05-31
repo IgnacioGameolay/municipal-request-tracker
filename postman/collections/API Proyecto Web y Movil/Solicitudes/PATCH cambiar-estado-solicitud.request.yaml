@@ -1,0 +1,32 @@
+$kind: http-request
+name: Cambiar Estado de Solicitud
+method: PATCH
+url: '{{baseUrl}}/solicitudes/{{solicitudId}}/estado'
+order: 5000
+description: |-
+  Actualiza únicamente el estado de una solicitud (acción parcial).
+  
+  **Requiere autenticación:** Bearer Token `{{token}}` (rol: funcionario)
+  
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud.
+  
+  **Estados disponibles:**
+  - `pendiente` — Solicitud recibida, sin revisar
+  - `en_revision` — Funcionario está revisando la solicitud
+  - `resuelta` — Solicitud atendida y resuelta
+  - `rechazada` — Solicitud rechazada con comentario
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "estado": "en_revision",
+      "comentarioFuncionario": "Se ha iniciado la revisión del caso reportado."
+    }

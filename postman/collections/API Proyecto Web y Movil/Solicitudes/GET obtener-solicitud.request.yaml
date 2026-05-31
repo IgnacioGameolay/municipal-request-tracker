@@ -1,0 +1,19 @@
+$kind: http-request
+name: Obtener Solicitud por ID
+method: GET
+url: '{{baseUrl}}/solicitudes/{{solicitudId}}'
+order: 2000
+description: |-
+  Obtiene el detalle completo de una solicitud específica por su ID.
+  
+  **Requiere autenticación:** Bearer Token `{{token}}`
+  
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud que deseas consultar.
+  
+  **Campos retornados:** id, titulo, categoria, descripcion, direccion, comuna,
+  estado, prioridad, comentarioFuncionario, createdAt, updatedAt.
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'

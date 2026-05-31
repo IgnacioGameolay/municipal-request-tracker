@@ -178,6 +178,7 @@ export async function crearSolicitud(req: AuthRequest, res: Response) {
       },
     });
 
+    // 1. Notificación de confirmación para el ciudadano
     await tx.notificacion.create({
       data: {
         usuarioId: req.user!.id,
@@ -198,6 +199,22 @@ export async function crearSolicitud(req: AuthRequest, res: Response) {
         comentario: "Solicitud creada por el ciudadano.",
       },
     });
+
+    const funcionarios = await tx.usuario.findMany({
+      where: { rol: "funcionario" },
+    });
+
+    for (const f of funcionarios) {
+      await tx.notificacion.create({
+        data: {
+          usuarioId: f.id,
+          solicitudId: nuevaSolicitud.id,
+          titulo: "Nueva solicitud",
+          mensaje: `Se ha recibido una nueva solicitud: "${nuevaSolicitud.titulo}".`,
+          leida: false,
+        },
+      });
+    }
 
     return nuevaSolicitud;
   });
@@ -304,20 +321,37 @@ export async function actualizarSolicitud(req: AuthRequest, res: Response) {
     ]);
   }
 
-  const solicitudActualizada = await prisma.solicitud.update({
-    where: { id },
-    data: datosActualizacion,
-  });
+  const solicitudActualizada = await prisma.$transaction(async (tx) => {
+    const actualizada = await tx.solicitud.update({
+      where: { id },
+      data: datosActualizacion,
+    });
 
-  await prisma.historialSolicitud.create({
-    data: {
-      solicitudId: solicitud.id,
-      usuarioActorId: req.user.id,
-      accion: "actualizacion_solicitud",
-      estadoAnterior: solicitud.estado,
-      estadoNuevo: solicitudActualizada.estado,
-      comentario: "Solicitud actualizada por el ciudadano.",
-    },
+    await tx.historialSolicitud.create({
+      data: {
+        solicitudId: solicitud.id,
+        usuarioActorId: req.user!.id,
+        accion: "actualizacion_solicitud",
+        estadoAnterior: solicitud.estado,
+        estadoNuevo: actualizada.estado,
+        comentario: "Solicitud actualizada por el ciudadano.",
+      },
+    });
+
+    // [ENGANCHE NOTIFICACIÓN] - Si la solicitud ya tenía un funcionario asignado, se le notifica la edición
+    if (solicitud.funcionarioId) {
+      await tx.notificacion.create({
+        data: {
+          usuarioId: solicitud.funcionarioId,
+          solicitudId: solicitud.id,
+          titulo: "Solicitud actualizada",
+          mensaje: `El ciudadano ha modificado los detalles de la solicitud "${solicitud.titulo}".`,
+          leida: false,
+        },
+      });
+    }
+
+    return actualizada;
   });
 
   return successResponse(
@@ -366,6 +400,16 @@ export async function actualizarEstadoSolicitud(req: AuthRequest, res: Response)
       : undefined;
 
   const solicitudActualizada = await prisma.$transaction(async (tx) => {
+    // [NUEVO] Limpiamos la bandeja: marcamos como leídas todas las alertas previas de esta solicitud para este funcionario
+    await tx.notificacion.updateMany({
+      where: {
+        solicitudId: solicitud.id,
+        usuarioId: req.user!.id,
+        leida: false,
+      },
+      data: { leida: true },
+    });
+
     const actualizada = await tx.solicitud.update({
       where: { id },
       data: {
@@ -463,6 +507,19 @@ export async function eliminarSolicitud(req: AuthRequest, res: Response) {
     await tx.mensajeSolicitud.deleteMany({
       where: { solicitudId: id },
     });
+
+    // [ENGANCHE NOTIFICACIÓN] - Si la solicitud tenía un funcionario, avisarle que fue eliminada
+    if (solicitud.funcionarioId) {
+      await tx.notificacion.create({
+        data: {
+          usuarioId: solicitud.funcionarioId,
+          solicitudId: null, // Lo dejamos en null porque la solicitud dejará de existir
+          titulo: "Solicitud eliminada",
+          mensaje: `El ciudadano ha cancelado y eliminado la solicitud "${solicitud.titulo}".`,
+          leida: false,
+        },
+      });
+    }
 
     await tx.solicitud.delete({
       where: { id },

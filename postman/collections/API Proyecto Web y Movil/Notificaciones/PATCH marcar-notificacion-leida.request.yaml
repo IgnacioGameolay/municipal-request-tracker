@@ -1,0 +1,18 @@
+$kind: http-request
+name: Marcar Notificación como Leída
+method: PATCH
+url: '{{baseUrl}}/notificaciones/{{notificacionId}}/leida'
+order: 2000
+description: |-
+  Marca una notificación específica como leída.
+  
+  **Requiere autenticación:** Bearer Token `{{token}}`
+  
+  Reemplaza `{{notificacionId}}` con el UUID de la notificación a marcar.
+  
+  Cambia el campo `leida` de `false` a `true` en la base de datos.
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{token}}'
