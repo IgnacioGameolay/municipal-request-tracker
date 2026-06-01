@@ -1,23 +1,22 @@
 $kind: http-request
 name: Actualizar Solicitud Completa
 method: PUT
-url: '{{baseUrl}}/solicitudes/{{solicitudId}}'
+url: "{{baseUrl}}/solicitudes/667406b4-219f-4819-9732-d00f93923a62"
+examples: .resources/PUT actualizar-solicitud.resources/examples
 order: 4000
 description: |-
   Actualiza todos los campos de una solicitud existente (reemplazo completo).
-  
+
   **Requiere autenticación:** Bearer Token `{{token}}`
-  
+
   Reemplaza `{{solicitudId}}` con el UUID de la solicitud a actualizar.
   Se deben enviar todos los campos del recurso.
 auth:
   type: bearer
   credentials:
-    - key: token
-      value: '{{token}}'
+    token: "{{token}}"
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

@@ -1,15 +1,16 @@
 $kind: http-request
 name: Cambiar Estado de Solicitud
 method: PATCH
-url: '{{baseUrl}}/solicitudes/{{solicitudId}}/estado'
+url: "{{baseUrl}}/solicitudes/667406b4-219f-4819-9732-d00f93923a62/estado"
+examples: .resources/PATCH cambiar-estado-solicitud.resources/examples
 order: 5000
 description: |-
   Actualiza únicamente el estado de una solicitud (acción parcial).
-  
+
   **Requiere autenticación:** Bearer Token `{{token}}` (rol: funcionario)
-  
+
   Reemplaza `{{solicitudId}}` con el UUID de la solicitud.
-  
+
   **Estados disponibles:**
   - `pendiente` — Solicitud recibida, sin revisar
   - `en_revision` — Funcionario está revisando la solicitud
@@ -18,11 +19,9 @@ description: |-
 auth:
   type: bearer
   credentials:
-    - key: token
-      value: '{{token}}'
+    token: "{{token}}"
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

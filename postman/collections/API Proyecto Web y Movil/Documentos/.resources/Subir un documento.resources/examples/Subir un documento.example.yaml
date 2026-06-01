@@ -1,0 +1,50 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos"
+  method: POST
+  headers:
+    - key: Accept
+      value: aplication/json
+      disabled: true
+  body:
+    type: formdata
+    content:
+      - type: file
+        key: documento
+        src:
+          - /C:/Users/vicen/Downloads/Taller 2 ISW.pdf
+        description: ""
+        disabled: false
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "467"
+    etag: W/"1d3-1y2ajkjjOm5NYObFaDHBwFQ0j1k"
+    date: Mon, 01 Jun 2026 22:47:27 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Documento incorporado correctamente al expediente de la solicitud",
+        "data": {
+          "id": "4b96543d-d882-4b3c-a786-68607e326bc1",
+          "solicitudId": "40bff3a0-321a-4173-b5bc-008249bdfd40",
+          "subidoPorUsuarioId": "u1",
+          "nombreOriginal": "Taller 2 ISW.pdf",
+          "nombreAlmacenado": "1780354047182-944857198.pdf",
+          "mimeType": "application/octet-stream",
+          "sizeBytes": 280316,
+          "ruta": "uploads\\1780354047182-944857198.pdf",
+          "hashArchivo": null,
+          "createdAt": "2026-06-01T22:47:27.239Z"
+        }
+      }
+order: 1780354058996

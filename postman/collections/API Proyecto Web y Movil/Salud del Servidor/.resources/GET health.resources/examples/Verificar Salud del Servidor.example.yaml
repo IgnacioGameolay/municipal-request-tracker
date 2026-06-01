@@ -1,0 +1,36 @@
+$kind: http-example
+description: |-
+  Verifica que el servidor esté funcionando correctamente.
+
+  No requiere autenticación. Útil para comprobar que el backend está activo
+  antes de realizar otras operaciones.
+
+  **Respuesta esperada:** `200 OK` con estado del servidor.
+request:
+  url: "{{baseUrl}}/health"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "115"
+    etag: W/"73-BvfnGfugYgBVP8BATSHj7Z3F+yQ"
+    date: Mon, 01 Jun 2026 03:39:18 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "API funcionando correctamente",
+        "data": {
+          "status": "ok",
+          "timestamp": "2026-06-01T03:39:18.945Z"
+        }
+      }
+order: 1780285162354

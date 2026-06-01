@@ -1,0 +1,5 @@
+$kind: http-request
+name: Borrar un documento
+url: ""
+method: DELETE
+order: 4481621328315946

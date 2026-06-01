@@ -1,0 +1,10 @@
+$kind: http-request
+name: Ver Bandeja Funcionario
+url: "{{baseUrl}}/solicitudes"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+examples: .resources/Ver Bandeja Funcionario.resources/examples
+order: 3834583502404825

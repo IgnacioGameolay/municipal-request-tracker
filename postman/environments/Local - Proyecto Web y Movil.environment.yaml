@@ -6,6 +6,4 @@ values:
     value: ''
   - key: solicitudId
     value: ''
-  - key: notificacionId
-    value: ''
 color: 0

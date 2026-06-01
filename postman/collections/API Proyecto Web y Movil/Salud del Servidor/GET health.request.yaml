@@ -1,12 +1,13 @@
 $kind: http-request
 name: Verificar Salud del Servidor
 method: GET
-url: '{{baseUrl}}/health'
+url: "{{baseUrl}}/health"
+examples: .resources/GET health.resources/examples
 order: 1000
 description: |-
   Verifica que el servidor esté funcionando correctamente.
-  
+
   No requiere autenticación. Útil para comprobar que el backend está activo
   antes de realizar otras operaciones.
-  
+
   **Respuesta esperada:** `200 OK` con estado del servidor.

@@ -1,17 +1,17 @@
 $kind: http-request
 name: Listar Notificaciones
 method: GET
-url: '{{baseUrl}}/notificaciones'
+url: "{{baseUrl}}/notificaciones"
+examples: .resources/GET listar-notificaciones.resources/examples
 order: 1000
 description: |-
   Obtiene todas las notificaciones del usuario autenticado.
-  
+
   **Requiere autenticación:** Bearer Token `{{token}}`
-  
+
   Retorna las notificaciones con sus campos: id, titulo, mensaje, leida, createdAt.
   Las notificaciones pueden estar asociadas a una solicitud específica.
 auth:
   type: bearer
   credentials:
-    - key: token
-      value: '{{token}}'
+    token: "{{token}}"

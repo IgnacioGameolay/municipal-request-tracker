@@ -1,0 +1,49 @@
+$kind: http-example
+description: |-
+  Obtiene el detalle completo de una solicitud específica por su ID.
+
+  **Requiere autenticación:** Bearer Token `{{token}}`
+
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud que deseas consultar.
+
+  **Campos retornados:** id, titulo, categoria, descripcion, direccion, comuna,
+  estado, prioridad, comentarioFuncionario, createdAt, updatedAt.
+request:
+  url: "{{baseUrl}}/solicitudes/667406b4-219f-4819-9732-d00f93923a62"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "461"
+    etag: W/"1cd-l/WBEeo53rvE+cdyFdNXOGO4RQU"
+    date: Mon, 01 Jun 2026 03:39:48 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud obtenida correctamente",
+        "data": {
+          "id": "667406b4-219f-4819-9732-d00f93923a62",
+          "usuarioId": "u1",
+          "funcionarioId": null,
+          "titulo": "4era prueba de horario 17:21 hrs",
+          "categoria": "Tipo 2",
+          "descripcion": "aaaaaaaaaaaaaaaaaaaa",
+          "direccion": "Dirección no especificada",
+          "comuna": "Valparaíso",
+          "estado": "pendiente",
+          "prioridad": "media",
+          "comentarioFuncionario": null,
+          "createdAt": "2026-05-31T21:21:23.464Z",
+          "updatedAt": "2026-05-31T21:21:23.464Z"
+        }
+      }
+order: 1780285189916

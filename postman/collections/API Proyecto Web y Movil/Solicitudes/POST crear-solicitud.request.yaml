@@ -1,24 +1,23 @@
 $kind: http-request
 name: Crear Solicitud
 method: POST
-url: '{{baseUrl}}/solicitudes'
+url: "{{baseUrl}}/solicitudes"
+examples: .resources/POST crear-solicitud.resources/examples
 order: 3000
 description: |-
   Crea una nueva solicitud ciudadana en el sistema.
-  
+
   **Requiere autenticación:** Bearer Token `{{token}}` (rol: ciudadano)
-  
+
   **Estados disponibles:** `pendiente`, `en_revision`, `resuelta`, `rechazada`
-  
+
   **Prioridades disponibles:** `baja`, `media`, `alta`
 auth:
   type: bearer
   credentials:
-    - key: token
-      value: '{{token}}'
+    token: "{{token}}"
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-

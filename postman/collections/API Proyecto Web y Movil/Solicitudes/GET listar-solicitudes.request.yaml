@@ -1,17 +1,17 @@
 $kind: http-request
 name: Listar Solicitudes
 method: GET
-url: '{{baseUrl}}/solicitudes'
+url: "{{baseUrl}}/solicitudes"
+examples: .resources/GET listar-solicitudes.resources/examples
 order: 1000
 description: |-
   Obtiene la lista de todas las solicitudes del usuario autenticado.
-  
+
   **Requiere autenticación:** Bearer Token `{{token}}`
-  
+
   - Si el usuario es **ciudadano**, retorna sus propias solicitudes.
   - Si el usuario es **funcionario**, retorna todas las solicitudes asignadas.
 auth:
   type: bearer
   credentials:
-    - key: token
-      value: '{{token}}'
+    token: "{{token}}"

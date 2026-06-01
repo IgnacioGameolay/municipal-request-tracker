@@ -34,16 +34,36 @@ const upload = multer({
     fileSize: MAX_DOCUMENTO_SIZE_BYTES,
   },
   fileFilter: (req, file, callback) => {
-    if (!MIME_TYPES_PERMITIDOS.includes(file.mimetype as typeof MIME_TYPES_PERMITIDOS[number])) {
-      return callback(
-        new Error(
-          "Formato no permitido. Solo se aceptan PDF, JPG, PNG, DOC y DOCX.",
-        ),
-      );
-    }
+  const tiposPermitidos = MIME_TYPES_PERMITIDOS as readonly string[];
 
-    callback(null, true);
-  },
+  const extensionesPermitidas = [
+    ".pdf",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".doc",
+    ".docx",
+  ];
+
+  // Extrae la extensión real del archivo (ej: ".pdf")
+  const extension = path.extname(file.originalname).toLowerCase();
+
+  // Revisa si el MIME type o la extensión coinciden
+  const mimePermitido = tiposPermitidos.includes(file.mimetype);
+  const extensionPermitida = extensionesPermitidas.includes(extension);
+
+  // Si NINGUNO de los dos es válido, rechaza el archivo
+  if (!mimePermitido && !extensionPermitida) {
+    return callback(
+      new Error(
+        "Formato no permitido. Solo se aceptan PDF, JPG, PNG, DOC y DOCX."
+      )
+    );
+  }
+
+  // Si todo está bien, lo deja pasar
+  callback(null, true);
+  }
 });
 
 router.use(authMiddleware);

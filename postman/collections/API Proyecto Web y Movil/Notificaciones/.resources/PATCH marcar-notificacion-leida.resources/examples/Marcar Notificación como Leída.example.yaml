@@ -1,0 +1,42 @@
+$kind: http-example
+description: |-
+  Marca una notificación específica como leída.
+
+  **Requiere autenticación:** Bearer Token `{{token}}`
+
+  Reemplaza `{{notificacionId}}` con el UUID de la notificación a marcar.
+
+  Cambia el campo `leida` de `false` a `true` en la base de datos.
+request:
+  url: "{{baseUrl}}/notificaciones/504f1c64-35ea-487c-b270-049f1a95c31b/leida"
+  method: PATCH
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "352"
+    etag: W/"160-qpl706YW29urRzrUoWdq7RcytM0"
+    date: Mon, 01 Jun 2026 03:39:02 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Notificación marcada como leída",
+        "data": {
+          "id": "504f1c64-35ea-487c-b270-049f1a95c31b",
+          "usuarioId": "u1",
+          "solicitudId": "667406b4-219f-4819-9732-d00f93923a62",
+          "titulo": "Solicitud creada",
+          "mensaje": "Tu solicitud \"4era prueba de horario 17:21 hrs\" fue registrada correctamente.",
+          "leida": true,
+          "createdAt": "2026-05-31T21:21:23.468Z"
+        }
+      }
+order: 1780285145594
