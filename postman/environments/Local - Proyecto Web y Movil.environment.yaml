@@ -6,4 +6,6 @@ values:
     value: ''
   - key: solicitudId
     value: ''
+  - key: documentoId
+    value: ''
 color: 0

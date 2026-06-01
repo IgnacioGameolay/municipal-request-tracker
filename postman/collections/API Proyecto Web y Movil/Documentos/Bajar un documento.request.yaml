@@ -1,4 +1,9 @@
 $kind: http-request
-url: ""
+name: Bajar un documento
+url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos/{{documentoId}}/descargar"
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
 order: 3064358992829323

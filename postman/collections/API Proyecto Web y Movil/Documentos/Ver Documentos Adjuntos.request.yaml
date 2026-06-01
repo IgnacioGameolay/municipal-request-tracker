@@ -1,4 +1,5 @@
 $kind: http-request
 url: ""
 method: GET
+examples: .resources/Ver Documentos Adjuntos.resources/examples
 order: 4497719237971326

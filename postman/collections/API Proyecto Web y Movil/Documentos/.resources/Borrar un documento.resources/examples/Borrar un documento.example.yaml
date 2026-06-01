@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos/{{documentoId}}"
+  method: DELETE
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "110"
+    etag: W/"6e-EiClILOfA+pIpjJ43hlLEu4pY58"
+    date: Mon, 01 Jun 2026 23:05:04 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Documento eliminado correctamente",
+        "data": {
+          "id": "4b96543d-d882-4b3c-a786-68607e326bc1"
+        }
+      }
+order: 1780355106268

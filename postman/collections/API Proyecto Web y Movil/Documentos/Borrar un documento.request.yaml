@@ -1,5 +1,9 @@
 $kind: http-request
-name: Borrar un documento
-url: ""
+url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos/{{documentoId}}"
 method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+examples: .resources/Borrar un documento.resources/examples
 order: 4481621328315946

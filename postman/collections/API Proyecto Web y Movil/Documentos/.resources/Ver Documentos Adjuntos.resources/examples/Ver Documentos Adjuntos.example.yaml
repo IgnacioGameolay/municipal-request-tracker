@@ -1,0 +1,26 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "68"
+    etag: W/"44-DFEBQ4fFuLfOlBMlODoJWUjBUso"
+    date: Mon, 01 Jun 2026 23:08:11 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Documentos obtenidos correctamente",
+        "data": []
+      }
+order: 1780355293720
