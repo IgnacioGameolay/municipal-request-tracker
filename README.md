@@ -922,8 +922,45 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 9. Verificar que la solicitud quedó actualizada.
 10. Cambiar a solicitante para revisar cómo se visualiza el cambio.
 
+## 21. Verificacion en POSTMAN
 
-## 21. Comandos útiles
+Esta sección detalla cómo validar el funcionamiento del backend utilizando la colección exportada.
+
+### 21.1 Preparación del Entorno
+Antes de ejecutar las pruebas, asegúrate de que el servidor esté activo:
+1. Navega a la carpeta `server/`.
+2. Ejecuta `npm run dev` para levantar el backend en `http://localhost:3000`.
+
+### 21.2 Configuración en Postman
+Para ejecutar la colección `API Proyecto Web y Movil`, realiza estos pasos:
+
+1. Importar: En Postman, ejecuta el comando "Ctrl" + "o" y selecciona el archivo `postman/collections/API Proyecto Web y Movil.json`.
+2. Entorno: Importa también el archivo de entorno `postman/environments/Local - Proyecto Web y Movil.json`.
+3. Selección: Asegúrate de seleccionar el entorno "Local" en el desplegable superior derecho de Postman.
+
+### 21.3 Flujo de pruebas recomendado (Orden de ejecución)
+
+Para demostrar que el backend es seguro y funcional, sigue este orden:
+
+1. Autenticación (Gestión de Token):
+   - Ejecuta `POST Iniciar Sesión`.
+   - Nota: Si el token expira, simplemente vuelve a ejecutar esta petición.
+   - Instrucciones para actualizar: 1. Copia el valor del token desde la respuesta (asegúrate de **NO** incluir las comillas `' '` ni caracteres extra).
+     2. Ve a la pestaña **Environments (parte superior derecha).
+     3. Selecciona tu entorno `Local - Proyecto Web y Movil`.
+     4. Pega el nuevo Token en el campo `value` de la variable `token`.
+     5. Haz clic en Save.
+     6. Nota: El procedimiento es el mismo cuando se requiere la id de solicitud y de documento.
+2. Solicitudes:
+   - Ejecuta `POST Crear Solicitud` (Asegúrate de tener un archivo cargado en el body de tipo `form-data`).
+   - Ejecuta `GET Listar Solicitudes` para verificar que la creación fue persistida.
+   - Ejecuta `GET Obtener Solicitud por ID` usando el ID generado en el paso anterior.
+3. Documentos:
+   - Ejecuta `POST Subir un documento` para probar el manejo de archivos (Multer).
+   - Ejecuta `GET Ver Documentos Adjuntos` para confirmar la relación entre solicitud y archivo.
+
+
+## 22. Comandos útiles
 
 ```bash
 # Instalar dependencias
@@ -942,7 +979,7 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 
 
 
-## 22. [MODIFICADO] Limpieza de datos locales y Base de Datos
+## 23. [MODIFICADO] Limpieza de datos locales y Base de Datos
 
 Para limpiar la base de datos real en etapa de pruebas, puedes abrir la consola en la carpeta del servidor y ejecutar:
 
@@ -961,7 +998,7 @@ location.href = '/login';
 
 
 
-## 23. [MODIFICADO] Limitaciones actuales
+## 24. [MODIFICADO] Limitaciones actuales
 
 - Las notificaciones son simuladas en el frontend (aún no usan WebSockets para tiempo real).
 - El envío de correos electrónicos para recuperar contraseñas no utiliza un servidor SMTP real todavía.
@@ -973,7 +1010,7 @@ Estas limitaciones son coherentes con el estado actual del proyecto, habiendo su
 
 
 
-## 24. [MODIFICADO] Proyección para próximas entregas
+## 25. [MODIFICADO] Proyección para próximas entregas
 
 Habiendo implementado exitosamente la API REST, la base de datos relacional, la autenticación JWT y la subida real de documentos, para una versión posterior del sistema se propone:
 
@@ -986,7 +1023,7 @@ Habiendo implementado exitosamente la API REST, la base de datos relacional, la 
 
 
 
-## 25. [MODIFICADO] Cumplimiento de pauta EP1 y Siguientes
+## 26. [MODIFICADO] Cumplimiento de pauta EP1 y Siguientes
 
 | Criterio esperado | Evidencia en el proyecto |
 |---|---|
@@ -1008,7 +1045,7 @@ Habiendo implementado exitosamente la API REST, la base de datos relacional, la 
 
 
 
-## 26. Autores
+## 27. Autores
 
 Proyecto desarrollado para la asignatura **ICI4247/1 - Ingeniería Web y Móvil**.
 
@@ -1021,7 +1058,7 @@ Integrantes:
 
 
 
-## 27. [MODIFICADO] Estado actual
+## 28. [MODIFICADO] Estado actual
 
 El proyecto ha evolucionado de un prototipo frontend a una aplicación Full-Stack funcional. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, visualización de trazabilidad por parte del solicitante, subida real de documentos y separación de roles mediante rutas protegidas conectadas a un backend real en Node.js y PostgreSQL.
 
