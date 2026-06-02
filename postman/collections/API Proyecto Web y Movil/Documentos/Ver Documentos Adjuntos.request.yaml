@@ -1,5 +1,10 @@
 $kind: http-request
-url: ""
+name: Ver Documentos Adjuntos
+url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos"
 method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
 examples: .resources/Ver Documentos Adjuntos.resources/examples
 order: 4497719237971326
