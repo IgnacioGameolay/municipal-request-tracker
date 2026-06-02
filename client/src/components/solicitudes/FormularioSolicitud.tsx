@@ -30,7 +30,7 @@ const FormularioRevisionSolicitud: React.FC<Props> = ({
         </label>
 
         <IonInput
-          value={solicitud.tipo || "Tipo 1"}
+          value={solicitud.tipo || "Sin tipo especificado"}
           disabled
           style={{
             backgroundColor: "#d3d3d3",

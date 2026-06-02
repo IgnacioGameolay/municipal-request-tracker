@@ -1,6 +1,16 @@
 import React from "react";
 import { IonInput, IonSelect, IonSelectOption } from "@ionic/react";
 
+export const OPCIONES_TRAMITES = [
+  "Permisos de Circulación 2026",
+  "Patentes Municipales",
+  "Becas Municipales 2026",
+  "Obtener y Renovar una Licencia de Conducir",
+  "Derechos de Aseo Domiciliario",
+  "Solicitud de Información, Reclamos y Sugerencias",
+  "Obtención de Casilla Única Digital"
+];
+
 interface Props {
   tipo: string;
   titulo: string;
@@ -44,10 +54,11 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
             paddingLeft: "10px",
           }}
         >
-          <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
-          <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
-          <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
-          <IonSelectOption value="Tipo 4">Tipo 4</IonSelectOption>
+          {OPCIONES_TRAMITES.map((opcion) => (
+            <IonSelectOption key={opcion} value={opcion}>
+              {opcion}
+            </IonSelectOption>
+          ))}
         </IonSelect>
       </div>
 

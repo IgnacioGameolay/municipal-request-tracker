@@ -65,21 +65,6 @@ const RealizarSolicitud: React.FC = () => {
   const [guardando, setGuardando] = useState(false);
   const [archivosPendientes, setArchivosPendientes] = useState<File[]>([]);
 
-  const cambiarRolManual = () => {
-    const rolActual = localStorage.getItem("rol_actual") || "solicitante";
-    const nuevoRol =
-      rolActual === "solicitante" ? "funcionario" : "solicitante";
-
-    localStorage.setItem("rol_actual", nuevoRol);
-    window.dispatchEvent(new Event("rolCambiado"));
-
-    history.push(
-      nuevoRol === "solicitante"
-        ? "/ciudadano/tramites"
-        : "/funcionario/tramites",
-    );
-  };
-
   const guardarFormulario = async () => {
     const error = validarFormularioSolicitud({
       tipo,
@@ -200,8 +185,6 @@ const RealizarSolicitud: React.FC = () => {
         rutaNotificaciones="/ciudadano/notificaciones"
         rutaPerfil="/ciudadano/tramites"
         onNavegar={(ruta) => history.push(ruta)}
-        permitirCambioManualRol
-        onCambiarRolManual={cambiarRolManual}
       />
 
       <IonContent style={{ "--background": "#ffffff" }}>
