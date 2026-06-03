@@ -1,33 +1,56 @@
 import { Notificacion } from "../../dominio/entidades/Notificacion";
-import { Solicitud } from "../../dominio/entidades/Solicitud";
+import { Solicitud, SolicitudId } from "../../dominio/entidades/Solicitud";
+import { HistorialRevision } from "../../dominio/entidades/HistorialRevision";
 import {
   obtenerSolicitudesGuardadas,
   guardarSolicitudes,
 } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
 
+const textoSeguro = (valor: string | undefined, respaldo: string): string => {
+  return valor && valor.trim() ? valor : respaldo;
+};
+
+const idSeguro = (
+  notificacion: Notificacion,
+): SolicitudId | null => {
+  return notificacion.idSolicitud ?? notificacion.solicitudId ?? null;
+};
+
 export const prepararSolicitudNotificacion = (
   notificacion: Notificacion,
 ): void => {
+  const idSolicitud = idSeguro(notificacion);
+
+  if (idSolicitud === null) {
+    return;
+  }
+
   const solicitudes = obtenerSolicitudesGuardadas();
 
   const index = solicitudes.findIndex(
-    (solicitud) =>
-      solicitud.id.toString() === notificacion.idSolicitud.toString(),
+    (solicitud) => solicitud.id.toString() === idSolicitud.toString(),
   );
 
-  const nuevaRevision = {
-    funcionario: notificacion.funcionario,
-    estadoNuevo: notificacion.estadoSolicitud,
-    fechaRevision: notificacion.fecha,
+  const nuevaRevision: HistorialRevision = {
+    funcionario: textoSeguro(notificacion.funcionario, "Funcionario municipal"),
+    estadoNuevo: textoSeguro(notificacion.estadoSolicitud, "Pendiente"),
+    fechaRevision: textoSeguro(
+      notificacion.fecha,
+      notificacion.createdAt || new Date().toISOString(),
+    ),
   };
+
+  const comentarioDetalle = textoSeguro(
+    notificacion.comentarioDetalle,
+    notificacion.mensaje || "Actualización de solicitud.",
+  );
 
   if (index !== -1) {
     const solicitudExistente = solicitudes[index];
 
     const comentarioYaExiste =
-      solicitudExistente.comentariosFuncionario?.includes(
-        notificacion.comentarioDetalle,
-      ) || false;
+      solicitudExistente.comentariosFuncionario?.includes(comentarioDetalle) ||
+      false;
 
     const historialYaExiste =
       solicitudExistente.historialRevisiones?.some(
@@ -39,13 +62,13 @@ export const prepararSolicitudNotificacion = (
 
     solicitudes[index] = {
       ...solicitudExistente,
-      titulo: solicitudExistente.titulo || notificacion.tituloSolicitud,
-      encargado: notificacion.funcionario,
-      estado: notificacion.estadoSolicitud,
-      ultimaRevision: notificacion.fecha,
+      titulo: solicitudExistente.titulo || textoSeguro(notificacion.tituloSolicitud, notificacion.titulo || "Solicitud municipal"),
+      encargado: nuevaRevision.funcionario,
+      estado: nuevaRevision.estadoNuevo,
+      ultimaRevision: nuevaRevision.fechaRevision,
       comentariosFuncionario: comentarioYaExiste
         ? solicitudExistente.comentariosFuncionario
-        : `${solicitudExistente.comentariosFuncionario || ""}${solicitudExistente.comentariosFuncionario ? "\n\n" : ""}${notificacion.comentarioDetalle}`,
+        : `${solicitudExistente.comentariosFuncionario || ""}${solicitudExistente.comentariosFuncionario ? "\n\n" : ""}${comentarioDetalle}`,
       historialRevisiones: historialYaExiste
         ? solicitudExistente.historialRevisiones
         : [...(solicitudExistente.historialRevisiones || []), nuevaRevision],
@@ -56,15 +79,15 @@ export const prepararSolicitudNotificacion = (
   }
 
   const nuevaSolicitud: Solicitud = {
-    id: notificacion.idSolicitud,
-    titulo: notificacion.tituloSolicitud,
-    encargado: notificacion.funcionario,
-    fecha: notificacion.fecha,
-    ultimaRevision: notificacion.fecha,
-    estado: notificacion.estadoSolicitud,
+    id: idSolicitud,
+    titulo: textoSeguro(notificacion.tituloSolicitud, notificacion.titulo || "Solicitud municipal"),
+    encargado: nuevaRevision.funcionario,
+    fecha: nuevaRevision.fechaRevision,
+    ultimaRevision: nuevaRevision.fechaRevision,
+    estado: nuevaRevision.estadoNuevo,
     tipo: "Tipo 1",
-    descripcion: "Sin descripción",
-    comentariosFuncionario: notificacion.comentarioDetalle,
+    descripcion: textoSeguro(notificacion.textoPrincipal, notificacion.mensaje || "Sin descripción"),
+    comentariosFuncionario: comentarioDetalle,
     historialRevisiones: [nuevaRevision],
   };
 

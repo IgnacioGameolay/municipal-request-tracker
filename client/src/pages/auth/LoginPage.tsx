@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
 try {
       setError("");
 
-      const sesion = await loginApi(correo, password);
+      const sesion = await loginApi({email: correo,password,});
 
       const rolBackend = sesion.user.rol;
       const rolRealFrontend: Role =
@@ -57,7 +57,7 @@ try {
         return;
       }
 
-      loginContext(rolRealFrontend);
+      loginContext(sesion);
 
       history.push(obtenerRutaInicioPorRol(rolRealFrontend as RolSesion));
     } catch (error) {

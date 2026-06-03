@@ -1,76 +1,118 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
+import {
+  AuthSession,
+  UsuarioApi,
+  cerrarSesionApi,
+  guardarSesion,
+  meApi,
+  obtenerTokenSesion,
+  obtenerUsuarioSesion,
+  rolApiToFrontend,
+} from "../services/authApi";
 
-export type Role = 'solicitante' | 'funcionario';
+export type Role = "solicitante" | "funcionario";
 
-interface AuthContextType {
+interface AuthState {
   isAuthenticated: boolean;
+  isLoading: boolean;
   role: Role | null;
-  login: (role: Role) => void;
+  user: UsuarioApi | null;
+
+  // Nombre nuevo.
+  setSession: (session: AuthSession) => void;
+
+  // Nombre antiguo que tus páginas ya usan.
+  login: (session: AuthSession) => void;
+
+  refreshSession: () => Promise<void>;
   logout: () => void;
-  cambiarRol: (role: Role) => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthState | undefined>(undefined);
 
-const obtenerRolGuardado = (): Role | null => {
-  const rol = localStorage.getItem('rol_actual');
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<UsuarioApi | null>(() =>
+    obtenerUsuarioSesion()
+  );
 
-  if (rol === 'solicitante' || rol === 'funcionario') {
-    return rol;
-  }
+  const [role, setRole] = useState<Role | null>(() => {
+    const usuario = obtenerUsuarioSesion();
+    return usuario ? rolApiToFrontend(usuario.rol) : null;
+  });
 
-  return null;
-};
+  const [isLoading, setIsLoading] = useState<boolean>(!!obtenerTokenSesion());
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
-}) => {
-  const [role, setRole] = useState<Role | null>(obtenerRolGuardado());
-
-  const isAuthenticated = role !== null;
-
-  const guardarRol = (nuevoRol: Role) => {
-    localStorage.setItem('rol_actual', nuevoRol);
-    setRole(nuevoRol);
-    window.dispatchEvent(new Event('rolCambiado'));
-  };
-
-  const login = (nuevoRol: Role) => {
-    guardarRol(nuevoRol);
-  };
-
-  const cambiarRol = (nuevoRol: Role) => {
-    guardarRol(nuevoRol);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('rol_actual');
+  const logout = useCallback(() => {
+    cerrarSesionApi();
+    setUser(null);
     setRole(null);
-    window.dispatchEvent(new Event('rolCambiado'));
-  };
+    setIsLoading(false);
+  }, []);
+
+  const setSession = useCallback((session: AuthSession) => {
+    guardarSesion(session);
+    setUser(session.user);
+    setRole(rolApiToFrontend(session.user.rol));
+    setIsLoading(false);
+  }, []);
+
+  const refreshSession = useCallback(async () => {
+    const token = obtenerTokenSesion();
+
+    if (!token) {
+      logout();
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const usuario = await meApi();
+
+      setUser(usuario);
+      setRole(rolApiToFrontend(usuario.rol));
+
+      localStorage.setItem("usuario_actual", JSON.stringify(usuario));
+      localStorage.setItem("rol_actual", rolApiToFrontend(usuario.rol));
+    } catch {
+      logout();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [logout]);
 
   useEffect(() => {
-    const sincronizarRol = () => {
-      setRole(obtenerRolGuardado());
+    refreshSession();
+
+    const handleSesionExpirada = () => {
+      logout();
     };
 
-    window.addEventListener('rolCambiado', sincronizarRol);
-    window.addEventListener('storage', sincronizarRol);
+    window.addEventListener("sesionExpirada", handleSesionExpirada);
 
     return () => {
-      window.removeEventListener('rolCambiado', sincronizarRol);
-      window.removeEventListener('storage', sincronizarRol);
+      window.removeEventListener("sesionExpirada", handleSesionExpirada);
     };
-  }, []);
+  }, [refreshSession, logout]);
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
+        isAuthenticated: !!user && !!obtenerTokenSesion(),
+        isLoading,
         role,
-        login,
+        user,
+        setSession,
+        login: setSession,
+        refreshSession,
         logout,
-        cambiarRol
       }}
     >
       {children}
@@ -78,12 +120,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-export const useAuth = () => {
-  const contexto = useContext(AuthContext);
+export const useAuth = (): AuthState => {
+  const context = useContext(AuthContext);
 
-  if (!contexto) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider');
+  if (!context) {
+    throw new Error("useAuth debe utilizarse dentro de AuthProvider");
   }
 
-  return contexto;
+  return context;
 };

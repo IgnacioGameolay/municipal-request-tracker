@@ -1,21 +1,23 @@
-export interface ApiErrorItem {
-  field?: string;
-  code: string;
-  message?: string;
-}
-
 export interface ApiResponse<T> {
   ok: boolean;
   message: string;
   data?: T;
-  errors?: ApiErrorItem[];
+  errors?: Array<{
+    field?: string;
+    code: string;
+    message?: string;
+  }>;
 }
 
 export class ApiClientError extends Error {
   status: number;
-  errors?: ApiErrorItem[];
+  errors?: ApiResponse<unknown>["errors"];
 
-  constructor(message: string, status: number, errors?: ApiErrorItem[]) {
+  constructor(
+    status: number,
+    message: string,
+    errors?: ApiResponse<unknown>["errors"]
+  ) {
     super(message);
     this.name = "ApiClientError";
     this.status = status;
@@ -23,18 +25,32 @@ export class ApiClientError extends Error {
   }
 }
 
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+// Alias por compatibilidad si en algún archivo quedó ApiError.
+export const ApiError = ApiClientError;
+
+export const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+const TOKEN_KEY = "auth_token";
+const USER_KEY = "usuario_actual";
+const ROLE_KEY = "rol_actual";
 
 export function getToken(): string | null {
-  return localStorage.getItem("auth_token");
+  return localStorage.getItem(TOKEN_KEY);
 }
 
-export function setToken(token: string): void {
-  localStorage.setItem("auth_token", token);
+export function clearStoredSession() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(ROLE_KEY);
+  window.dispatchEvent(new Event("rolCambiado"));
 }
 
-export function removeToken(): void {
-  localStorage.removeItem("auth_token");
+function handleUnauthorized() {
+  clearStoredSession();
+
+  // Avisamos a la app que la sesión expiró o el token ya no es válido.
+  window.dispatchEvent(new Event("sesionExpirada"));
 }
 
 interface ApiRequestOptions extends RequestInit {
@@ -45,39 +61,69 @@ export async function apiRequest<T>(
   path: string,
   options: ApiRequestOptions = {}
 ): Promise<ApiResponse<T>> {
+  const { auth = true, headers, body, ...rest } = options;
+  const token = getToken();
+  const isFormData = body instanceof FormData;
+
+  const finalHeaders: HeadersInit = {
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    ...(auth && token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(headers || {}),
+  };
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...rest,
+      headers: finalHeaders,
+      body,
+    });
+  } catch {
+    throw new ApiClientError(
+      0,
+      "No se pudo conectar con el servidor. Revisa que el backend esté ejecutándose."
+    );
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+
+  const payload: ApiResponse<T> = contentType.includes("application/json")
+    ? await response.json()
+    : {
+        ok: response.ok,
+        message: response.ok ? "Operación realizada correctamente" : "Error al consumir la API",
+      };
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
+
+    throw new ApiClientError(
+      response.status,
+      payload.message || "Error al consumir la API",
+      payload.errors
+    );
+  }
+
+  return payload;
+}
+
+export async function apiDownload(path: string): Promise<Blob> {
   const token = getToken();
 
-  const headers = new Headers(options.headers);
-
-  if (!(options.body instanceof FormData)) {
-    headers.set("Content-Type", "application/json");
-  }
-
-  if (options.auth !== false && token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
   const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
-  const json = (await response.json().catch(() => null)) as ApiResponse<T> | null;
+  if (!response.ok) {
+    if (response.status === 401) {
+      handleUnauthorized();
+    }
 
-  if (!json) {
-    throw new ApiClientError(
-      "El servidor no respondió con JSON válido",
-      response.status
-    );
+    throw new ApiClientError(response.status, "No se pudo descargar el archivo");
   }
 
-  if (!response.ok || !json.ok) {
-    throw new ApiClientError(
-      json.message || "Error en la solicitud",
-      response.status,
-      json.errors
-    );
-  }
-
-  return json;
+  return response.blob();
 }
