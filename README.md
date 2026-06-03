@@ -922,7 +922,7 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 9. Verificar que la solicitud quedó actualizada.
 10. Cambiar a solicitante para revisar cómo se visualiza el cambio.
 
-## 21. Verificacion en POSTMAN
+## 21. Verificación en POSTMAN
 
 Esta sección detalla cómo validar el funcionamiento del backend utilizando la colección exportada.
 
@@ -934,28 +934,31 @@ Antes de ejecutar las pruebas, asegúrate de que el servidor esté activo:
 ### 21.2 Configuración en Postman
 Para ejecutar la colección `API Proyecto Web y Movil`, realiza estos pasos:
 
-1. Importar: En Postman, ejecuta el comando "Ctrl" + "o" y selecciona el archivo `postman/collections/API Proyecto Web y Movil.json`.
-2. Entorno: Importa también el archivo de entorno `postman/environments/Local - Proyecto Web y Movil.json`.
-3. Selección: Asegúrate de seleccionar el entorno "Local" en el desplegable superior derecho de Postman.
+1. **Importar Colección:** En Postman, ejecuta el comando "Ctrl" + "O" (o haz clic en el botón *Import*). Arrastra directamente la carpeta completa `postman/collections/API Proyecto Web y Movil` hacia la ventana, o usa la opción de seleccionar carpeta (Folder). Postman leerá automáticamente toda la estructura de archivos `.yaml`.
+2. **Importar Entorno:** En la misma ventana de importación, selecciona o arrastra el archivo `postman/environments/Local - Proyecto Web y Movil.environment.yaml`.
+3. **Selección:** Asegúrate de seleccionar el entorno "Local" en el menú desplegable superior derecho de Postman.
 
 ### 21.3 Flujo de pruebas recomendado (Orden de ejecución)
 
 Para demostrar que el backend es seguro y funcional, sigue este orden:
 
-1. Autenticación (Gestión de Token):
+1. **Autenticación (Gestión de Token):**
    - Ejecuta `POST Iniciar Sesión`.
    - Nota: Si el token expira, simplemente vuelve a ejecutar esta petición.
-   - Instrucciones para actualizar: 1. Copia el valor del token desde la respuesta (asegúrate de **NO** incluir las comillas `' '` ni caracteres extra).
-     2. Ve a la pestaña **Environments (parte superior derecha).
+   - Instrucciones para actualizar: 
+     1. Copia el valor del token desde la respuesta (asegúrate de **NO** incluir las comillas `' '` ni caracteres extra).
+     2. Ve a la pestaña **Environments** (parte superior derecha).
      3. Selecciona tu entorno `Local - Proyecto Web y Movil`.
-     4. Pega el nuevo Token en el campo `value` de la variable `token`.
+     4. Pega el nuevo Token en el campo `Current Value` de la variable `token`.
      5. Haz clic en Save.
-     6. Nota: El procedimiento es el mismo cuando se requiere la id de solicitud y de documento.
-2. Solicitudes:
+     6. *Nota: El procedimiento es el mismo cuando se requiere actualizar la variable de id de solicitud y de documento.*
+     
+2. **Solicitudes:**
    - Ejecuta `POST Crear Solicitud` (Asegúrate de tener un archivo cargado en el body de tipo `form-data`).
    - Ejecuta `GET Listar Solicitudes` para verificar que la creación fue persistida.
    - Ejecuta `GET Obtener Solicitud por ID` usando el ID generado en el paso anterior.
-3. Documentos:
+   
+3. **Documentos:**
    - Ejecuta `POST Subir un documento` para probar el manejo de archivos (Multer).
    - Ejecuta `GET Ver Documentos Adjuntos` para confirmar la relación entre solicitud y archivo.
 
