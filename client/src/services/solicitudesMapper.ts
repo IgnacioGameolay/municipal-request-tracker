@@ -17,15 +17,13 @@ export function mapSolicitudApiToSolicitud(api: SolicitudApi): Solicitud {
     id: api.id,
     titulo: api.titulo,
     encargado: api.funcionarioId ? api.funcionarioId : "Sin asignar",
-    // Pasamos la fecha cruda de la base de datos sin manipularla
     fecha: api.createdAt,
     estado: mapEstadoApiToEstadoVisual(api.estado),
     tipo: api.categoria,
     cliente: api.comuna,
     descripcion: api.descripcion,
     descripcionAgregada: api.direccion,
-    comentariosFuncionario: api.comentarioFuncionario,
-    // Pasamos la actualización cruda
+    comentariosFuncionario: api.comentarioFuncionario ?? undefined,
     ultimaRevision: api.updatedAt || api.createdAt,
   };
 }

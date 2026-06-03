@@ -6,7 +6,10 @@ export type EstadoSolicitud =
   | "resuelta"
   | "rechazada";
 
+export type EstadoSolicitudApi = EstadoSolicitud;
+
 export type PrioridadSolicitud = "baja" | "media" | "alta";
+export type PrioridadSolicitudApi = PrioridadSolicitud;
 
 export interface SolicitudApi {
   id: string;
@@ -18,8 +21,8 @@ export interface SolicitudApi {
   comuna: string;
   estado: EstadoSolicitud;
   prioridad: PrioridadSolicitud;
-  comentarioFuncionario?: string;
-  funcionarioId?: string;
+  comentarioFuncionario?: string | null;
+  funcionarioId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,6 +36,8 @@ export interface CrearSolicitudData {
   prioridad?: PrioridadSolicitud;
 }
 
+export type CrearSolicitudPayload = CrearSolicitudData;
+
 export interface ActualizarSolicitudData {
   titulo?: string;
   categoria?: string;
@@ -41,6 +46,8 @@ export interface ActualizarSolicitudData {
   comuna?: string;
   prioridad?: PrioridadSolicitud;
 }
+
+export type ActualizarSolicitudPayload = ActualizarSolicitudData;
 
 export interface CambiarEstadoData {
   estado: EstadoSolicitud;
@@ -53,7 +60,11 @@ export async function obtenerSolicitudes(): Promise<SolicitudApi[]> {
   return response.data ?? [];
 }
 
-export async function obtenerSolicitudPorId(id: string): Promise<SolicitudApi> {
+export const listarSolicitudesApi = obtenerSolicitudes;
+
+export async function obtenerSolicitudPorId(
+  id: string | number,
+): Promise<SolicitudApi> {
   const response = await apiRequest<SolicitudApi>(`/solicitudes/${id}`);
 
   if (!response.data) {
@@ -63,12 +74,14 @@ export async function obtenerSolicitudPorId(id: string): Promise<SolicitudApi> {
   return response.data;
 }
 
+export const obtenerSolicitudApi = obtenerSolicitudPorId;
+
 export async function crearSolicitud(
-  data: CrearSolicitudData
+  data: CrearSolicitudData,
 ): Promise<SolicitudApi> {
   const response = await apiRequest<SolicitudApi>("/solicitudes", {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   if (!response.data) {
@@ -78,13 +91,15 @@ export async function crearSolicitud(
   return response.data;
 }
 
+export const crearSolicitudApi = crearSolicitud;
+
 export async function actualizarSolicitud(
-  id: string,
-  data: ActualizarSolicitudData
+  id: string | number,
+  data: ActualizarSolicitudData,
 ): Promise<SolicitudApi> {
   const response = await apiRequest<SolicitudApi>(`/solicitudes/${id}`, {
     method: "PUT",
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   if (!response.data) {
@@ -94,13 +109,15 @@ export async function actualizarSolicitud(
   return response.data;
 }
 
+export const actualizarSolicitudApi = actualizarSolicitud;
+
 export async function cambiarEstadoSolicitud(
-  id: string,
-  data: CambiarEstadoData
+  id: string | number,
+  data: CambiarEstadoData,
 ): Promise<SolicitudApi> {
   const response = await apiRequest<SolicitudApi>(`/solicitudes/${id}/estado`, {
     method: "PATCH",
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   });
 
   if (!response.data) {
@@ -110,8 +127,48 @@ export async function cambiarEstadoSolicitud(
   return response.data;
 }
 
-export async function eliminarSolicitud(id: string): Promise<void> {
-  await apiRequest<{ id: string }>(`/solicitudes/${id}`, {
-    method: "DELETE"
+export async function actualizarEstadoSolicitudApi(params: {
+  id: string | number;
+  estadoNuevo: string;
+  comentario?: string;
+}): Promise<SolicitudApi> {
+  return cambiarEstadoSolicitud(params.id, {
+    estado: estadoVisualAApi(params.estadoNuevo),
+    comentarioFuncionario: params.comentario,
   });
+}
+
+export async function eliminarSolicitud(id: string | number): Promise<void> {
+  await apiRequest<{ id: string }>(`/solicitudes/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export const eliminarSolicitudApi = eliminarSolicitud;
+
+export function estadoVisualAApi(estado: string): EstadoSolicitud {
+  const normalizado = estado.trim().toLowerCase();
+
+  if (
+    normalizado === "en revisión" ||
+    normalizado === "en revision" ||
+    normalizado === "observado"
+  ) {
+    return "en_revision";
+  }
+
+  if (
+    normalizado === "aprobada" ||
+    normalizado === "aprobado" ||
+    normalizado === "resuelta" ||
+    normalizado === "resuelto"
+  ) {
+    return "resuelta";
+  }
+
+  if (normalizado === "rechazada" || normalizado === "rechazado") {
+    return "rechazada";
+  }
+
+  return "pendiente";
 }

@@ -28,7 +28,7 @@ enum PrioridadSolicitud {
 model Usuario {
   id           String   @id @default(uuid())
   nombre       String
-  rut          String
+  rut          String   @unique
   email        String   @unique
   passwordHash String   @map("password_hash")
   region       String

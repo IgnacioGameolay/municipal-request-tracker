@@ -95,7 +95,7 @@ const RealizarSolicitud: React.FC = () => {
           ),
         });
 
-        solicitudIdParaDocumentos = solicitudActualizada.id;
+        solicitudIdParaDocumentos = solicitudActualizada.id.toString();;
       } else {
         const solicitudCreada = await crearSolicitud({
           titulo: titulo.trim(),
@@ -106,7 +106,7 @@ const RealizarSolicitud: React.FC = () => {
           prioridad: "media",
         });
 
-        solicitudIdParaDocumentos = solicitudCreada.id;
+        solicitudIdParaDocumentos = solicitudCreada.id.toString();;
       }
 
       for (const archivo of archivosPendientes) {

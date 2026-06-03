@@ -19,6 +19,8 @@ interface Props {
   rutaNotificaciones: string;
   rutaPerfil: string;
   onNavegar: (ruta: string) => void;
+  permitirCambioManualRol?: boolean;
+  onCambiarRolManual?: () => void;
 }
 
 const EncabezadoAplicacion: React.FC<Props> = ({

@@ -3,7 +3,7 @@ import { apiRequest } from "./apiClient";
 export interface NotificacionApi {
   id: string;
   usuarioId: string;
-  solicitudId?: string;
+  solicitudId?: string | null;
   titulo: string;
   mensaje: string;
   leida: boolean;
@@ -22,7 +22,7 @@ export async function marcarNotificacionLeida(
   const response = await apiRequest<NotificacionApi>(
     `/notificaciones/${id}/leida`,
     {
-      method: "PATCH"
+      method: "PATCH",
     }
   );
 

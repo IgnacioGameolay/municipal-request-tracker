@@ -83,8 +83,8 @@ export async function descargarDocumentoSolicitud(
     const json = await response.json().catch(() => null);
 
     throw new ApiClientError(
-      json?.message || "No se pudo descargar el documento.",
       response.status,
+      json?.message || "No se pudo descargar el documento.",
       json?.errors,
     );
   }

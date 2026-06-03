@@ -65,21 +65,22 @@ const RegisterPage: React.FC = () => {
 
       const nombreCompleto = `${datosRegistro.nombre} ${datosRegistro.apellido}`.trim();
 
-      await registerApi({
+      // El backend registra al usuario y devuelve la sesión con token JWT.
+      const sesion = await registerApi({
         nombre: nombreCompleto,
         rut: datosRegistro.rut,
         email: datosRegistro.correo,
         password: datosRegistro.password,
         region: datosRegistro.region,
         comuna: datosRegistro.comuna,
-        rol: "ciudadano",
       });
 
       const rolFrontend: Role = "solicitante";
 
-      loginContext(rolFrontend);
+      // Guardamos token, usuario y rol en el contexto global.
+      loginContext(sesion);
 
-      history.push(obtenerRutaInicioPorRol(rolFrontend as RolSesion));
+      history.replace(obtenerRutaInicioPorRol(rolFrontend as RolSesion));
     } catch (error) {
       if (error instanceof ApiClientError) {
         setError(error.message);
