@@ -1,1068 +1,1402 @@
-# Municipal Request Tracker - Gestor de Solicitudes Municipales
+# Municipal Request Tracker
 
-Aplicación web desarrollada con **Ionic + React + TypeScript** para el seguimiento, revisión y comunicación de solicitudes municipales entre solicitantes y funcionarios. El proyecto corresponde a la Entrega Parcial 1 de Ingeniería Web y Móvil, centrada en frontend, navegación, prototipado funcional, roles, experiencia de usuario y organización modular del código.
+Sistema web y móvil híbrido para la gestión, seguimiento y revisión de solicitudes municipales.
 
+**Asignatura:** Ingeniería Web y Móvil - ICI4247  
+**Entrega:** Entrega Parcial 2 - Integración Frontend + Backend y Autenticación  
+**Frontend:** Ionic + React + TypeScript  
+**Backend:** Node.js + Express + TypeScript  
+**Base de datos:** PostgreSQL + Prisma ORM  
+**Autenticación:** JWT + bcrypt  
+**Pruebas API:** Postman
 
+---
 
-## 1. Descripción general del proyecto
+## Índice
 
-Municipal Request Tracker es un prototipo funcional de una plataforma de gestión de solicitudes municipales. Su propósito es mejorar la comunicación entre los municipios y las personas solicitantes durante el proceso de revisión de trámites, especialmente cuando una solicitud requiere correcciones, documentación adicional, aclaraciones o cuando es rechazada/anulada.
+1. [Descripción general](#1-descripción-general)
+2. [Problema abordado](#2-problema-abordado)
+3. [Objetivo del sistema](#3-objetivo-del-sistema)
+4. [Alcance de la Entrega Parcial 2](#4-alcance-de-la-entrega-parcial-2)
+5. [Usuarios y roles](#5-usuarios-y-roles)
+6. [Funcionalidades implementadas](#6-funcionalidades-implementadas)
+7. [Requerimientos funcionales y no funcionales](#7-requerimientos-funcionales-y-no-funcionales)
+8. [Tecnologías utilizadas](#8-tecnologías-utilizadas)
+9. [Arquitectura general](#9-arquitectura-general)
+10. [Estructura del proyecto](#10-estructura-del-proyecto)
+11. [Modelo de datos](#11-modelo-de-datos)
+12. [Estados de una solicitud](#12-estados-de-una-solicitud)
+13. [API REST](#13-api-rest)
+14. [Autenticación, autorización y seguridad](#14-autenticación-autorización-y-seguridad)
+15. [Integración frontend-backend](#15-integración-frontend-backend)
+16. [Instalación y ejecución](#16-instalación-y-ejecución)
+17. [Usuarios demo](#17-usuarios-demo)
+18. [Flujos recomendados de demostración](#18-flujos-recomendados-de-demostración)
+19. [Pruebas en Postman](#19-pruebas-en-postman)
+20. [Material adicional de entrega](#20-material-adicional-de-entrega)
+21. [Comandos útiles](#21-comandos-útiles)
+22. [Solución de problemas comunes](#22-solución-de-problemas-comunes)
+23. [Limitaciones actuales](#23-limitaciones-actuales)
+24. [Proyección para la entrega final](#24-proyección-para-la-entrega-final)
+25. [Cumplimiento de pauta EP2](#25-cumplimiento-de-pauta-ep2)
+26. [Integrantes](#26-integrantes)
 
-El sistema permite que una persona solicitante cree solicitudes, consulte su historial, revise el estado de sus trámites, acceda a observaciones realizadas por funcionarios, vea notificaciones y consulte canales de contacto. Por otra parte, permite que un funcionario municipal revise solicitudes, actualice estados, registre comentarios y deje trazabilidad de las revisiones realizadas.
+---
 
-El proyecto se diseñó tomando como referencia una problemática real frecuente en servicios municipales: la falta de información clara y oportuna sobre el avance de trámites, documentación faltante y razones de rechazo.
+## 1. Descripción general
 
+**Municipal Request Tracker** es una aplicación full-stack orientada al seguimiento, gestión y revisión de solicitudes municipales. Su propósito es entregar una plataforma donde ciudadanos o solicitantes puedan registrar solicitudes, adjuntar documentos, consultar estados, recibir notificaciones y revisar comentarios de funcionarios municipales.
 
+Por otra parte, el sistema permite que funcionarios municipales visualicen solicitudes ingresadas, revisen antecedentes, cambien estados, registren observaciones y mantengan trazabilidad sobre cada expediente.
+
+La versión actual corresponde a la **Entrega Parcial 2**, por lo que el foco principal está en:
+
+- implementación del backend;
+- conexión frontend-backend;
+- autenticación con JWT;
+- base de datos relacional;
+- API REST;
+- consumo de la API desde Ionic React;
+- validaciones, roles, bcrypt y pruebas en Postman.
+
+---
 
 ## 2. Problema abordado
 
-En muchos procesos municipales, los solicitantes no reciben información clara, oportuna y trazable sobre el estado de sus solicitudes. Cuando falta documentación, una solicitud queda pendiente o es rechazada, la persona interesada suele enterarse tarde, de forma incompleta o mediante canales informales como llamadas, correos aislados o visitas presenciales.
+En muchos procesos municipales, las personas no cuentan con un canal claro y trazable para conocer el estado de sus solicitudes. Esto provoca incertidumbre, visitas presenciales innecesarias, dependencia de correos aislados y dificultad para saber si falta documentación o si una solicitud fue revisada.
 
-Esta situación produce varios problemas:
+El problema se manifiesta principalmente en:
 
-- Incertidumbre sobre el estado real de una solicitud.
-- Dificultad para saber qué documento falta o qué corrección debe realizarse.
-- Aumento de visitas presenciales innecesarias al municipio.
-- Mayor carga operativa para funcionarios, que deben responder consultas repetidas.
-- Falta de trazabilidad de observaciones, revisiones y cambios de estado.
-- Pérdida de tiempo para ciudadanos, emprendedores y pequeñas empresas que dependen de estos trámites para operar.
+- falta de visibilidad sobre el estado real del trámite;
+- ausencia de notificaciones centralizadas;
+- poca trazabilidad de comentarios y revisiones;
+- dificultad para adjuntar o revisar documentación asociada;
+- mayor carga operativa para funcionarios municipales;
+- experiencia poco clara para usuarios con conocimientos digitales básicos.
 
-El sistema propuesto busca mejorar esta situación mediante una interfaz clara de seguimiento, historial, notificaciones, comentarios de revisión y actualización de estados.
+La aplicación busca resolver este problema mediante una plataforma web/móvil híbrida donde cada solicitud tiene estado, historial, documentos, notificaciones y responsables asociados.
 
-
+---
 
 ## 3. Objetivo del sistema
 
-Diseñar e implementar un prototipo frontend de una aplicación web para gestionar solicitudes municipales, permitiendo que solicitantes y funcionarios interactúen con el estado de los trámites de forma ordenada, trazable y comprensible.
+### Objetivo general
+
+Implementar una aplicación web/móvil híbrida que permita gestionar solicitudes municipales mediante un frontend Ionic React conectado a una API REST con autenticación JWT y persistencia en una base de datos relacional PostgreSQL.
 
 ### Objetivos específicos
 
-- Permitir que el solicitante cree y consulte solicitudes municipales.
-- Mostrar el estado actual de cada solicitud mediante etiquetas visuales.
-- Permitir que el funcionario revise solicitudes y actualice su estado.
-- Registrar comentarios del funcionario asociados a una revisión.
-- Mostrar historial de revisiones y última revisión realizada.
-- Facilitar la consulta de requisitos y canales de contacto.
-- Diferenciar la navegación y funcionalidades según rol.
-- Implementar rutas públicas y rutas protegidas mediante React Router.
-- Modularizar la interfaz en componentes reutilizables.
-- Separar responsabilidades entre dominio, aplicación, infraestructura, componentes y páginas.
+- Permitir el registro e inicio de sesión de usuarios.
+- Diferenciar acceso según rol: ciudadano/solicitante y funcionario municipal.
+- Permitir que ciudadanos creen, consulten, editen y eliminen solicitudes según reglas de negocio.
+- Permitir que funcionarios revisen solicitudes y actualicen su estado.
+- Adjuntar, listar, descargar y eliminar documentos asociados a una solicitud.
+- Generar y consultar notificaciones relacionadas con solicitudes.
+- Mantener trazabilidad mediante historial de acciones en base de datos.
+- Exponer una API REST con respuestas JSON estructuradas.
+- Validar entradas, proteger rutas y manejar errores HTTP adecuados.
+- Documentar y probar endpoints con Postman.
 
+---
 
+## 4. Alcance de la Entrega Parcial 2
 
-## 4. [MODIFICADO] Alcance Actual del Proyecto
+Esta entrega incluye el paso desde una maqueta/prototipo frontend hacia una aplicación full-stack funcional.
 
-Esta entrega abarca tanto el desarrollo frontend del sistema como la implementación de un backend funcional, superando la fase inicial de persistencia simulada temporal.
+### Incluido en esta versión
 
-### Incluido actualmente
+- Frontend en **Ionic + React + TypeScript**.
+- Backend en **Node.js + Express + TypeScript**.
+- Base de datos relacional **PostgreSQL**.
+- ORM **Prisma** para modelado, migraciones y acceso a datos.
+- Autenticación real con **JWT**.
+- Contraseñas protegidas con **bcrypt**.
+- Rutas protegidas en frontend y backend.
+- Diferenciación de roles entre ciudadano y funcionario.
+- CRUD de solicitudes.
+- Cambio de estado por funcionario.
+- Notificaciones persistidas en base de datos.
+- Documentos adjuntos con Multer.
+- Catálogo de trámites servido desde API.
+- Listado de funcionarios servido desde API.
+- Colección Postman con endpoints principales y pruebas negativas.
+- Modelo relacional incluido en carpeta `otros/`.
 
-- Proyecto Ionic React con TypeScript.
-- Rutas públicas y protegidas en el frontend.
-- Separación estricta de roles validados desde el backend (Solicitante y Funcionario Municipal).
-- Autenticación real con JWT y encriptación de contraseñas.
-- Backend en Node.js con Express y Prisma ORM.
-- Base de datos relacional real en PostgreSQL.
-- Creación, edición, listado, detalle y eliminación de solicitudes (CRUD completo en BD).
-- Subida y descarga real de archivos al servidor mediante Multer.
-- Bandeja e historial de gestión real para el funcionario.
-- Cambio de estado y registro de comentarios persistidos en PostgreSQL.
-- Historial de revisiones automatizado en el servidor.
-- Notificaciones simuladas en frontend (estructura base para futura integración real).
-- Consulta de información sobre requisitos de trámites.
-- Contacto y ayuda con funcionarios simulados.
-- Colección de pruebas en Postman documentada con flujos reales.
-- Refactorización modular por carpetas de dominio, aplicación, infraestructura, componentes y páginas.
+### No incluido en esta versión
 
-### No incluido en esta entrega
+- Despliegue con Docker.
+- Servicio externo municipal real.
+- Clave Única u OAuth externo.
+- Correos reales para recuperación de contraseña.
+- WebSockets o notificaciones push en tiempo real.
+- Panel administrador avanzado.
 
-- Envío real de correos electrónicos para recuperación de contraseña.
-- Gestión avanzada de permisos multisucursal.
-- Integración con servicios municipales externos (RUT, Clave Única, etc.).
-- Notificaciones push o WebSockets en tiempo real.
+---
 
-
-## 5. Usuarios objetivo
-
-### 5.1 Solicitante
-
-Persona natural, emprendedor, representante de pyme o ciudadano que realiza una solicitud municipal y necesita conocer su estado. Puede tener nivel digital básico o intermedio, por lo que la interfaz debe ser clara, directa y fácil de usar.
-
-Necesidades principales:
-
-- Crear una solicitud.
-- Ver el estado de sus solicitudes.
-- Saber si falta documentación.
-- Revisar comentarios del funcionario.
-- Consultar el historial de revisiones.
-- Acceder a canales de contacto.
-- Conocer requisitos por tipo de trámite.
-- Recibir notificaciones simuladas sobre cambios relevantes.
-
-### 5.2 Funcionario Municipal
-
-Persona encargada de revisar solicitudes ingresadas al sistema, actualizar estados y registrar observaciones. Necesita una vista organizada que le permita gestionar múltiples solicitudes de forma eficiente.
-
-Necesidades principales:
-
-- Consultar solicitudes disponibles para revisión.
-- Filtrar solicitudes por estado, fecha, título, tipo o identificador.
-- Revisar el detalle de una solicitud.
-- Registrar comentarios u observaciones.
-- Cambiar el estado de una solicitud.
-- Rechazar una solicitud cuando corresponda.
-- Dejar trazabilidad de la revisión realizada.
-- Consultar historial de solicitudes desde la vista de gestión.
-
-
-
-## 6. Roles del sistema
+## 5. Usuarios y roles
 
 El sistema considera dos roles principales.
 
-| Rol | Descripción | Acceso principal |
-|---|---|---|
-| Solicitante | Usuario que crea y consulta solicitudes municipales. | Perfil, nueva solicitud, historial, detalle, notificaciones, contacto, información de solicitudes. |
-| Funcionario Municipal | Usuario que revisa solicitudes y actualiza estados. | Perfil funcionario, bandeja, historial, revisión de solicitud, notificaciones. |
-
-En esta entrega, el control de sesión y rol se simula mediante `AuthContext` y `localStorage`. El rol se guarda bajo la clave `rol_actual` y solo se consideran válidos los valores:
-
-```txt
-solicitante
-funcionario
-```
-
-El cambio manual de rol se mantiene como apoyo prototipal para la demostración. Actualmente se gestiona desde el encabezado común, cambiando el rol y redirigiendo a la pantalla inicial correspondiente:
-
-```txt
-solicitante  -> /funcionario/tramites
-funcionario  -> /ciudadano/tramites
-```
-
-En una versión productiva, este mecanismo debe ser reemplazado por autenticación real y control de permisos desde backend.
-
-
-
-## 7. Requerimientos funcionales considerados
-
-| ID | Requerimiento funcional | Rol principal | Estado en prototipo |
+| Rol frontend | Rol backend | Descripción | Acceso principal |
 |---|---|---|---|
-| RF01 | Registrar y consultar solicitudes municipales. | Solicitante | Implementado en frontend. |
-| RF02 | Visualizar estado actual de una solicitud. | Solicitante / Funcionario | Implementado con etiquetas de estado. |
-| RF03 | Crear una nueva solicitud. | Solicitante | Implementado con formulario. |
-| RF04 | Editar o complementar información de una solicitud. | Solicitante | Implementado mediante vista de edición. |
-| RF05 | Consultar historial de solicitudes realizadas. | Solicitante | Implementado con tabla, filtros y acciones. |
-| RF06 | Recibir notificaciones sobre cambios de estado. | Solicitante | Implementado con datos simulados. |
-| RF07 | Visualizar comentarios u observaciones del funcionario. | Solicitante | Implementado en detalle de solicitud. |
-| RF08 | Revisar solicitudes ingresadas. | Funcionario | Implementado en bandeja e historial. |
-| RF09 | Actualizar estado de una solicitud. | Funcionario | Implementado con modal de cambio de estado. |
-| RF10 | Rechazar una solicitud. | Funcionario | Implementado con modal de confirmación. |
-| RF11 | Registrar historial de revisión. | Funcionario / Solicitante | Implementado con `historialRevisiones`. |
-| RF12 | Consultar requisitos por tipo de solicitud. | Solicitante | Implementado en Información sobre solicitudes. |
-| RF13 | Consultar canales de contacto y ayuda. | Solicitante | Implementado en Contacto. |
-| RF14 | Recuperar contraseña de forma prototipal. | Usuario público | Implementado con validaciones locales. |
-| RF15 | Registrar cuenta de usuario de forma prototipal. | Usuario público | Implementado con validaciones locales. |
+| `solicitante` | `ciudadano` | Usuario que crea y consulta solicitudes municipales. | Perfil, nueva solicitud, historial, detalle, notificaciones, contacto e información de trámites. |
+| `funcionario` | `funcionario` | Usuario municipal que revisa, gestiona y actualiza solicitudes. | Perfil, bandeja, historial, revisión de solicitud y notificaciones. |
 
-
-
-## 8. Requerimientos no funcionales considerados
-
-| ID | Requerimiento no funcional | Aplicación en el prototipo |
-|---|---|---|
-| RNF01 | Usabilidad | Interfaz con menús, filtros, botones claros, etiquetas de estado y formularios simples. |
-| RNF02 | Consistencia visual | Uso de encabezado común, contenedor de página, colores por rol y componentes Ionic. |
-| RNF03 | Trazabilidad | Registro de última revisión, estado nuevo, funcionario responsable y comentarios. |
-| RNF04 | Separación por roles | Rutas protegidas y menús diferenciados para solicitante y funcionario. |
-| RNF05 | Mantenibilidad | Organización por carpetas `dominio`, `aplicacion`, `infraestructura`, `components`, `pages`, `routes` y `context`. |
-| RNF06 | Rendimiento percibido | Datos locales simulados para navegación rápida durante el prototipo. |
-| RNF07 | Escalabilidad futura | Estructura preparada para reemplazar `localStorage` por API REST y base de datos. |
-| RNF08 | Legibilidad | Refactorización de pantallas grandes en componentes y casos de uso más pequeños. |
-
-
-
-## 9. Tecnologías utilizadas
-
-| Tecnología | Uso |
-|---|---|
-| Ionic Framework | Componentes visuales y estructura de aplicación web/móvil. |
-| React | Construcción de interfaces mediante componentes. |
-| TypeScript | Tipado de props, estados, entidades, casos de uso y rutas. |
-| React Router | Definición de rutas públicas y protegidas. |
-| IonReactRouter | Integración de Ionic con React Router. |
-| localStorage | Persistencia simulada para solicitudes, rol y sesión en EP1. |
-| Vite | Herramienta de desarrollo y construcción del frontend. |
-| Node.js / npm | Gestión de dependencias y scripts del proyecto. |
-| CSS inline / estilos Ionic | Ajustes visuales rápidos y consistencia con los mockups. |
-
-
-
-## 10. Estructura actual del frontend
-
-La estructura actual del frontend fue refactorizada para separar responsabilidades. La organización principal bajo `client/src` es la siguiente:
-
-```txt
-src/
-├── App.tsx
-├── main.tsx
-├── aplicacion/
-│   └── casosDeUso/
-│       ├── actualizarEstadoSolicitud.ts
-│       ├── crearSolicitud.ts
-│       ├── editarSolicitud.ts
-│       ├── eliminarSolicitud.ts
-│       ├── filtrarHistorialFuncionario.ts
-│       ├── filtrarSolicitudesFuncionario.ts
-│       ├── obtenerRutaInicioPorRol.ts
-│       └── prepararSolicitudNotificacion.ts
-├── components/
-│   ├── MenuCiudadano.tsx
-│   ├── MenuFuncionario.tsx
-│   ├── auth/
-│   │   ├── CampoAuthConEtiqueta.tsx
-│   │   ├── CampoRegistro.tsx
-│   │   ├── CodigoVerificacion.tsx
-│   │   ├── EncabezadoAuth.tsx
-│   │   ├── FormularioCambiarPassword.tsx
-│   │   ├── FormularioLogin.tsx
-│   │   └── FormularioRegistro.tsx
-│   ├── ciudadano/
-│   │   ├── AvatarContactoFuncionario.tsx
-│   │   ├── AvatarSolicitante.tsx
-│   │   ├── CampoContactoFuncionario.tsx
-│   │   ├── CampoDatoSolicitante.tsx
-│   │   ├── DocumentosRequeridosTramite.tsx
-│   │   ├── FilaDatoEmpresa.tsx
-│   │   ├── ListaContactosFuncionarios.tsx
-│   │   ├── ResumenInformacionTramite.tsx
-│   │   ├── SelectorTipoTramite.tsx
-│   │   ├── TarjetaContactoFuncionario.tsx
-│   │   ├── TarjetaEmpresaSolicitante.tsx
-│   │   └── TarjetaPerfilSolicitante.tsx
-│   ├── common/
-│   │   ├── BarraRol.tsx
-│   │   ├── ColorEstado.tsx
-│   │   ├── ContenedorPagina.tsx
-│   │   ├── EncabezadoAplicacion.tsx
-│   │   └── LogoMunicipal.tsx
-│   ├── funcionario/
-│   │   ├── AvatarFuncionario.tsx
-│   │   ├── CampoDatoFuncionario.tsx
-│   │   ├── FilaBandejaFuncionario.tsx
-│   │   ├── FilaHistorialFuncionario.tsx
-│   │   ├── FiltrosBandejaFuncionario.tsx
-│   │   ├── FiltrosHistorialFuncionario.tsx
-│   │   ├── TablaBandejaFuncionario.tsx
-│   │   ├── TablaHistorialFuncionario.tsx
-│   │   └── TarjetaPerfilFuncionario.tsx
-│   ├── notificaciones/
-│   │   ├── ItemNotificacion.tsx
-│   │   └── ListaNotificacion.tsx
-│   └── solicitudes/
-│       ├── AccionesEnFomularioSolicitud.tsx
-│       ├── ComentariosSolicitud.tsx
-│       ├── DocumentacionSolicitud.tsx
-│       ├── FilaSolicitud.tsx
-│       ├── FiltrarSolicitudes.tsx
-│       ├── FormularioCrearYEditarSolicitudes.tsx
-│       ├── FormularioSolicitud.tsx
-│       ├── ModalCambioDeEstado.tsx
-│       ├── ModalEliminarSolicitud.tsx
-│       ├── ModalSolicitudRechazada.tsx
-│       ├── ResumenSolicitud.tsx
-│       ├── RevisionSolicitud.tsx
-│       └── TablaSolicitudes.tsx
-├── context/
-│   └── AuthContext.tsx
-├── dominio/
-│   ├── constantes/
-│   │   ├── estadosSolicitud.ts
-│   │   └── roles.ts
-│   ├── entidades/
-│   │   ├── ContactoFuncionario.ts
-│   │   ├── Funcionario.ts
-│   │   ├── HistorialRevision.ts
-│   │   ├── InformacionTramite.ts
-│   │   ├── Notificacion.ts
-│   │   ├── Solicitante.ts
-│   │   └── Solicitud.ts
-│   └── reglas/
-│       ├── formatearFecha.ts
-│       ├── normalizarEstado.ts
-│       ├── validarFormularioSolicitud.ts
-│       ├── validarLogin.ts
-│       ├── validarRecuperacionPassword.ts
-│       └── validarRegistro.ts
-├── infraestructura/
-│   ├── almacenamiento/
-│   │   ├── clavesAlmacenamiento.ts
-│   │   └── repositorioLocalSolicitudes.ts
-│   └── simulacionDatos/
-│       ├── contactosFuncionariosSimulados.ts
-│       ├── funcionariosSimulados.ts
-│       ├── informacionTramitesSimulados.ts
-│       ├── notificacionesSimuladas.ts
-│       ├── solicitantesSimulados.ts
-│       └── solicitudesSimuladas.ts
-├── pages/
-│   ├── auth/
-│   │   ├── CambiarPassword.tsx
-│   │   ├── LoginPage.tsx
-│   │   └── RegisterPage.tsx
-│   ├── ciudadano/
-│   │   ├── ContactoCiudadano.tsx
-│   │   ├── DashboardCiudadano.tsx
-│   │   ├── DetalleSolicitud.tsx
-│   │   ├── InfoSolicitudes.tsx
-│   │   ├── NotificacionesCiudadano.tsx
-│   │   ├── RealizarSolicitud.tsx
-│   │   └── SolicitudesRealizadas.tsx
-│   └── funcionario/
-│       ├── BandejaFuncionario.tsx
-│       ├── DashboardFuncionario.tsx
-│       ├── HistorialFuncionario.tsx
-│       ├── NotificacionesFuncionario.tsx
-│       └── RevisarSolicitudFuncionario.tsx
-├── routes/
-│   ├── AppRouter.tsx
-│   └── ProtectedRoute.tsx
-├── services/
-│   ├── authService.ts
-│   └── solicitudesService.ts
-└── theme/
-    └── variables.css
-```
-
-
-
-## 11. Arquitectura frontend actual
-
-La aplicación está organizada con una arquitectura frontend simple, pero más ordenada que una estructura basada solo en páginas. La separación actual permite que las vistas principales sean más pequeñas y que la lógica repetida esté centralizada.
-
-### 11.1 Capas principales
-
-| Capa | Responsabilidad |
-|---|---|
-| `pages` | Contienen las vistas principales del sistema y coordinan navegación, estado local y componentes. |
-| `components` | Contienen elementos reutilizables de interfaz: encabezados, formularios, tablas, tarjetas, modales y menús. |
-| `dominio/entidades` | Define las interfaces principales del sistema. |
-| `dominio/reglas` | Contiene validaciones, normalización de estados y formateo de fechas. |
-| `dominio/constantes` | Define roles y estados permitidos. |
-| `aplicacion/casosDeUso` | Agrupa operaciones del sistema como crear, editar, eliminar, filtrar y actualizar solicitudes. |
-| `infraestructura/almacenamiento` | Encapsula el acceso a `localStorage`. |
-| `infraestructura/simulacionDatos` | Contiene los datos simulados usados en EP1. |
-| `routes` | Centraliza rutas públicas, rutas protegidas y redirecciones por rol. |
-| `context` | Maneja sesión y rol actual mediante `AuthContext`. |
-
-### 11.2 Decisión de uso de `localStorage`
-
-Para EP1 se utiliza `localStorage` como mecanismo de persistencia temporal. Esta decisión permite demostrar flujos completos sin depender todavía de backend.
-
-Actualmente se usa para:
-
-- Guardar el rol actual (`rol_actual`).
-- Simular sesión iniciada.
-- Guardar solicitudes creadas o modificadas.
-- Actualizar estados.
-- Registrar comentarios del funcionario.
-- Mantener historial de revisiones.
-- Conservar datos durante la navegación y recarga del navegador.
-
-Las claves de almacenamiento están centralizadas en:
-
-```txt
-src/infraestructura/almacenamiento/clavesAlmacenamiento.ts
-```
-
-La clave principal para solicitudes es:
-
-```txt
-solicitudes_db
-```
-
-
-
-## 12. Modelo de datos simulado
-
-### 12.1 Solicitud
-
-Las solicitudes se trabajan mediante la entidad `Solicitud`:
+La conversión entre nombres de rol se realiza en el frontend, porque la interfaz usa el concepto de **solicitante**, mientras que la base de datos usa el enum **ciudadano**.
 
 ```ts
-interface Solicitud {
-  id: number;
-  titulo: string;
-  encargado: string;
-  fecha: string;
-  estado: string;
-  tipo?: string;
-  cliente?: string;
-  descripcion?: string;
-  descripcionAgregada?: string;
-  comentariosFuncionario?: string;
-  ultimaRevision?: string;
-  historialRevisiones?: HistorialRevision[];
+ciudadano   -> solicitante
+funcionario -> funcionario
+```
+
+---
+
+## 6. Funcionalidades implementadas
+
+### 6.1 Funcionalidades para ciudadano/solicitante
+
+- Registro de usuario.
+- Inicio de sesión.
+- Visualización de perfil con datos reales del usuario autenticado.
+- Creación de nueva solicitud.
+- Selección dinámica del tipo de trámite desde API.
+- Adjuntar documentos al expediente.
+- Consulta de historial de solicitudes propias.
+- Filtros por ID, tipo, estado, fecha y título.
+- Refresco de solicitudes desde API sin recargar manualmente la página.
+- Consulta de detalle de una solicitud.
+- Visualización de comentarios del funcionario.
+- Edición de solicitudes pendientes.
+- Eliminación de solicitudes pendientes.
+- Bloqueo de edición/eliminación si la solicitud ya está en revisión, resuelta o rechazada.
+- Consulta de notificaciones.
+- Marcado de notificaciones como leídas.
+- Consulta de información de trámites.
+- Consulta de contactos de funcionarios.
+
+### 6.2 Funcionalidades para funcionario
+
+- Inicio de sesión como funcionario.
+- Visualización de perfil funcionario.
+- Bandeja de solicitudes.
+- Historial de solicitudes.
+- Filtros por número, identificador, fecha, estado, título y cliente/comuna.
+- Refresco de bandeja e historial desde API sin F5.
+- Revisión de detalle de solicitud.
+- Visualización de documentos adjuntos.
+- Descarga de documentos.
+- Cambio de estado de solicitud.
+- Registro de comentario de funcionario.
+- Notificación al ciudadano por cambio de estado.
+- Consulta de notificaciones recibidas.
+- Marcado de notificaciones como leídas.
+
+### 6.3 Funcionalidades transversales
+
+- Manejo de sesión con JWT.
+- Limpieza de sesión cuando el token expira o es inválido.
+- Rutas protegidas por rol.
+- Respuestas de API estandarizadas.
+- Validaciones de entrada en backend.
+- Manejo de códigos HTTP.
+- Persistencia real en PostgreSQL.
+- Trazabilidad mediante historial de acciones.
+
+---
+
+## 7. Requerimientos funcionales y no funcionales
+
+### 7.1 Requerimientos funcionales
+
+| ID | Requerimiento | Rol | Estado |
+|---|---|---|---|
+| RF01 | Registrar usuario. | Público | Implementado. |
+| RF02 | Iniciar sesión. | Público | Implementado. |
+| RF03 | Validar sesión actual. | Usuario autenticado | Implementado mediante `/auth/me`. |
+| RF04 | Crear solicitud municipal. | Ciudadano | Implementado. |
+| RF05 | Listar solicitudes propias. | Ciudadano | Implementado. |
+| RF06 | Listar todas las solicitudes. | Funcionario | Implementado. |
+| RF07 | Ver detalle de solicitud. | Ciudadano/Funcionario | Implementado con control de permisos. |
+| RF08 | Editar solicitud pendiente. | Ciudadano | Implementado. |
+| RF09 | Eliminar solicitud pendiente. | Ciudadano | Implementado. |
+| RF10 | Cambiar estado de solicitud. | Funcionario | Implementado. |
+| RF11 | Registrar comentario de revisión. | Funcionario | Implementado. |
+| RF12 | Subir documentos. | Ciudadano/Funcionario autorizado | Implementado. |
+| RF13 | Listar documentos. | Ciudadano/Funcionario autorizado | Implementado. |
+| RF14 | Descargar documentos. | Ciudadano/Funcionario autorizado | Implementado. |
+| RF15 | Eliminar documentos. | Ciudadano/Funcionario autorizado | Implementado. |
+| RF16 | Ver notificaciones. | Usuario autenticado | Implementado. |
+| RF17 | Marcar notificación como leída. | Usuario autenticado dueño de la notificación | Implementado. |
+| RF18 | Listar funcionarios de contacto. | Usuario autenticado | Implementado. |
+| RF19 | Listar catálogo de trámites. | Usuario autenticado | Implementado. |
+
+### 7.2 Requerimientos no funcionales
+
+| ID | Requerimiento | Evidencia |
+|---|---|---|
+| RNF01 | Usabilidad | Menús por rol, formularios claros, filtros, estados visuales y navegación protegida. |
+| RNF02 | Seguridad | JWT, bcrypt, validación de token, control por rol y Prisma ORM. |
+| RNF03 | Mantenibilidad | Separación entre `pages`, `components`, `services`, `routes`, `context`, `controllers`, `routes`, `middlewares` y `prisma`. |
+| RNF04 | Trazabilidad | Tabla `historial_solicitudes` para acciones relevantes. |
+| RNF05 | Integridad de datos | Relaciones y restricciones en Prisma/PostgreSQL. |
+| RNF06 | Manejo de errores | Respuestas JSON estructuradas con `ok`, `message`, `data` y `errors`. |
+| RNF07 | Rendimiento básico | Filtros en frontend sobre datos actualizados desde API y consultas ordenadas por fecha. |
+| RNF08 | Escalabilidad inicial | Arquitectura separada en frontend y backend, lista para futuras integraciones. |
+
+---
+
+## 8. Tecnologías utilizadas
+
+### Frontend
+
+- Ionic React.
+- React 19.
+- TypeScript.
+- React Router DOM v5.
+- Ionicons.
+- Vite.
+- Capacitor.
+- CSS modular por componentes.
+
+### Backend
+
+- Node.js.
+- Express.
+- TypeScript.
+- Prisma ORM.
+- PostgreSQL.
+- JWT.
+- bcrypt.
+- Multer.
+- CORS.
+- dotenv.
+
+### Desarrollo y pruebas
+
+- npm.
+- Git/GitHub.
+- Postman.
+- Prisma Studio.
+- Cypress/Vitest configurados desde el template Ionic.
+
+---
+
+## 9. Arquitectura general
+
+El sistema usa una arquitectura cliente-servidor con separación entre frontend, backend y base de datos.
+
+```txt
+Usuario
+  │
+  ▼
+Frontend Ionic React
+  │
+  │ fetch / Bearer Token JWT
+  ▼
+Backend Express API REST
+  │
+  │ Prisma ORM
+  ▼
+PostgreSQL
+```
+
+### 9.1 Frontend
+
+El frontend se encarga de:
+
+- renderizar las pantallas;
+- administrar sesión local del usuario;
+- proteger rutas según rol;
+- consumir la API mediante servicios centralizados;
+- mostrar errores y mensajes;
+- enviar formularios y archivos al backend.
+
+### 9.2 Backend
+
+El backend se encarga de:
+
+- autenticar usuarios;
+- generar y validar JWT;
+- validar permisos por rol;
+- exponer endpoints REST;
+- validar datos de entrada;
+- acceder a PostgreSQL mediante Prisma;
+- manejar archivos con Multer;
+- registrar historial y notificaciones.
+
+### 9.3 Base de datos
+
+La base de datos PostgreSQL almacena:
+
+- usuarios;
+- solicitudes;
+- documentos;
+- notificaciones;
+- historial de acciones;
+- mensajes asociados a solicitudes.
+
+---
+
+## 10. Estructura del proyecto
+
+```txt
+municipal-request-tracker/
+│
+├── client/                         # Frontend Ionic React
+│   ├── src/
+│   │   ├── components/             # Componentes reutilizables
+│   │   ├── context/                # AuthContext
+│   │   ├── dominio/                # Entidades, constantes y reglas frontend
+│   │   ├── pages/                  # Pantallas principales
+│   │   ├── routes/                 # Rutas y ProtectedRoute
+│   │   ├── services/               # Consumo API
+│   │   ├── theme/                  # Variables de tema Ionic
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── .env.development
+│   ├── package.json
+│   └── ionic.config.json
+│
+├── server/                         # Backend Express
+│   ├── prisma/
+│   │   ├── schema.prisma           # Modelo relacional Prisma
+│   │   ├── seed.ts                 # Usuarios demo
+│   │   └── migrations/             # Migraciones
+│   ├── src/
+│   │   ├── config/                 # Cliente Prisma
+│   │   ├── controllers/            # Lógica de endpoints
+│   │   ├── middlewares/            # Auth, roles y errores
+│   │   ├── models/                 # Tipos/constantes backend
+│   │   ├── routes/                 # Definición de rutas REST
+│   │   ├── utils/                  # Respuestas estándar
+│   │   ├── app.ts                  # Configuración Express
+│   │   └── server.ts               # Inicio del servidor
+│   ├── uploads/                    # Archivos subidos
+│   ├── .env.example
+│   └── package.json
+│
+├── postman/                        # Colección y entorno Postman en YAML
+├── otros/                          # Diagramas, mockups y evidencias
+├── misc/                           # Diagramas adicionales
+└── README.md                       # Documento principal del proyecto
+```
+
+---
+
+## 11. Modelo de datos
+
+El modelo principal está definido en:
+
+```txt
+server/prisma/schema.prisma
+```
+
+Además, el diagrama relacional está incluido en:
+
+```txt
+otros/modelo-relacional.png
+```
+
+### 11.1 Entidades principales
+
+#### Usuario
+
+Representa a ciudadanos y funcionarios.
+
+Campos principales:
+
+- `id`
+- `nombre`
+- `rut`
+- `email`
+- `passwordHash`
+- `region`
+- `comuna`
+- `rol`
+- `createdAt`
+
+Relaciones:
+
+- un usuario ciudadano puede crear muchas solicitudes;
+- un funcionario puede gestionar muchas solicitudes;
+- un usuario puede subir documentos;
+- un usuario puede recibir notificaciones;
+- un usuario puede ejecutar acciones de historial.
+
+#### Solicitud
+
+Representa una solicitud municipal.
+
+Campos principales:
+
+- `id`
+- `usuarioId`
+- `funcionarioId`
+- `titulo`
+- `categoria`
+- `descripcion`
+- `direccion`
+- `comuna`
+- `estado`
+- `prioridad`
+- `comentarioFuncionario`
+- `createdAt`
+- `updatedAt`
+
+Relaciones:
+
+- pertenece a un ciudadano;
+- puede estar asignada a un funcionario;
+- puede tener documentos;
+- puede generar notificaciones;
+- tiene historial de acciones;
+- puede tener mensajes asociados.
+
+#### DocumentoSolicitud
+
+Representa un archivo subido a una solicitud.
+
+Campos principales:
+
+- `id`
+- `solicitudId`
+- `subidoPorUsuarioId`
+- `nombreOriginal`
+- `nombreAlmacenado`
+- `mimeType`
+- `sizeBytes`
+- `ruta`
+- `hashArchivo`
+- `createdAt`
+
+#### Notificacion
+
+Representa una notificación dirigida a un usuario.
+
+Campos principales:
+
+- `id`
+- `usuarioId`
+- `solicitudId`
+- `titulo`
+- `mensaje`
+- `leida`
+- `createdAt`
+
+#### HistorialSolicitud
+
+Registra trazabilidad de acciones relevantes.
+
+Campos principales:
+
+- `id`
+- `solicitudId`
+- `usuarioActorId`
+- `accion`
+- `estadoAnterior`
+- `estadoNuevo`
+- `comentario`
+- `createdAt`
+
+#### MensajeSolicitud
+
+Modelo preparado para mensajes asociados a una solicitud.
+
+Campos principales:
+
+- `id`
+- `solicitudId`
+- `emisorId`
+- `mensaje`
+- `leido`
+- `createdAt`
+
+### 11.2 Enums de Prisma
+
+```prisma
+RolUsuario {
+  ciudadano
+  funcionario
+}
+
+EstadoSolicitud {
+  pendiente
+  en_revision
+  resuelta
+  rechazada
+}
+
+PrioridadSolicitud {
+  baja
+  media
+  alta
 }
 ```
 
-### 12.2 Historial de revisión
+---
 
-```ts
-interface HistorialRevision {
-  funcionario: string;
-  estadoNuevo: string;
-  fechaRevision: string;
+## 12. Estados de una solicitud
+
+Los estados válidos son:
+
+| Estado en API/BD | Estado visual | Descripción |
+|---|---|---|
+| `pendiente` | Pendiente | Solicitud creada y aún no revisada. |
+| `en_revision` | En revisión | Solicitud tomada o revisada por funcionario. |
+| `resuelta` | Resuelta | Solicitud finalizada satisfactoriamente. |
+| `rechazada` | Rechazada | Solicitud rechazada por observaciones o incumplimiento. |
+
+Reglas aplicadas:
+
+- El ciudadano solo puede editar o eliminar solicitudes en estado `pendiente`.
+- El funcionario puede cambiar el estado mediante `PATCH /api/solicitudes/:id/estado`.
+- Cuando cambia el estado, se registra historial y se crea una notificación para el ciudadano.
+
+---
+
+## 13. API REST
+
+La API queda disponible por defecto en:
+
+```txt
+http://localhost:3000/api
+```
+
+El formato estándar de respuesta exitosa es:
+
+```json
+{
+  "ok": true,
+  "message": "Operación realizada correctamente",
+  "data": {}
 }
 ```
 
-### 12.3 Estados utilizados
+El formato estándar de error es:
 
-Los estados se centralizan en `dominio/constantes/estadosSolicitud.ts`.
-
-| Estado | Significado | Color visual |
-|---|---|---|
-| Recibido | Solicitud ingresada y recibida por el sistema. | Gris |
-| En revisión | Solicitud en proceso de análisis municipal. | Celeste |
-| Pendiente | Solicitud requiere atención o documentación adicional. | Amarillo |
-| Aprobada | Solicitud aceptada o aprobada. | Verde |
-| Rechazada | Solicitud rechazada por el funcionario. | Rojo |
-| Anulada | Solicitud anulada durante el proceso. | Rojo |
-
-La visualización se realiza con el componente:
-
-```txt
-src/components/common/ColorEstado.tsx
+```json
+{
+  "ok": false,
+  "message": "Descripción del error",
+  "errors": [
+    {
+      "field": "campo",
+      "code": "codigo_error",
+      "message": "Detalle opcional"
+    }
+  ]
+}
 ```
 
-
-
-## 13. Rutas principales
-
-### 13.1 Rutas públicas
-
-| Ruta | Pantalla | Propósito |
-|---|---|---|
-| `/login` | LoginPage | Ingreso al sistema y selección de rol. |
-| `/registro` | RegisterPage | Creación de cuenta prototipal. |
-| `/recuperar` | CambiarPassword | Recuperación o cambio de contraseña prototipal. |
-| `/` | Redirect | Redirige a `/login`. |
-
-### 13.2 Rutas protegidas del solicitante
-
-| Ruta | Pantalla | Propósito |
-|---|---|---|
-| `/ciudadano/tramites` | DashboardCiudadano | Perfil, datos personales y datos de empresa del solicitante. |
-| `/ciudadano/nueva-solicitud` | RealizarSolicitud | Crear una nueva solicitud. |
-| `/ciudadano/historial` | SolicitudesRealizadas | Ver historial, filtrar, editar, eliminar y abrir detalle de solicitudes. |
-| `/ciudadano/solicitud/:id` | DetalleSolicitud | Ver detalle, comentarios e historial de revisión. |
-| `/ciudadano/editar-solicitud/:id` | RealizarSolicitud | Complementar una solicitud existente. |
-| `/ciudadano/notificaciones` | NotificacionesCiudadano | Ver cambios relevantes de solicitudes. |
-| `/ciudadano/contacto` | ContactoCiudadano | Consultar contactos de funcionarios. |
-| `/ciudadano/informacion-solicitudes` | InfoSolicitudes | Revisar requisitos por tipo de solicitud. |
-
-### 13.3 Rutas protegidas del funcionario
-
-| Ruta | Pantalla | Propósito |
-|---|---|---|
-| `/funcionario/tramites` | DashboardFuncionario | Perfil y datos generales del funcionario. |
-| `/funcionario/bandeja` | BandejaFuncionario | Ver solicitudes disponibles para revisión. |
-| `/funcionario/historial` | HistorialFuncionario | Consultar solicitudes desde vista de gestión. |
-| `/funcionario/solicitud/:id` | RevisarSolicitudFuncionario | Revisar, comentar, rechazar y actualizar una solicitud. |
-| `/funcionario/notificaciones` | NotificacionesFuncionario | Revisar notificaciones asociadas al rol funcionario. |
-
-
-
-## 14. Menús laterales
-
-La aplicación utiliza `IonMenu` con `contentId="main-content"` y `menuId="menu-lateral"`. El menú mostrado depende del rol actual.
-
-### 14.1 Menú del solicitante
-
-Secciones principales:
-
-- Mi cuenta
-  - Perfil
-- Gestor de solicitudes
-  - Realizar nueva solicitud
-  - Solicitudes realizadas
-- Centro de Comunicación
-  - Bandeja de notificaciones
-  - Contacto y ayuda
-  - Información sobre solicitudes
-
-### 14.2 Menú del funcionario
-
-Secciones principales:
-
-- Mi cuenta
-  - Perfil
-  - Datos funcionario
-- Gestor de solicitudes
-  - Historial y gestor de solicitudes
-- Centro de Comunicación
-  - Bandeja de notificaciones
-  - Contacto con solicitantes
-
-Algunas opciones del menú funcionario se mantienen como elementos visuales de prototipo cuando aún no tienen una ruta propia asociada.
-
-
-
-## 15. Casos de uso principales
-
-### CU01 - Iniciar sesión
-
-**Actor:** Solicitante o Funcionario Municipal.  
-**Objetivo:** Acceder a las funcionalidades del sistema según rol.
-
-**Flujo principal:**
-
-1. El usuario ingresa a `/login`.
-2. Ingresa correo y contraseña.
-3. Selecciona tipo de usuario.
-4. El sistema valida campos obligatorios.
-5. El sistema guarda el rol mediante `AuthContext`.
-6. El sistema redirige al panel correspondiente.
-
-**Resultado esperado:** El usuario accede a las rutas propias de su rol.
-
-
-
-### CU02 - Crear una nueva solicitud
-
-**Actor:** Solicitante.  
-**Objetivo:** Registrar una solicitud municipal.
-
-**Flujo principal:**
-
-1. El solicitante ingresa a "Realizar nueva solicitud".
-2. Selecciona tipo de solicitud.
-3. Ingresa título y descripción.
-4. Revisa la advertencia sobre documentación.
-5. Envía la solicitud.
-6. El sistema valida el formulario.
-7. El sistema crea la solicitud mediante `crearSolicitud.ts`.
-8. El sistema guarda la solicitud en `localStorage`.
-9. El sistema redirige al historial.
-
-**Resultado esperado:** La solicitud aparece en el historial con estado inicial "Pendiente".
-
-
-
-### CU03 - Consultar historial de solicitudes como solicitante
-
-**Actor:** Solicitante.  
-**Objetivo:** Revisar solicitudes ya ingresadas.
-
-**Flujo principal:**
-
-1. El solicitante ingresa a "Solicitudes realizadas".
-2. Visualiza tabla con ID, tipo, título, encargado, fecha, estado y acciones.
-3. Puede filtrar solicitudes.
-4. Puede entrar al detalle.
-5. Puede editar/complementar una solicitud.
-6. Puede eliminar una solicitud mediante modal de confirmación.
-
-**Resultado esperado:** El usuario puede dar seguimiento y gestionar sus solicitudes desde una tabla clara.
-
-
-
-### CU04 - Revisar detalle de una solicitud
-
-**Actor:** Solicitante.  
-**Objetivo:** Conocer el estado y las observaciones de una solicitud.
-
-**Flujo principal:**
-
-1. El solicitante presiona el botón de detalle.
-2. El sistema abre `/ciudadano/solicitud/:id`.
-3. Se muestra estado actual, encargado y última revisión.
-4. Se muestran comentarios del funcionario.
-5. El usuario puede revisar el historial de revisión.
-
-**Resultado esperado:** El solicitante entiende qué ocurrió con su trámite y qué observaciones existen.
-
-
-
-### CU05 - Revisar solicitud como funcionario
-
-**Actor:** Funcionario Municipal.  
-**Objetivo:** Evaluar una solicitud y registrar una decisión.
-
-**Flujo principal:**
-
-1. El funcionario accede a la bandeja o historial.
-2. Selecciona una solicitud.
-3. Revisa tipo, título, descripción y documentación simulada.
-4. Escribe un comentario si corresponde.
-5. Presiona "Actualizar solicitud" o "Rechazar solicitud".
-6. Selecciona el nuevo estado o confirma el rechazo.
-7. El sistema guarda estado, comentario, fecha y funcionario responsable.
-8. El sistema actualiza el historial de revisión.
-
-**Resultado esperado:** La solicitud queda actualizada y el solicitante puede ver el cambio desde su detalle.
-
-
-
-### CU06 - Consultar notificaciones
-
-**Actor:** Solicitante o Funcionario Municipal.  
-**Objetivo:** Ver eventos importantes sobre solicitudes.
-
-**Flujo solicitante:**
-
-1. El solicitante ingresa a notificaciones.
-2. Visualiza una lista de cambios relevantes.
-3. Presiona el botón de detalle de una notificación.
-4. El sistema prepara la solicitud asociada si es necesario.
-5. El sistema abre el detalle de la solicitud asociada.
-
-**Flujo funcionario:**
-
-1. El funcionario ingresa a notificaciones.
-2. Visualiza solicitudes nuevas o pendientes de atención.
-3. Puede abrir la solicitud asociada para revisarla.
-
-**Resultado esperado:** El usuario accede directamente al detalle del cambio informado.
-
-
-
-### CU07 - Consultar requisitos de una solicitud
-
-**Actor:** Solicitante.  
-**Objetivo:** Conocer documentación requerida antes de ingresar una solicitud.
-
-**Flujo principal:**
-
-1. El usuario ingresa a "Información sobre solicitudes".
-2. Selecciona tipo de trámite.
-3. El sistema muestra documentos requeridos, área responsable y tiempo estimado.
-
-**Resultado esperado:** El solicitante cuenta con información previa para evitar errores o rechazos.
-
-
-
-### CU08 - Contactar o consultar ayuda
-
-**Actor:** Solicitante.  
-**Objetivo:** Consultar información de contacto de funcionarios.
-
-**Flujo principal:**
-
-1. El solicitante ingresa a "Contacto y ayuda".
-2. Visualiza una lista de funcionarios simulados.
-3. Revisa nombre, teléfono y correo institucional.
-
-**Resultado esperado:** El solicitante cuenta con canales de contacto visibles dentro del prototipo.
-
-
-
-## 16. Task flows principales
-
-### 16.1 Task Flow - Crear y consultar solicitud
-
-```txt
-Login solicitante
-↓
-Perfil solicitante
-↓
-Realizar nueva solicitud
-↓
-Completar tipo, título y descripción
-↓
-Enviar solicitud
-↓
-Historial de solicitudes
-↓
-Ver detalle de solicitud
+### 13.1 Health check
+
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| GET | `/api/health` | No | Verifica que la API esté funcionando. |
+
+### 13.2 Autenticación
+
+| Método | Ruta | Auth | Descripción | Respuesta esperada |
+|---|---|---|---|---|
+| POST | `/api/auth/register` | No | Registra un nuevo ciudadano. | `201 Created` con usuario público y token. |
+| POST | `/api/auth/login` | No | Inicia sesión. | `200 OK` con usuario público y token. |
+| GET | `/api/auth/me` | Sí | Valida token y retorna usuario autenticado. | `200 OK` con usuario público. |
+
+Ejemplo de login:
+
+```json
+{
+  "email": "ciudadano@demo.cl",
+  "password": "123456"
+}
 ```
 
-### 16.2 Task Flow - Revisión por funcionario
+### 13.3 Solicitudes
 
-```txt
-Login funcionario
-↓
-Perfil funcionario
-↓
-Bandeja o historial de solicitudes
-↓
-Abrir solicitud
-↓
-Revisar antecedentes
-↓
-Comentar solicitud
-↓
-Actualizar estado o rechazar
-↓
-Guardar historial de revisión
-↓
-Volver a bandeja
+| Método | Ruta | Auth | Rol | Descripción |
+|---|---|---|---|---|
+| GET | `/api/solicitudes` | Sí | Ciudadano/Funcionario | Ciudadano ve sus solicitudes; funcionario ve todas. |
+| GET | `/api/solicitudes/:id` | Sí | Ciudadano dueño/Funcionario | Obtiene detalle de solicitud. |
+| POST | `/api/solicitudes` | Sí | Ciudadano/Funcionario autenticado | Crea solicitud asociada al usuario autenticado. |
+| PUT | `/api/solicitudes/:id` | Sí | Ciudadano dueño/Funcionario | Actualiza datos de solicitud. |
+| PATCH | `/api/solicitudes/:id/estado` | Sí | Funcionario | Cambia estado y registra comentario. |
+| DELETE | `/api/solicitudes/:id` | Sí | Ciudadano dueño/Funcionario | Elimina solicitud según reglas de permiso/estado. |
+
+Ejemplo de creación:
+
+```json
+{
+  "titulo": "Solicitud de permiso municipal",
+  "categoria": "Solicitud de Información, Reclamos y Sugerencias",
+  "descripcion": "Solicito revisión del caso indicado.",
+  "direccion": "Valparaíso, Valparaíso",
+  "comuna": "Valparaíso",
+  "prioridad": "media"
+}
 ```
 
-### 16.3 Task Flow - Notificación y trazabilidad
+Ejemplo de cambio de estado:
 
-```txt
-Solicitante revisa notificaciones
-↓
-Presiona botón de detalle
-↓
-Sistema abre solicitud asociada
-↓
-Solicitante ve estado actualizado
-↓
-Solicitante revisa comentario del funcionario
-↓
-Solicitante consulta historial de revisión
+```json
+{
+  "estado": "en_revision",
+  "comentarioFuncionario": "La solicitud fue revisada y requiere validación documental."
+}
 ```
 
-### 16.4 Task Flow - Cambio de rol prototipal
+### 13.4 Documentos
 
-```txt
-Usuario presiona indicador de rol en encabezado
-↓
-AuthContext actualiza rol_actual
-↓
-AppRouter actualiza menú lateral
-↓
-Sistema redirige a la vista principal del nuevo rol
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| GET | `/api/solicitudes/:id/documentos` | Sí | Lista documentos de una solicitud. |
+| POST | `/api/solicitudes/:id/documentos` | Sí | Sube un documento con `multipart/form-data`. |
+| GET | `/api/solicitudes/:id/documentos/:documentoId/descargar` | Sí | Descarga un documento. |
+| DELETE | `/api/solicitudes/:id/documentos/:documentoId` | Sí | Elimina un documento. |
+
+Reglas de documentos:
+
+- Campo esperado en form-data: `documento`.
+- Máximo por archivo: 15 MB.
+- Máximo por solicitud: 10 documentos.
+- Formatos permitidos: PDF, JPG, PNG, DOC, DOCX.
+
+### 13.5 Notificaciones
+
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| GET | `/api/notificaciones` | Sí | Lista notificaciones del usuario autenticado. |
+| PATCH | `/api/notificaciones/:id/leida` | Sí | Marca una notificación propia como leída. |
+
+### 13.6 Usuarios/funcionarios
+
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| GET | `/api/usuarios/funcionarios` | Sí | Lista usuarios con rol funcionario para contacto ciudadano. |
+
+Este endpoint no retorna `passwordHash`.
+
+### 13.7 Catálogo de trámites
+
+| Método | Ruta | Auth | Descripción |
+|---|---|---|---|
+| GET | `/api/tramites` | Sí | Lista el catálogo de trámites usado por el frontend. |
+
+Cada trámite contiene:
+
+- `id`
+- `tipo`
+- `documentos`
+- `tiempoEstimado`
+- `areaResponsable`
+
+### 13.8 Códigos HTTP usados
+
+| Código | Uso |
+|---|---|
+| 200 | Operación exitosa. |
+| 201 | Recurso creado correctamente. |
+| 400 | Datos inválidos o payload incompleto. |
+| 401 | Token faltante, inválido o credenciales incorrectas. |
+| 403 | Usuario autenticado sin permisos suficientes. |
+| 404 | Recurso no encontrado. |
+| 409 | Conflicto de regla de negocio, por ejemplo editar una solicitud no pendiente. |
+| 500 | Error interno/configuración faltante. |
+
+---
+
+## 14. Autenticación, autorización y seguridad
+
+### 14.1 JWT
+
+El backend genera tokens JWT al registrar o iniciar sesión. El token contiene:
+
+```ts
+{
+  id: string;
+  email: string;
+  rol: "ciudadano" | "funcionario";
+}
 ```
 
+El frontend guarda el token en `localStorage` bajo la clave:
 
+```txt
+auth_token
+```
 
-## 17. Decisiones de diseño
+La validación del token se realiza en:
 
-### 17.1 Colores por rol
+```txt
+server/src/middlewares/auth.middleware.ts
+```
 
-- Azul principal para encabezado general del sistema.
-- Amarillo para rol solicitante.
-- Rojo para rol funcionario municipal.
+### 14.2 Rutas protegidas
 
-Esta diferenciación permite reconocer rápidamente el contexto de navegación.
+En frontend:
 
-### 17.2 Etiquetas de estado
+```txt
+client/src/routes/ProtectedRoute.tsx
+```
 
-Los estados se representan mediante badges de color para facilitar lectura rápida:
+En backend:
 
-- Gris: recibido.
-- Celeste: en revisión.
-- Amarillo: pendiente u observado.
-- Verde: aprobada.
-- Rojo: rechazada o anulada.
+```txt
+server/src/middlewares/auth.middleware.ts
+server/src/middlewares/role.middleware equivalente mediante roleMiddleware
+```
 
-### 17.3 Separación por rol
+### 14.3 Control por rol
 
-Se utilizan menús laterales distintos para solicitante y funcionario. Esto reduce ruido visual y evita mostrar opciones que no corresponden al usuario actual.
+Ejemplo de endpoint protegido solo para funcionario:
 
-### 17.4 Encabezado común
+```ts
+router.patch(
+  "/:id/estado",
+  roleMiddleware("funcionario"),
+  actualizarEstadoSolicitud
+);
+```
 
-Las páginas internas reutilizan `EncabezadoAplicacion`, que centraliza:
+### 14.4 bcrypt
 
-- Botón de menú lateral.
-- Logo prototipal.
-- Título del sistema.
-- Acceso a notificaciones.
-- Acceso a perfil.
-- Indicador y cambio manual de rol.
+Las contraseñas se almacenan como hash mediante bcrypt.
 
-### 17.5 Formularios de autenticación modularizados
+- Registro: `bcrypt.hash(password, 10)`.
+- Login: `bcrypt.compare(password, usuario.passwordHash)`.
 
-Las pantallas de login, registro y recuperación de contraseña se separaron en formularios reutilizables y reglas de validación. Esto evita que las páginas de autenticación concentren toda la lógica visual y de validación.
+El backend nunca retorna `passwordHash` en respuestas públicas.
 
-### 17.6 Prototipado con datos locales
+### 14.5 Protección básica contra inyección SQL
 
-El uso de `localStorage` permite demostrar continuidad entre pantallas sin backend. Se considera una decisión válida para EP1, ya que el foco está en frontend, navegación y experiencia de usuario.
+El acceso a base de datos se realiza mediante Prisma ORM. No se construyen consultas SQL concatenando strings desde entrada de usuario. Esto entrega protección básica contra inyección SQL al usar consultas parametrizadas y modelos tipados.
 
-### 17.7 Identificadores prototipales
+### 14.6 Manejo de credenciales
 
-Para esta entrega, los ID de solicitudes se mantienen con generación prototipal. En una versión madura, estos identificadores deben ser generados por backend o base de datos para garantizar unicidad.
+Las credenciales sensibles no deben subirse al repositorio. El archivo real debe ser:
 
+```txt
+server/.env
+```
 
+El repositorio solo incluye:
 
-## 18. Relación con mockups
+```txt
+server/.env.example
+```
 
-Las pantallas implementadas se basan en los mockups diseñados para el proyecto. La implementación busca mantener:
+---
 
-- Estructura general de encabezado.
-- Menú lateral por rol.
-- Formularios de login, registro, recuperación y solicitudes.
-- Tablas de historial.
-- Badges de estado.
-- Botones de acción.
-- Vista de detalle de solicitud.
-- Notificaciones y acceso a detalle.
-- Información sobre requisitos.
-- Contacto y ayuda.
-- Perfil de solicitante y funcionario.
+## 15. Integración frontend-backend
 
-Algunas diferencias se mantienen por decisiones de prototipo:
+El frontend consume la API usando `fetch` centralizado en:
 
-- Uso de datos simulados en lugar de datos reales.
-- Subida de documentación representada visualmente, sin carga real de archivos.
-- Cambio manual de rol como apoyo de demostración.
-- Generación de ID prototipal.
-- Algunas opciones visuales del menú funcionario todavía no tienen pantalla propia.
+```txt
+client/src/services/apiClient.ts
+```
 
+Este cliente se encarga de:
 
+- definir la URL base de la API;
+- agregar `Content-Type: application/json` cuando corresponde;
+- agregar `Authorization: Bearer <token>` en rutas protegidas;
+- omitir `Content-Type` cuando se envía `FormData`;
+- transformar errores HTTP en `ApiClientError`;
+- limpiar sesión si recibe `401 Unauthorized`.
 
-## 19. Instalación y ejecución
+Servicios principales:
 
-### Requisitos previos
+| Archivo | Responsabilidad |
+|---|---|
+| `authApi.ts` | Login, registro, sesión y conversión de roles. |
+| `solicitudesApi.ts` | CRUD de solicitudes y cambio de estado. |
+| `documentosApi.ts` | Subida, listado, descarga y eliminación de documentos. |
+| `notificaciones.ts` | Listado y marcado de notificaciones. |
+| `tramitesApi.ts` | Catálogo de trámites. |
+| `usuariosApi.ts` | Listado de funcionarios. |
+| `solicitudesMapper.ts` | Conversión de estados API a estados visuales. |
+
+Variable frontend:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+---
+
+## 16. Instalación y ejecución
+
+### 16.1 Requisitos previos
 
 - Node.js instalado.
 - npm instalado.
 - Git instalado.
-- PostgreSQL instalado y corriendo.
+- PostgreSQL instalado y ejecutándose.
+- Ionic CLI instalado para levantar el frontend con `ionic serve`.
+- Postman instalado para pruebas de API.
 
-### Clonar repositorio
+Instalar Ionic CLI si no está instalado:
 
 ```bash
-git clone [https://github.com/IgnacioGameolay/municipal-request-tracker.git](https://github.com/IgnacioGameolay/municipal-request-tracker.git)
+npm install -g @ionic/cli
+```
+
+### 16.2 Clonar repositorio
+
+```bash
+git clone https://github.com/IgnacioGameolay/municipal-request-tracker.git
 cd municipal-request-tracker
 ```
 
-### Instalar y configurar el Backend (AGREGADO)
+### 16.3 Configurar base de datos PostgreSQL
 
-Para levantar la API y la base de datos real:
+Crear una base de datos llamada:
 
-1. Abre una nueva terminal y entra a la carpeta del servidor:
-```bash
-   cd server
-   ```
-2. Instala las dependencias:
-```bash
-   npm install
-   ```
-3. **Variables de entorno:** Crea un archivo `.env` en la raíz de la carpeta `server` guiándote por `.env.example`. Configura de forma obligatoria tu `DATABASE_URL` y tu `JWT_SECRET`.
-4. Ejecuta las migraciones de Prisma para construir las tablas en PostgreSQL:
-```bash
-   npx prisma migrate dev
-   ```
-5. Levanta el servidor en modo desarrollo:
-```bash
-   npm run dev
-   ```
-*(El backend quedará corriendo en `http://localhost:3000`)*
+```txt
+municipal_request_tracker
+```
 
-### Instalar dependencias del frontend
+El puerto usado en el ejemplo es `5433`. Si PostgreSQL está en el puerto estándar `5432`, se debe ajustar `DATABASE_URL`.
 
-En una nueva terminal, vuelve a la raíz del proyecto e ingresa al cliente:
+### 16.4 Configurar backend
+
+Entrar a la carpeta del servidor:
+
+```bash
+cd server
+```
+
+Instalar dependencias:
+
+```bash
+npm install
+```
+
+Crear archivo `.env` dentro de `server/`, usando como base `server/.env.example`:
+
+```env
+PORT=3000
+CLIENT_URL=http://localhost:8100
+JWT_SECRET=develop_secret_cambiar_en_produccion
+JWT_EXPIRES_IN=2h
+DATABASE_URL="postgresql://usuario:password@localhost:5433/municipal_request_tracker?schema=public"
+```
+
+Ajustar `usuario`, `password` y puerto según la configuración local de PostgreSQL.
+
+Generar cliente Prisma:
+
+```bash
+npx prisma generate
+```
+
+Ejecutar migraciones:
+
+```bash
+npx prisma migrate dev
+```
+
+Cargar usuarios demo:
+
+```bash
+npm run db:seed
+```
+
+Levantar backend:
+
+```bash
+npm run dev
+```
+
+El backend queda disponible en:
+
+```txt
+http://localhost:3000/api
+```
+
+Probar health check:
+
+```txt
+http://localhost:3000/api/health
+```
+
+### 16.5 Configurar frontend
+
+Abrir otra terminal desde la raíz del proyecto:
 
 ```bash
 cd client
 npm install
 ```
 
-Si Cypress genera problemas durante la instalación, se puede instalar sin descargar el binario:
+Verificar archivo:
+
+```txt
+client/.env.development
+```
+
+Debe contener:
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+Levantar frontend con Ionic:
 
 ```bash
-CYPRESS_INSTALL_BINARY=0 npm install
+ionic serve
 ```
 
-En PowerShell:
+El frontend queda disponible normalmente en:
 
-```powershell
-$env:CYPRESS_INSTALL_BINARY=0; npm install
+```txt
+http://localhost:8100
 ```
 
-### Ejecutar en modo desarrollo
+### 16.6 Alternativa con Vite
 
-Para el frontend:
+También se puede levantar con:
 
 ```bash
 npm run dev
 ```
 
-Luego abrir la URL local indicada por Vite, por ejemplo:
+En ese caso, Vite puede usar:
 
 ```txt
 http://localhost:5173
 ```
 
-### Compilar para producción
+Si se usa esta alternativa, debe ajustarse `CLIENT_URL` en `server/.env` o configurar CORS para permitir `5173`.
+
+### 16.7 Compilar proyecto
+
+Backend:
 
 ```bash
+cd server
+npm run typecheck
 npm run build
 ```
 
-### Formatear código con Prettier
-
-Si Prettier está instalado:
+Frontend:
 
 ```bash
-npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
-```
-
-
-
-## 20. [MODIFICADO] Uso del sistema para demostración
-
-### 20.1 Flujo solicitante recomendado
-
-1. Abrir la aplicación (asegurándose de tener el backend y PostgreSQL corriendo).
-2. Iniciar sesión como Solicitante.
-3. Revisar perfil y datos de empresa.
-4. Ir a "Realizar nueva solicitud".
-5. Crear una solicitud y adjuntar un documento real (el backend ahora procesará y guardará el archivo).
-6. Verla en "Solicitudes realizadas".
-7. Entrar al detalle.
-8. Editar/complementar una solicitud.
-9. Revisar notificaciones.
-10. Abrir una notificación con el botón de detalle.
-11. Consultar "Información sobre solicitudes".
-12. Consultar "Contacto y ayuda".
-13. Cambiar a rol funcionario desde el encabezado.
-
-### 20.2 Flujo funcionario recomendado
-
-1. Iniciar sesión como Funcionario Municipal.
-2. Revisar perfil funcionario.
-3. Ingresar a bandeja o historial de solicitudes.
-4. Abrir una solicitud (aquí podrás ver o descargar los documentos adjuntos reales).
-5. Escribir comentario.
-6. Actualizar estado o rechazar solicitud.
-7. Confirmar cambio (la trazabilidad quedará guardada de forma persistente en la base de datos).
-8. Volver a bandeja.
-9. Verificar que la solicitud quedó actualizada.
-10. Cambiar a solicitante para revisar cómo se visualiza el cambio.
-
-## 21. Verificación en POSTMAN
-
-Esta sección detalla cómo validar el funcionamiento del backend utilizando la colección exportada.
-
-### 21.1 Preparación del Entorno
-Antes de ejecutar las pruebas, asegúrate de que el servidor esté activo:
-1. Navega a la carpeta `server/`.
-2. Ejecuta `npm run dev` para levantar el backend en `http://localhost:3000`.
-
-### 21.2 Configuración en Postman
-Para ejecutar la colección `API Proyecto Web y Movil`, realiza estos pasos:
-
-1. **Importar Colección:** En Postman, ejecuta el comando "Ctrl" + "O" (o haz clic en el botón *Import*). Arrastra directamente la carpeta completa `postman/collections/API Proyecto Web y Movil` hacia la ventana, o usa la opción de seleccionar carpeta (Folder). Postman leerá automáticamente toda la estructura de archivos `.yaml`.
-2. **Importar Entorno:** En la misma ventana de importación, selecciona o arrastra el archivo `postman/environments/Local - Proyecto Web y Movil.environment.yaml`.
-3. **Selección:** Asegúrate de seleccionar el entorno "Local" en el menú desplegable superior derecho de Postman.
-
-### 21.3 Flujo de pruebas recomendado (Orden de ejecución)
-
-Para demostrar que el backend es seguro y funcional, sigue este orden:
-
-1. **Autenticación (Gestión de Token):**
-   - Ejecuta `POST Iniciar Sesión`.
-   - Nota: Si el token expira, simplemente vuelve a ejecutar esta petición.
-   - Instrucciones para actualizar: 
-     1. Copia el valor del token desde la respuesta (asegúrate de **NO** incluir las comillas `' '` ni caracteres extra).
-     2. Ve a la pestaña **Environments** (parte superior derecha).
-     3. Selecciona tu entorno `Local - Proyecto Web y Movil`.
-     4. Pega el nuevo Token en el campo `Current Value` de la variable `token`.
-     5. Haz clic en Save.
-     6. *Nota: El procedimiento es el mismo cuando se requiere actualizar la variable de id de solicitud y de documento.*
-     
-2. **Solicitudes:**
-   - Ejecuta `POST Crear Solicitud` (Asegúrate de tener un archivo cargado en el body de tipo `form-data`).
-   - Ejecuta `GET Listar Solicitudes` para verificar que la creación fue persistida.
-   - Ejecuta `GET Obtener Solicitud por ID` usando el ID generado en el paso anterior.
-   
-3. **Documentos:**
-   - Ejecuta `POST Subir un documento` para probar el manejo de archivos (Multer).
-   - Ejecuta `GET Ver Documentos Adjuntos` para confirmar la relación entre solicitud y archivo.
-
-
-## 22. Comandos útiles
-
-```bash
-# Instalar dependencias
 cd client
-npm install
-
-# Ejecutar proyecto
-npm run dev
-
-# Compilar proyecto
 npm run build
-
-# Formatear frontend
-npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 ```
 
+---
 
+## 17. Usuarios demo
 
-## 23. [MODIFICADO] Limpieza de datos locales y Base de Datos
+Después de ejecutar:
 
-Para limpiar la base de datos real en etapa de pruebas, puedes abrir la consola en la carpeta del servidor y ejecutar:
+```bash
+cd server
+npm run db:seed
+```
+
+se crean los siguientes usuarios:
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| Ciudadano/Solicitante | `ciudadano@demo.cl` | `123456` |
+| Funcionario | `funcionario@demo.cl` | `123456` |
+
+El usuario ciudadano permite probar creación y seguimiento de solicitudes. El usuario funcionario permite probar bandeja, revisión y cambio de estado.
+
+---
+
+## 18. Flujos recomendados de demostración
+
+### 18.1 Flujo ciudadano
+
+1. Iniciar backend y frontend.
+2. Iniciar sesión con `ciudadano@demo.cl`.
+3. Entrar al perfil ciudadano.
+4. Ir a **Realizar nueva solicitud**.
+5. Seleccionar un tipo de trámite cargado desde API.
+6. Ingresar título y descripción.
+7. Adjuntar documento si corresponde.
+8. Guardar solicitud.
+9. Ir a **Historial**.
+10. Presionar el botón amarillo para refrescar desde API.
+11. Ver el detalle de la solicitud.
+12. Editar una solicitud pendiente.
+13. Consultar notificaciones.
+14. Consultar información de solicitudes.
+15. Consultar contactos de funcionarios.
+
+### 18.2 Flujo funcionario
+
+1. Iniciar sesión con `funcionario@demo.cl`.
+2. Ir a **Bandeja**.
+3. Presionar el botón amarillo para recargar solicitudes desde API.
+4. Abrir una solicitud.
+5. Revisar datos y documentos.
+6. Cambiar estado a `En revisión`, `Resuelta` o `Rechazada`.
+7. Agregar comentario.
+8. Confirmar cambio.
+9. Revisar historial.
+10. Volver al navegador del ciudadano y refrescar solicitudes para ver el cambio.
+11. Revisar la notificación generada al ciudadano.
+
+### 18.3 Flujo con dos navegadores
+
+Para demostrar actualización real mediante API:
+
+1. Abrir Chrome con ciudadano.
+2. Abrir Edge con funcionario.
+3. Crear solicitud desde ciudadano.
+4. En funcionario, presionar botón amarillo de refresco en bandeja/historial.
+5. La nueva solicitud debe aparecer sin necesidad de F5.
+6. Cambiar estado desde funcionario.
+7. En ciudadano, presionar botón amarillo en historial.
+8. El nuevo estado debe verse actualizado.
+
+---
+
+## 19. Pruebas en Postman
+
+La pauta EP2 exige pruebas funcionales en Postman o Insomnia, documentación de endpoints y evidencia. Este proyecto incluye carpeta Postman en:
+
+```txt
+postman/
+```
+
+Para la versión más actual, se recomienda importar directamente la carpeta `postman/` incluida en el repositorio, ya que contiene la estructura final en YAML.
+
+### 19.1 Entorno Postman
+
+Archivo de entorno:
+
+```txt
+postman/environments/Local - Proyecto Web y Movil.environment.yaml
+```
+
+Variables principales:
+
+| Variable | Uso |
+|---|---|
+| `baseUrl` | URL base de API: `http://localhost:3000/api`. |
+| `token` | Token JWT activo. |
+| `tokenCiudadano` | Token específico del ciudadano. |
+| `tokenFuncionario` | Token específico del funcionario. |
+| `solicitudId` | ID de solicitud para pruebas de detalle, edición, documentos y eliminación. |
+| `documentoId` | ID de documento para descarga o eliminación. |
+
+### 19.2 Colecciones incluidas
+
+La colección está organizada en:
+
+```txt
+postman/collections/API Proyecto Web y Movil/
+```
+
+Carpetas principales:
+
+- `Salud del Servidor`
+- `Autenticacion`
+- `Solicitudes`
+- `Documentos`
+- `Notificaciones`
+- `Funcionarios`
+
+### 19.3 Endpoints cubiertos en Postman
+
+| Área | Request |
+|---|---|
+| Health | `GET {{baseUrl}}/health` |
+| Auth | `POST {{baseUrl}}/auth/register` |
+| Auth | `POST {{baseUrl}}/auth/login` |
+| Auth | `GET {{baseUrl}}/auth/me` |
+| Solicitudes | `GET {{baseUrl}}/solicitudes` |
+| Solicitudes | `GET {{baseUrl}}/solicitudes/:id` |
+| Solicitudes | `POST {{baseUrl}}/solicitudes` |
+| Solicitudes | `PUT {{baseUrl}}/solicitudes/:id` |
+| Solicitudes | `PATCH {{baseUrl}}/solicitudes/:id/estado` |
+| Solicitudes | `DELETE {{baseUrl}}/solicitudes/:id` |
+| Documentos | `GET {{baseUrl}}/solicitudes/:id/documentos` |
+| Documentos | `POST {{baseUrl}}/solicitudes/:id/documentos` |
+| Documentos | `GET {{baseUrl}}/solicitudes/:id/documentos/:documentoId/descargar` |
+| Documentos | `DELETE {{baseUrl}}/solicitudes/:id/documentos/:documentoId` |
+| Notificaciones | `GET {{baseUrl}}/notificaciones` |
+| Notificaciones | `PATCH {{baseUrl}}/notificaciones/:id/leida` |
+| Funcionarios | `GET {{baseUrl}}/usuarios/funcionarios` |
+| Trámites | `GET {{baseUrl}}/tramites` |
+
+### 19.4 Pruebas negativas incluidas o recomendadas
+
+La carpeta Postman incluye pruebas negativas para autenticación y solicitudes. Para demostrar cobertura completa se recomienda ejecutar o mantener documentados estos casos:
+
+| Caso | Resultado esperado |
+|---|---|
+| Login con credenciales incorrectas | `401 Unauthorized`. |
+| Registro con campos faltantes | `400 Bad Request`. |
+| Registro con correo repetido | `409 Conflict`. |
+| Listar solicitudes sin token | `401 Unauthorized`. |
+| Obtener solicitud inexistente | `404 Not Found`. |
+| Eliminar solicitud ajena o sin permisos | `403 Forbidden`. |
+| Cambiar estado como ciudadano | `403 Forbidden`. |
+| Editar solicitud no pendiente como ciudadano | `409 Conflict`. |
+| Subir archivo inválido | `400 Bad Request`. |
+| Subir archivo sobre 15 MB | `400 Bad Request`. |
+| Marcar notificación ajena como leída | `403 Forbidden`. |
+
+### 19.5 Flujo recomendado de ejecución en Postman
+
+1. Ejecutar `GET Health` para confirmar que el backend está activo.
+2. Ejecutar `POST login-ciudadano`.
+3. Copiar token a variable `token` o `tokenCiudadano`.
+4. Ejecutar `POST crear-solicitud`.
+5. Guardar el `id` retornado en `solicitudId`.
+6. Ejecutar `GET listar-solicitudes`.
+7. Ejecutar `GET obtener-solicitud`.
+8. Ejecutar `POST subir-documento` usando `form-data` con campo `documento`.
+9. Guardar el `id` del documento en `documentoId`.
+10. Ejecutar `GET listar-documentos`.
+11. Ejecutar `GET descargar-documento`.
+12. Ejecutar `POST login-funcionario`.
+13. Copiar token de funcionario a `token` o `tokenFuncionario`.
+14. Ejecutar `PATCH cambiar-estado-solicitud`.
+15. Volver al token ciudadano y ejecutar `GET notificaciones`.
+16. Ejecutar `PATCH marcar-notificacion-leida`.
+
+### 19.6 Evidencias de pruebas
+
+Las evidencias de pruebas se pueden encontrar en los archivos .yaml generados tras las pruebas dentor de las sub-carpetas 
+
+```txt
+postman/
+```
+Por ejemplo:
+```txt
+postman/collections
+/API Proyecto Web y Movil/
+```
+
+---
+
+## 20. Material adicional de entrega
+
+La pauta solicita incluir otros archivos como diagramas, presentaciones o material adicional dentro de una carpeta `otros/`. Este proyecto incluye:
+
+```txt
+otros/
+```
+
+Contenido relevante:
+
+- `modelo-relacional.png`: modelo relacional del proyecto.
+- Mockups del proyecto.
+- Evidencias de pruebas API.
+- Material visual de pantallas.
+
+También existe:
+
+```txt
+misc/
+```
+
+con diagramas adicionales, como máquina de estados, secuencia y árbol de rutas.
+
+---
+
+## 21. Comandos útiles
+
+### Backend
+
+```bash
+cd server
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run db:seed
+npm run dev
+```
+
+Validación:
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Prisma Studio:
+
+```bash
+npm run db:studio
+```
+
+Reset de base de datos:
 
 ```bash
 npx prisma migrate reset
 ```
 
-El prototipo frontend aún puede usar `localStorage` para almacenar la sesión activa (como el token JWT). Si se desea reiniciar la sesión local o las solicitudes cacheadas durante pruebas, abrir la consola del navegador y ejecutar:
+### Frontend
 
-```js
-localStorage.removeItem('solicitudes_db');
-localStorage.removeItem('token');
-localStorage.clear();
-location.href = '/login';
+```bash
+cd client
+npm install
+ionic serve
 ```
 
+Alternativa Vite:
 
+```bash
+npm run dev
+```
 
-## 24. [MODIFICADO] Limitaciones actuales
+Build:
 
-- Las notificaciones son simuladas en el frontend (aún no usan WebSockets para tiempo real).
-- El envío de correos electrónicos para recuperar contraseñas no utiliza un servidor SMTP real todavía.
-- La generación de algunos ID visuales en el frontend podría seguir un formato prototipal temporal.
-- El cambio manual de rol se mantiene como recurso rápido de demostración.
-- Algunas opciones visuales del menú funcionario todavía no tienen ruta propia.
+```bash
+npm run build
+```
 
-Estas limitaciones son coherentes con el estado actual del proyecto, habiendo superado exitosamente la fase inicial al integrar un backend funcional, autenticación real y manejo de archivos.
+### Limpieza de sesión frontend
 
+En consola del navegador:
 
+```js
+localStorage.clear();
+location.href = "/login";
+```
 
-## 25. [MODIFICADO] Proyección para próximas entregas
+---
 
-Habiendo implementado exitosamente la API REST, la base de datos relacional, la autenticación JWT y la subida real de documentos, para una versión posterior del sistema se propone:
+## 22. Solución de problemas comunes
 
-- Implementar notificaciones push en tiempo real (ej. WebSockets / Socket.io).
-- Enviar correos reales para recuperación de contraseña integrando un servicio como NodeMailer.
-- Mejorar permisos por rol desde backend (ej. gestión multisucursal o multi-departamento).
-- Agregar auditoría avanzada de acciones en la base de datos.
-- Centralizar y robustecer los servicios HTTP en el frontend para la comunicación con el backend.
-- Corregir elementos visuales del menú que aún no tienen pantalla propia.
+### 22.1 Error de conexión con backend
 
+Mensaje típico:
 
+```txt
+No se pudo conectar con el servidor. Revisa que el backend esté ejecutándose.
+```
 
-## 26. [MODIFICADO] Cumplimiento de pauta EP1 y Siguientes
+Verificar:
 
-| Criterio esperado | Evidencia en el proyecto |
-|---|---|
-| Uso de Ionic + React + TypeScript | Proyecto frontend en `client` construido con Ionic React y TypeScript. |
-| Rutas públicas | Login, registro y recuperación. |
-| Rutas protegidas | `ProtectedRoute` para solicitante y funcionario (ahora con validación JWT). |
-| Dos roles diferenciados | Solicitante y Funcionario Municipal (validados en BD). |
-| Mínimo de pantallas implementadas | Se implementan más de cuatro pantallas funcionales. |
-| Persistencia de datos (AGREGADO) | Uso de PostgreSQL y Prisma ORM para solicitudes, usuarios y revisiones. |
-| Gestión de Archivos (AGREGADO) | Endpoints con Multer operativos en el backend para subida y descarga de expedientes. |
-| Componentes Ionic | Uso de `IonPage`, `IonHeader`, `IonToolbar`, `IonContent`, `IonMenu`, `IonButton`, `IonInput`, `IonSelect`, `IonModal`, entre otros. |
-| Organización modular | Carpetas `dominio`, `aplicacion`, `infraestructura`, `components`, `pages`, `routes` y `context`. |
-| Mockups asociados | Pantallas implementadas de acuerdo con el diseño del prototipo. |
-| Arquitectura de navegación | Rutas centralizadas en `src/routes/AppRouter.tsx` y protección en `ProtectedRoute.tsx`. |
-| Documentación API (AGREGADO) | Colección de Postman exportada con flujos probados. |
-| Funcionalidades más allá de login/registro | Solicitudes, historial, revisión, notificaciones, contacto e información. |
-| Separación de responsabilidades | Casos de uso, reglas, entidades, simulación de datos y repositorio local separados. |
-| Uso de repositorio | Proyecto estructurado para entrega mediante GitHub. |
+1. Backend corriendo con `npm run dev` en `server/`.
+2. API disponible en `http://localhost:3000/api/health`.
+3. `client/.env.development` contiene `VITE_API_URL=http://localhost:3000/api`.
 
+### 22.2 Error CORS
 
+Si se usa `ionic serve`, el frontend normalmente corre en:
 
-## 27. Autores
+```txt
+http://localhost:8100
+```
 
-Proyecto desarrollado para la asignatura **ICI4247/1 - Ingeniería Web y Móvil**.
+Por eso `server/.env` debe tener:
+
+```env
+CLIENT_URL=http://localhost:8100
+```
+
+Si se usa `npm run dev`, Vite puede correr en:
+
+```txt
+http://localhost:5173
+```
+
+En ese caso se debe ajustar `CLIENT_URL` o permitir ambos orígenes en `server/src/app.ts`.
+
+### 22.3 Error de base de datos
+
+Verificar que:
+
+- PostgreSQL esté ejecutándose.
+- La base `municipal_request_tracker` exista.
+- `DATABASE_URL` tenga usuario, contraseña, host, puerto y base correctos.
+- Se hayan ejecutado migraciones con `npx prisma migrate dev`.
+
+### 22.4 Token expirado o sesión inválida
+
+El frontend limpia sesión automáticamente ante `401`. Si se queda una sesión antigua en navegador:
+
+```js
+localStorage.clear();
+location.href = "/login";
+```
+
+### 22.5 Los cambios no se ven en otra pestaña/navegador
+
+Usar el botón amarillo de refresco en las vistas de historial/bandeja. Ese botón vuelve a consultar la API y evita depender de datos viejos cargados en memoria.
+
+### 22.6 No aparecen usuarios demo
+
+Ejecutar:
+
+```bash
+cd server
+npm run db:seed
+```
+
+---
+
+## 23. Limitaciones actuales
+
+- No hay despliegue con Docker en esta entrega.
+- No hay integración con Clave Única u OAuth externo.
+- La recuperación de contraseña es una pantalla prototipal; no envía correos reales.
+- Las notificaciones son persistidas y consultables, pero no se emiten en tiempo real con WebSockets.
+- El catálogo de trámites se sirve desde backend como arreglo estático, no como tabla editable desde administración.
+- No existe panel administrador para gestionar funcionarios o trámites.
+- No hay integración con servicios municipales externos.
+- La carpeta `uploads/` almacena archivos localmente, no en S3 u otro storage externo.
+
+---
+
+## 24. Proyección para la entrega final
+
+Para una versión posterior se propone:
+
+- Despliegue con Docker y `docker-compose`.
+- Separar almacenamiento de documentos hacia servicio externo.
+- Implementar notificaciones en tiempo real.
+- Incorporar correos reales para recuperación de contraseña.
+- Crear panel administrador.
+- Convertir catálogo de trámites en entidad administrable en base de datos.
+- Mejorar validaciones de RUT y formato de correo.
+- Agregar paginación y filtros desde backend.
+- Implementar pruebas automatizadas más completas.
+- Endurecer CORS, headers de seguridad y políticas de archivos.
+
+---
+
+## 25. Cumplimiento de pauta EP2
+
+| Criterio EP2 | Evidencia en el proyecto | Estado |
+|---|---|---|
+| EP 2.1 Servidor Node.js con Express o Flask | `server/src/app.ts`, `server/src/server.ts`, rutas Express. | Cumplido. |
+| EP 2.2 Base de datos relacional | PostgreSQL + Prisma, `schema.prisma`, migraciones, `otros/modelo-relacional.png`. | Cumplido. |
+| EP 2.3 API REST GET/POST/PUT/PATCH/DELETE | Rutas de auth, solicitudes, documentos, notificaciones, funcionarios y trámites. | Cumplido. |
+| EP 2.4 Consumo API desde Ionic React | `client/src/services/apiClient.ts` y servicios específicos. | Cumplido. |
+| EP 2.5 JWT, login, registro, rutas protegidas y roles | `auth.controller.ts`, `auth.middleware.ts`, `AuthContext.tsx`, `ProtectedRoute.tsx`. | Cumplido. |
+| EP 2.6 Validación, bcrypt, credenciales y SQL injection | Validaciones en controladores, bcrypt, JWT, Prisma ORM. | Cumplido. |
+| EP 2.7 Pruebas Postman, documentación y evidencia | Carpeta `postman/`, entorno local, requests YAML, pruebas negativas y evidencias en `otros/`. | Cumplido/documentado. |
+| Entrega: backend funcional | API Express ejecutable en `localhost:3000`. | Cumplido. |
+| Entrega: autenticación y usuarios | Registro, login, `/auth/me`, roles y usuarios demo. | Cumplido. |
+| Entrega: integración frontend-backend | Ionic React consume datos reales desde API. | Cumplido. |
+
+---
+
+## 26. Integrantes
+
+Proyecto desarrollado para la asignatura **ICI4247 - Ingeniería Web y Móvil**.
 
 Integrantes:
 
-- Sebastián Andrés de Jesús García Valdebenito
-- Francisca Antonia Guzmán Pérez
-- Vicente Nills Quezada Gallardo
-- Ignacio Antonio Reyes Toledo
+- Sebastián Andrés de Jesús García Valdebenito.
+- Francisca Antonia Guzmán Pérez.
+- Vicente Nills Quezada Gallardo.
+- Ignacio Antonio Reyes Toledo.
 
+---
 
+## Estado final de esta entrega
 
-## 28. [MODIFICADO] Estado actual
+La versión actual corresponde a una aplicación full-stack funcional para la Entrega Parcial 2. El proyecto cuenta con backend Express, base de datos PostgreSQL, Prisma ORM, autenticación JWT, hash de contraseñas con bcrypt, rutas protegidas, roles diferenciados, API REST documentada, integración con frontend Ionic React y colección Postman para pruebas funcionales.
 
-El proyecto ha evolucionado de un prototipo frontend a una aplicación Full-Stack funcional. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, visualización de trazabilidad por parte del solicitante, subida real de documentos y separación de roles mediante rutas protegidas conectadas a un backend real en Node.js y PostgreSQL.
-
-La versión actual mantiene la refactorización importante del frontend (separando páginas grandes en componentes reutilizables, casos de uso, reglas de dominio y entidades) y suma la capa de infraestructura del servidor para garantizar la persistencia y seguridad definitiva de los datos.
