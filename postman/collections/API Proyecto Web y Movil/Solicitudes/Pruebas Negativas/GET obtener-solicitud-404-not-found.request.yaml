@@ -1,0 +1,16 @@
+$kind: http-request
+name: Obtener Solicitud 404 - ID Inexistente
+method: GET
+url: "{{baseUrl}}/solicitudes/uuid-inventado-123"
+examples: .resources/GET obtener-solicitud-404-not-found.resources/examples
+order: 2000
+description: |-
+  **Prueba Negativa - Error 404 Not Found**
+
+  Busca una solicitud con un ID que no existe en el sistema.
+
+  Se espera respuesta: `404 Not Found`
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenCiudadano}}"

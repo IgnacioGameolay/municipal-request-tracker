@@ -1,0 +1,14 @@
+$kind: http-request
+name: Listar Solicitudes 401 - Sin Token
+method: GET
+url: "{{baseUrl}}/solicitudes"
+examples: .resources/GET listar-solicitudes-401-sin-token.resources/examples
+order: 1000
+description: |-
+  **Prueba Negativa - Error 401 Unauthorized**
+
+  Realiza la petición sin token de autenticación para demostrar que el endpoint está protegido.
+
+  Se espera respuesta: `401 Unauthorized`
+auth:
+  type: noauth

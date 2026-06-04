@@ -1,0 +1,30 @@
+$kind: http-request
+name: Iniciar Sesión (Funcionario)
+method: POST
+url: "{{baseUrl}}/auth/login"
+examples: .resources/POST login-funcionario.resources/examples
+order: 1600
+description: |-
+  Autentica a un **funcionario** y guarda el token en `{{tokenFuncionario}}`.
+
+  **No requiere autenticación previa.**
+
+  El script de Tests guarda automáticamente el token recibido en la variable de entorno `tokenFuncionario`.
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "funcionario@demo.cl",
+      "password": "123456"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      if (jsonData.token) {
+        pm.environment.set("tokenFuncionario", jsonData.token);
+        console.log("tokenFuncionario guardado:", jsonData.token);
+      }
+    language: text/javascript

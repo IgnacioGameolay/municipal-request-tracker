@@ -2,6 +2,10 @@ $kind: http-request
 name: Iniciar Sesión
 method: POST
 url: "{{baseUrl}}/auth/login"
+auth:
+  type: bearer
+  credentials:
+    token: ""
 examples: .resources/POST login.resources/examples
 order: 1000
 description: |-

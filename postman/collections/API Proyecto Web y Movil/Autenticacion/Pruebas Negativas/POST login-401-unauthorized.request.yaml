@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Login 401 - Unauthorized (contraseña incorrecta)'
+method: POST
+url: '{{baseUrl}}/auth/login'
+order: 3000
+description: |-
+  **Prueba Negativa - Error 401 Unauthorized**
+
+  Envía una contraseña incorrecta para demostrar que el sistema rechaza el acceso.
+
+  Se espera respuesta: `401 Unauthorized`
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "ciudadano@demo.cl",
+      "password": "contraseña_incorrecta_123"
+    }
