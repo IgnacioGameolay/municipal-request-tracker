@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IonContent, IonPage, IonToast } from "@ionic/react";
+import { IonContent, IonPage, IonToast, useIonViewWillEnter } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
@@ -51,6 +51,22 @@ const RealizarSolicitud: React.FC = () => {
   const [mensajeError, setMensajeError] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [archivosPendientes, setArchivosPendientes] = useState<File[]>([]);
+
+  const limpiarFormularioNuevaSolicitud = () => {
+  setTipo("");
+  setTitulo("");
+  setDescripcionOriginal("");
+  setDescripcionAgregada("");
+  setArchivosPendientes([]);
+  setMensajeError("");
+  setGuardando(false);
+};
+
+useIonViewWillEnter(() => {
+  if (!esEdicion) {
+    limpiarFormularioNuevaSolicitud();
+  }
+});
 
   const cargarTramites = async () => {
     try {
@@ -119,7 +135,7 @@ const RealizarSolicitud: React.FC = () => {
         await subirDocumentoSolicitud(String(solicitudIdParaDocumentos), archivo);
       }
 
-      setArchivosPendientes([]);
+      limpiarFormularioNuevaSolicitud();
 
       history.push("/ciudadano/historial");
     } catch (error) {
@@ -180,11 +196,7 @@ const RealizarSolicitud: React.FC = () => {
 
   useEffect(() => {
     if (!esEdicion) {
-      setTipo("");
-      setTitulo("");
-      setDescripcionOriginal("");
-      setDescripcionAgregada("");
-      setArchivosPendientes([]);
+      limpiarFormularioNuevaSolicitud();
     }
   }, [esEdicion]);
 

@@ -1,8 +1,18 @@
 export const ESTADOS_SOLICITUD = {
-  recibido: "Recibido",
-  enRevision: "En revisión",
   pendiente: "Pendiente",
-  aprobada: "Aprobada",
+  enRevision: "En revisión",
+  resuelta: "Resuelta",
   rechazada: "Rechazada",
-  anulada: "Anulada",
+  recibido: "Pendiente",
+  aprobada: "Resuelta",
 } as const;
+
+export const ESTADOS_SOLICITUD_VISUALES = [
+  ESTADOS_SOLICITUD.pendiente,
+  ESTADOS_SOLICITUD.enRevision,
+  ESTADOS_SOLICITUD.resuelta,
+  ESTADOS_SOLICITUD.rechazada,
+] as const;
+
+export type EstadoSolicitudVisual =
+  (typeof ESTADOS_SOLICITUD_VISUALES)[number];

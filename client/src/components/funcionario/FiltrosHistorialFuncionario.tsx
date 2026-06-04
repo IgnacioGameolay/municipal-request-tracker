@@ -9,18 +9,21 @@ import {
 import { refreshOutline } from "ionicons/icons";
 
 import type { Solicitud } from "../../dominio/entidades/Solicitud";
-import { filtrarHistorialFuncionario } from "../../aplicacion/casosDeUso/filtrarHistorialFuncionario";
-
-import type { FiltrosHistorialFuncionarioDatos } from "../../aplicacion/casosDeUso/filtrarHistorialFuncionario";
+import {
+  filtrarHistorialFuncionario,
+  type FiltrosHistorialFuncionarioDatos,
+} from "../../aplicacion/casosDeUso/filtrarHistorialFuncionario";
 
 interface Props {
   solicitudes: Solicitud[];
   onFiltrar: (solicitudes: Solicitud[]) => void;
+  onRecargar: () => Promise<Solicitud[]>;
 }
 
 const FiltrosHistorialFuncionario: React.FC<Props> = ({
   solicitudes,
   onFiltrar,
+  onRecargar,
 }) => {
   const [filtroId, setFiltroId] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("");
@@ -42,7 +45,25 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
     ).sort((a, b) => a.localeCompare(b, "es"));
   }, [solicitudes]);
 
-  const buscar = () => {
+  const filtrosVacios = () => {
+    return (
+      !filtroId.trim() &&
+      !filtroTipo &&
+      !ordenFecha &&
+      !filtroCliente.trim() &&
+      !filtroEstado &&
+      !filtroTitulo.trim()
+    );
+  };
+
+  const buscar = async () => {
+    const baseActualizada = await onRecargar();
+
+    if (filtrosVacios()) {
+      onFiltrar(baseActualizada);
+      return;
+    }
+
     const filtros: FiltrosHistorialFuncionarioDatos = {
       id: filtroId,
       tipo: filtroTipo,
@@ -52,17 +73,19 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
       titulo: filtroTitulo,
     };
 
-    onFiltrar(filtrarHistorialFuncionario(solicitudes, filtros));
+    onFiltrar(filtrarHistorialFuncionario(baseActualizada, filtros));
   };
 
-  const limpiar = () => {
+  const limpiar = async () => {
     setFiltroId("");
     setFiltroTipo("");
     setOrdenFecha("");
     setFiltroCliente("");
     setFiltroEstado("");
     setFiltroTitulo("");
-    onFiltrar(solicitudes);
+
+    const baseActualizada = await onRecargar();
+    onFiltrar(baseActualizada);
   };
 
   return (
@@ -173,11 +196,9 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
             style={estiloCampo}
           >
             <IonSelectOption value="">Todos</IonSelectOption>
-            <IonSelectOption value="Recibido">Recibido</IonSelectOption>
-            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
-            <IonSelectOption value="Observado">Observado</IonSelectOption>
             <IonSelectOption value="Pendiente">Pendiente</IonSelectOption>
-            <IonSelectOption value="Aprobada">Aprobada</IonSelectOption>
+            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
+            <IonSelectOption value="Resuelta">Resuelta</IonSelectOption>
             <IonSelectOption value="Rechazada">Rechazada</IonSelectOption>
           </IonSelect>
         </div>
@@ -194,7 +215,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
         <div style={{ display: "flex", gap: "10px" }}>
           <IonButton
-            onClick={buscar}
+            onClick={() => void buscar()}
             style={{
               "--background": "#0088ff",
               "--color": "white",
@@ -208,7 +229,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
           </IonButton>
 
           <IonButton
-            onClick={limpiar}
+            onClick={() => void limpiar()}
             style={{
               "--background": "#ffcc00",
               "--color": "white",

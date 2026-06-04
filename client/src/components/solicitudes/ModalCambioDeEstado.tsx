@@ -115,7 +115,7 @@ const ModalCambioDeEstado: React.FC<Props> = ({
                 <option value="">Seleccionar</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="En revisión">En revisión</option>
-                <option value="Aprobada">Aprobada</option>
+                <option value="Resuelta">Resuelta</option>
                 <option value="Rechazada">Rechazada</option>
               </select>
             </div>

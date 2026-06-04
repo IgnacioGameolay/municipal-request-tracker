@@ -29,15 +29,15 @@ import DocumentosSolicitud from "../../components/solicitudes/DocumentosSolicitu
 
 
 function mapEstadoVisualToApi(estadoVisual: string): EstadoSolicitud | null {
-  const estadoNormalizado = estadoVisual.trim().toLowerCase();
+  const estadoNormalizado = estadoVisual
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
   const mapa: Record<string, EstadoSolicitud> = {
     pendiente: "pendiente",
-    recibido: "pendiente",
-    "en revisión": "en_revision",
     "en revision": "en_revision",
-    aprobada: "resuelta",
-    aprobado: "resuelta",
     resuelta: "resuelta",
     resuelto: "resuelta",
     rechazada: "rechazada",
@@ -108,12 +108,6 @@ const RevisarSolicitudFuncionario: React.FC = () => {
 
   const cerrarModalRechazar = () => {
     setMostrarModalRechazar(false);
-  };
-
-  const cerrarModales = () => {
-    setMostrarModalActualizar(false);
-    setMostrarModalRechazar(false);
-    setEstadoSeleccionado("");
   };
 
   const confirmarActualizacion = async (estadoFinalVisual: string) => {

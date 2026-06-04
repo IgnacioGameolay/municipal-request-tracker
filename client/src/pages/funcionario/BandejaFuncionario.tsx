@@ -28,32 +28,35 @@ const BandejaFuncionario: React.FC = () => {
   const [cargando, setCargando] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
 
-  const cargarSolicitudes = async () => {
-    try {
-      setCargando(true);
-      setMensajeError("");
+  const cargarSolicitudes = async (): Promise<Solicitud[]> => {
+  try {
+    setCargando(true);
+    setMensajeError("");
 
-      const solicitudesApi = await obtenerSolicitudes();
-      const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
+    const solicitudesApi = await obtenerSolicitudes();
+    const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
 
-      setTodasLasSolicitudes(solicitudes);
-      setSolicitudesMostrar(solicitudes);
-    } catch (error) {
-      if (error instanceof ApiClientError) {
-        setMensajeError(error.message);
-        return;
-      }
+    setTodasLasSolicitudes(solicitudes);
+    setSolicitudesMostrar(solicitudes);
 
-      if (error instanceof Error) {
-        setMensajeError(error.message);
-        return;
-      }
-
-      setMensajeError("No se pudieron cargar las solicitudes.");
-    } finally {
-      setCargando(false);
+    return solicitudes;
+  } catch (error) {
+    if (error instanceof ApiClientError) {
+      setMensajeError(error.message);
+      return [];
     }
-  };
+
+    if (error instanceof Error) {
+      setMensajeError(error.message);
+      return [];
+    }
+
+    setMensajeError("No se pudieron cargar las solicitudes.");
+    return [];
+  } finally {
+    setCargando(false);
+  }
+};
 
   const cambiarRolManual = () => {
     localStorage.setItem("rol_actual", "solicitante");
@@ -131,6 +134,7 @@ const BandejaFuncionario: React.FC = () => {
                 <FiltrosBandejaFuncionario
                   solicitudes={todasLasSolicitudes}
                   onFiltrar={setSolicitudesMostrar}
+                  onRecargar={cargarSolicitudes}
                 />
 
                 <TablaBandejaFuncionario

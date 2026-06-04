@@ -9,8 +9,11 @@ export const normalizarEstado = (estado: string) => {
 export const mostrarEstado = (estado: string) => {
   const estadoNormalizado = normalizarEstado(estado);
 
-  if (estadoNormalizado === "en proceso") return "En revisión";
-  if (estadoNormalizado === "aceptada") return "Aprobada";
+  if (estadoNormalizado === "en_revision") return "En revisión";
+  if (estadoNormalizado === "en revision") return "En revisión";
+  if (estadoNormalizado === "resuelta") return "Resuelta";
+  if (estadoNormalizado === "pendiente") return "Pendiente";
+  if (estadoNormalizado === "rechazada") return "Rechazada";
 
   return estado;
 };
@@ -19,24 +22,17 @@ export const obtenerColorEstado = (estado: string) => {
   const estadoNormalizado = normalizarEstado(estado);
 
   switch (estadoNormalizado) {
-    case "recibido":
-      return { fondo: "#8e8e93", texto: "#ffffff" };
-
-    case "aprobada":
-    case "aceptada":
-      return { fondo: "#22c55e", texto: "#ffffff" };
-
-    case "rechazada":
-    case "anulada":
-      return { fondo: "#ff3b30", texto: "#ffffff" };
-
     case "pendiente":
-    case "observado":
       return { fondo: "#f1c40f", texto: "#ffffff" };
 
     case "en revision":
-    case "en proceso":
       return { fondo: "#00a8e8", texto: "#ffffff" };
+
+    case "resuelta":
+      return { fondo: "#22c55e", texto: "#ffffff" };
+
+    case "rechazada":
+      return { fondo: "#ff3b30", texto: "#ffffff" };
 
     default:
       return { fondo: "#8e8e93", texto: "#ffffff" };

@@ -147,22 +147,17 @@ export async function eliminarSolicitud(id: string | number): Promise<void> {
 export const eliminarSolicitudApi = eliminarSolicitud;
 
 export function estadoVisualAApi(estado: string): EstadoSolicitud {
-  const normalizado = estado.trim().toLowerCase();
+  const normalizado = estado
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 
-  if (
-    normalizado === "en revisión" ||
-    normalizado === "en revision" ||
-    normalizado === "observado"
-  ) {
+  if (normalizado === "en revision") {
     return "en_revision";
   }
 
-  if (
-    normalizado === "aprobada" ||
-    normalizado === "aprobado" ||
-    normalizado === "resuelta" ||
-    normalizado === "resuelto"
-  ) {
+  if (normalizado === "resuelta" || normalizado === "resuelto") {
     return "resuelta";
   }
 

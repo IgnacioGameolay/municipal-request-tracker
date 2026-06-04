@@ -5,7 +5,7 @@ function mapEstadoApiToEstadoVisual(estado: EstadoSolicitud): string {
   const estados: Record<EstadoSolicitud, string> = {
     pendiente: "Pendiente",
     en_revision: "En revisión",
-    resuelta: "Aprobada",
+    resuelta: "Resuelta",
     rechazada: "Rechazada",
   };
 

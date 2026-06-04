@@ -15,9 +15,14 @@ import { obtenerMilisegundosFecha } from "../../dominio/reglas/formatearFecha";
 interface Props {
   solicitudes: Solicitud[];
   onFiltrar: (solicitudes: Solicitud[]) => void;
+  onRecargar: () => Promise<Solicitud[]>;
 }
 
-const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
+const FiltrarSolicitudes: React.FC<Props> = ({
+  solicitudes,
+  onFiltrar,
+  onRecargar,
+}) => {
   const [filtroId, setFiltroId] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("");
   const [ordenFecha, setOrdenFecha] = useState("");
@@ -37,8 +42,18 @@ const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
     ).sort((a, b) => a.localeCompare(b, "es"));
   }, [solicitudes]);
 
-  const manejarBusqueda = () => {
-    let filtrado = [...solicitudes];
+  const filtrosVacios = () => {
+    return (
+      !filtroId.trim() &&
+      !filtroTipo &&
+      !ordenFecha &&
+      !filtroEstado &&
+      !filtroTitulo.trim()
+    );
+  };
+
+  const aplicarFiltros = (base: Solicitud[]) => {
+    let filtrado = [...base];
 
     if (filtroId.trim()) {
       filtrado = filtrado.filter((solicitud) =>
@@ -77,16 +92,29 @@ const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
       );
     }
 
-    onFiltrar(filtrado);
+    return filtrado;
   };
 
-  const limpiarFiltros = () => {
+  const manejarBusqueda = async () => {
+    const baseActualizada = await onRecargar();
+
+    if (filtrosVacios()) {
+      onFiltrar(baseActualizada);
+      return;
+    }
+
+    onFiltrar(aplicarFiltros(baseActualizada));
+  };
+
+  const limpiarFiltros = async () => {
     setFiltroId("");
     setFiltroTipo("");
     setOrdenFecha("");
     setFiltroEstado("");
     setFiltroTitulo("");
-    onFiltrar(solicitudes);
+
+    const baseActualizada = await onRecargar();
+    onFiltrar(baseActualizada);
   };
 
   return (
@@ -188,10 +216,9 @@ const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
             style={estiloCampo}
           >
             <IonSelectOption value="">Todos</IonSelectOption>
-            <IonSelectOption value="Recibido">Recibido</IonSelectOption>
-            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
             <IonSelectOption value="Pendiente">Pendiente</IonSelectOption>
-            <IonSelectOption value="Aprobada">Aprobada</IonSelectOption>
+            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
+            <IonSelectOption value="Resuelta">Resuelta</IonSelectOption>
             <IonSelectOption value="Rechazada">Rechazada</IonSelectOption>
           </IonSelect>
         </div>
@@ -208,7 +235,7 @@ const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
 
         <div style={{ display: "flex", gap: "12px" }}>
           <IonButton
-            onClick={manejarBusqueda}
+            onClick={() => void manejarBusqueda()}
             style={{
               "--background": "#0088ff",
               "--color": "white",
@@ -223,7 +250,7 @@ const FiltrarSolicitudes: React.FC<Props> = ({ solicitudes, onFiltrar }) => {
           </IonButton>
 
           <IonButton
-            onClick={limpiarFiltros}
+            onClick={() => void limpiarFiltros()}
             style={{
               "--background": "#ffcc00",
               "--color": "white",

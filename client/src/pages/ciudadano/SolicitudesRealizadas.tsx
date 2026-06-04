@@ -37,32 +37,35 @@ const SolicitudesRealizadas: React.FC = () => {
   const [errorCarga, setErrorCarga] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  const cargarSolicitudes = async () => {
-    try {
-      setCargando(true);
-      setErrorCarga("");
+  const cargarSolicitudes = async (): Promise<Solicitud[]> => {
+  try {
+    setCargando(true);
+    setErrorCarga("");
 
-      const solicitudesApi = await obtenerSolicitudes();
-      const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
+    const solicitudesApi = await obtenerSolicitudes();
+    const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
 
-      setTodasLasSolicitudes(solicitudes);
-      setSolicitudesMostrar(solicitudes);
-    } catch (error) {
-      if (error instanceof ApiClientError) {
-        setErrorCarga(error.message);
-        return;
-      }
+    setTodasLasSolicitudes(solicitudes);
+    setSolicitudesMostrar(solicitudes);
 
-      if (error instanceof Error) {
-        setErrorCarga(error.message);
-        return;
-      }
-
-      setErrorCarga("No se pudieron cargar las solicitudes.");
-    } finally {
-      setCargando(false);
+    return solicitudes;
+  } catch (error) {
+    if (error instanceof ApiClientError) {
+      setErrorCarga(error.message);
+      return [];
     }
-  };
+
+    if (error instanceof Error) {
+      setErrorCarga(error.message);
+      return [];
+    }
+
+    setErrorCarga("No se pudieron cargar las solicitudes.");
+    return [];
+  } finally {
+    setCargando(false);
+  }
+};
 
   const cambiarRolManual = () => {
     localStorage.setItem("rol_actual", "solicitante");
@@ -180,6 +183,7 @@ const SolicitudesRealizadas: React.FC = () => {
               <FiltrarSolicitudes
                 solicitudes={todasLasSolicitudes}
                 onFiltrar={setSolicitudesMostrar}
+                onRecargar={cargarSolicitudes}
               />
 
               <TablaSolicitudes

@@ -17,11 +17,13 @@ import {
 interface Props {
   solicitudes: Solicitud[];
   onFiltrar: (solicitudes: Solicitud[]) => void;
+  onRecargar: () => Promise<Solicitud[]>;
 }
 
 const FiltrosBandejaFuncionario: React.FC<Props> = ({
   solicitudes,
   onFiltrar,
+  onRecargar,
 }) => {
   const [filtroNro, setFiltroNro] = useState("");
   const [filtroIdentificador, setFiltroIdentificador] = useState("");
@@ -29,7 +31,24 @@ const FiltrosBandejaFuncionario: React.FC<Props> = ({
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroTitulo, setFiltroTitulo] = useState("");
 
-  const buscar = () => {
+  const filtrosVacios = () => {
+    return (
+      !filtroNro.trim() &&
+      !filtroIdentificador.trim() &&
+      !filtroFecha &&
+      !filtroEstado &&
+      !filtroTitulo.trim()
+    );
+  };
+
+  const buscar = async () => {
+    const baseActualizada = await onRecargar();
+
+    if (filtrosVacios()) {
+      onFiltrar(baseActualizada);
+      return;
+    }
+
     const filtros: FiltrosFuncionario = {
       nroSolicitud: filtroNro,
       identificador: filtroIdentificador,
@@ -38,16 +57,18 @@ const FiltrosBandejaFuncionario: React.FC<Props> = ({
       titulo: filtroTitulo,
     };
 
-    onFiltrar(filtrarSolicitudesFuncionario(solicitudes, filtros));
+    onFiltrar(filtrarSolicitudesFuncionario(baseActualizada, filtros));
   };
 
-  const limpiar = () => {
+  const limpiar = async () => {
     setFiltroNro("");
     setFiltroIdentificador("");
     setFiltroFecha("");
     setFiltroEstado("");
     setFiltroTitulo("");
-    onFiltrar(solicitudes);
+
+    const baseActualizada = await onRecargar();
+    onFiltrar(baseActualizada);
   };
 
   return (
@@ -128,11 +149,10 @@ const FiltrosBandejaFuncionario: React.FC<Props> = ({
             placeholder="Seleccione..."
             style={estiloCampo}
           >
-            <IonSelectOption value="Recibido">Recibido</IonSelectOption>
-            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
-            <IonSelectOption value="Observado">Observado</IonSelectOption>
+            <IonSelectOption value="">Todos</IonSelectOption>
             <IonSelectOption value="Pendiente">Pendiente</IonSelectOption>
-            <IonSelectOption value="Aprobada">Aprobada</IonSelectOption>
+            <IonSelectOption value="En revisión">En revisión</IonSelectOption>
+            <IonSelectOption value="Resuelta">Resuelta</IonSelectOption>
             <IonSelectOption value="Rechazada">Rechazada</IonSelectOption>
           </IonSelect>
         </div>
@@ -149,7 +169,7 @@ const FiltrosBandejaFuncionario: React.FC<Props> = ({
 
         <div style={{ display: "flex", gap: "10px" }}>
           <IonButton
-            onClick={buscar}
+            onClick={() => void buscar()}
             style={{
               "--background": "#0088ff",
               "--color": "white",
@@ -163,7 +183,7 @@ const FiltrosBandejaFuncionario: React.FC<Props> = ({
           </IonButton>
 
           <IonButton
-            onClick={limpiar}
+            onClick={() => void limpiar()}
             style={{
               "--background": "#ffcc00",
               "--color": "white",

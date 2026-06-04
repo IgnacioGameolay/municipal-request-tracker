@@ -55,21 +55,6 @@ export const MenuFuncionario: React.FC = () => {
               </IonLabel>
             </IonItem>
           </IonMenuToggle>
-          <IonMenuToggle autoHide={false}>
-            <IonItem
-              button
-              lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
-            >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Datos funcionario
-              </IonLabel>
-            </IonItem>
-          </IonMenuToggle>
         </IonList>
 
         {/* SECCIÓN 2: Gestor de solicitudes */}
