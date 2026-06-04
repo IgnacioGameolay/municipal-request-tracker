@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   IonButton,
   IonIcon,
@@ -28,6 +28,19 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
   const [filtroCliente, setFiltroCliente] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroTitulo, setFiltroTitulo] = useState("");
+
+  const tiposDisponibles = useMemo(() => {
+    return Array.from(
+      new Set(
+        solicitudes
+          .map((solicitud) => solicitud.tipo)
+          .filter(
+            (tipo): tipo is string =>
+              typeof tipo === "string" && tipo.trim().length > 0,
+          ),
+      ),
+    ).sort((a, b) => a.localeCompare(b, "es"));
+  }, [solicitudes]);
 
   const buscar = () => {
     const filtros: FiltrosHistorialFuncionarioDatos = {
@@ -98,13 +111,21 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
             interface="popover"
             value={filtroTipo}
             onIonChange={(e) => setFiltroTipo(e.detail.value || "")}
-            placeholder="Seleccione..."
+            placeholder={
+              tiposDisponibles.length > 0
+                ? "Seleccione..."
+                : "Sin tipos disponibles"
+            }
             style={estiloCampo}
+            disabled={tiposDisponibles.length === 0}
           >
-            <IonSelectOption value="Tipo 1">Tipo 1</IonSelectOption>
-            <IonSelectOption value="Tipo 2">Tipo 2</IonSelectOption>
-            <IonSelectOption value="Tipo 3">Tipo 3</IonSelectOption>
-            <IonSelectOption value="Tipo 4">Tipo 4</IonSelectOption>
+            <IonSelectOption value="">Todos</IonSelectOption>
+
+            {tiposDisponibles.map((tipo) => (
+              <IonSelectOption key={tipo} value={tipo}>
+                {tipo}
+              </IonSelectOption>
+            ))}
           </IonSelect>
         </div>
 
@@ -151,6 +172,7 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
             placeholder="Seleccione..."
             style={estiloCampo}
           >
+            <IonSelectOption value="">Todos</IonSelectOption>
             <IonSelectOption value="Recibido">Recibido</IonSelectOption>
             <IonSelectOption value="En revisión">En revisión</IonSelectOption>
             <IonSelectOption value="Observado">Observado</IonSelectOption>
