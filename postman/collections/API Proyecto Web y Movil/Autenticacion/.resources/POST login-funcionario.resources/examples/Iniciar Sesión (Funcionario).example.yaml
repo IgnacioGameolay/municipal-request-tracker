@@ -1,0 +1,53 @@
+$kind: http-example
+description: |-
+  Autentica a un **funcionario** y guarda el token en `{{tokenFuncionario}}`.
+
+  **No requiere autenticación previa.**
+
+  El script de Tests guarda automáticamente el token recibido en la variable de entorno `tokenFuncionario`.
+request:
+  url: "{{baseUrl}}/auth/login"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "funcionario@demo.cl",
+        "password": "123456"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "479"
+    etag: W/"1df-qlCif+9d+281fYZ0QPruvu6JsJU"
+    date: Thu, 04 Jun 2026 03:04:55 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Inicio de sesión correcto",
+        "data": {
+          "user": {
+            "id": "u2",
+            "nombre": "Funcionario Demo",
+            "rut": "22222222-2",
+            "email": "funcionario@demo.cl",
+            "region": "Valparaíso",
+            "comuna": "Valparaíso",
+            "rol": "funcionario",
+            "createdAt": "2026-05-31T00:15:41.374Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InUyIiwiZW1haWwiOiJmdW5jaW9uYXJpb0BkZW1vLmNsIiwicm9sIjoiZnVuY2lvbmFyaW8iLCJpYXQiOjE3ODA1NDIyOTUsImV4cCI6MTc4MDU0OTQ5NX0.RcjOBzDXK77dVhxvlr8-6KCij0nelVdQKLBsJCEYhoY"
+        }
+      }
+order: 1780542297680

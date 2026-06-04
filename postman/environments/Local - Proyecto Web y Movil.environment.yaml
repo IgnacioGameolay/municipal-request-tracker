@@ -8,4 +8,8 @@ values:
     value: ''
   - key: documentoId
     value: ''
+  - key: tokenCiudadano
+    value: ''
+  - key: tokenFuncionario
+    value: ''
 color: 0

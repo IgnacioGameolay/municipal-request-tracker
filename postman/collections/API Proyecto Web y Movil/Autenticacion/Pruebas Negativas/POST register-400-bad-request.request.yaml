@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Register 400 - Bad Request (sin email)'
+method: POST
+url: '{{baseUrl}}/auth/register'
+order: 1000
+description: |-
+  **Prueba Negativa - Error 400 Bad Request**
+
+  Envía el body sin el campo `email` para demostrar que el servidor valida los campos obligatorios.
+
+  Se espera respuesta: `400 Bad Request`
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombre": "Test",
+      "rut": "11111111-1",
+      "region": "Valparaíso",
+      "comuna": "Viña del Mar",
+      "password": "PasswordSeguro123!"
+    }

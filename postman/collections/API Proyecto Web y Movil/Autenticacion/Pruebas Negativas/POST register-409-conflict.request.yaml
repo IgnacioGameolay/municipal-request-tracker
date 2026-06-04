@@ -1,0 +1,24 @@
+$kind: http-request
+name: 'Register 409 - Conflict (email duplicado)'
+method: POST
+url: '{{baseUrl}}/auth/register'
+order: 2000
+description: |-
+  **Prueba Negativa - Error 409 Conflict**
+
+  Intenta registrar un usuario con un correo que ya existe en el sistema.
+
+  Se espera respuesta: `409 Conflict`
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombre": "Vicente",
+      "rut": "12345678-9",
+      "region": "Valparaíso",
+      "comuna": "Viña del Mar",
+      "email": "ciudadano2.prueba@correo.com",
+      "password": "PasswordSeguro123!"
+    }

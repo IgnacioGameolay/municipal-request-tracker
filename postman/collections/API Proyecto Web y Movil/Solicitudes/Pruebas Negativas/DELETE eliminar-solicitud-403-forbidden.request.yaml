@@ -1,0 +1,18 @@
+$kind: http-request
+name: Eliminar Solicitud 403 - Forbidden (token de otro usuario)
+method: DELETE
+url: "{{baseUrl}}/solicitudes/{{solicitudId}}"
+examples: .resources/DELETE eliminar-solicitud-403-forbidden.resources/examples
+order: 3000
+description: |-
+  **Prueba Negativa - Error 403 Forbidden**
+
+  Intenta eliminar una solicitud usando el token de un ciudadano diferente al dueño de la solicitud.
+
+  Para esta prueba: usa el `{{tokenCiudadano}}` de un usuario que NO sea el dueño de `{{solicitudId}}`.
+
+  Se espera respuesta: `403 Forbidden`
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenCiudadano}}"
