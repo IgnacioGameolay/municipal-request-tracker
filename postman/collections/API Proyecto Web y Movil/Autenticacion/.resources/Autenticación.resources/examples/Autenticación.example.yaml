@@ -1,0 +1,35 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/auth/me"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "238"
+    etag: W/"ee-9Dl4rOswCl0qd3iIfWtweVq79bg"
+    date: Mon, 01 Jun 2026 03:28:36 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Usuario autenticado",
+        "data": {
+          "id": "u1",
+          "nombre": "Ciudadano Demo",
+          "rut": "11111111-1",
+          "email": "ciudadano@demo.cl",
+          "region": "Valparaíso",
+          "comuna": "Valparaíso",
+          "rol": "ciudadano",
+          "createdAt": "2026-05-31T00:15:41.368Z"
+        }
+      }
+order: 1780284519190

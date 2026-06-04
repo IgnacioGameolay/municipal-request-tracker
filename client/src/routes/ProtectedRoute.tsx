@@ -1,8 +1,6 @@
 import React from "react";
 import { Route, Redirect, RouteProps } from "react-router-dom";
-
-import { useAuth } from "../context/AuthContext";
-import type { Role } from "../context/AuthContext";
+import { useAuth, Role } from "../context/AuthContext";
 
 interface ProtectedRouteProps extends RouteProps {
   component: React.ComponentType<any>;
@@ -14,12 +12,16 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   allowedRole,
   ...rest
 }) => {
-  const { isAuthenticated, role } = useAuth();
+  const { isAuthenticated, isLoading, role } = useAuth();
 
   return (
     <Route
       {...rest}
       render={(props) => {
+        if (isLoading) {
+          return null;
+        }
+
         if (!isAuthenticated || !role) {
           return <Redirect to="/login" />;
         }

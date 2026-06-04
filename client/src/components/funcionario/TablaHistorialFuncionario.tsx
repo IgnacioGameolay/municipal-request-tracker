@@ -5,7 +5,7 @@ import FilaHistorialFuncionario from "./FilaHistorialFuncionario";
 
 interface Props {
   solicitudes: Solicitud[];
-  onComentar: (id: number) => void;
+  onComentar: (id: Solicitud["id"]) => void;
 }
 
 const TablaHistorialFuncionario: React.FC<Props> = ({

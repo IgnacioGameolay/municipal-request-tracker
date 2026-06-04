@@ -1,0 +1,11 @@
+name: Local - Proyecto Web y Móvil
+values:
+  - key: baseUrl
+    value: 'http://localhost:3000/api'
+  - key: token
+    value: ''
+  - key: solicitudId
+    value: ''
+  - key: documentoId
+    value: ''
+color: 0

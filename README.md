@@ -50,45 +50,35 @@ Diseñar e implementar un prototipo frontend de una aplicación web para gestion
 
 
 
-## 4. Alcance de la Entrega Parcial 1
+## 4. [MODIFICADO] Alcance Actual del Proyecto
 
-Esta entrega se enfoca en el desarrollo frontend del sistema. No corresponde aún a una implementación completa con backend persistente ni base de datos real. Para simular persistencia durante la navegación, se utiliza `localStorage` del navegador.
+Esta entrega abarca tanto el desarrollo frontend del sistema como la implementación de un backend funcional, superando la fase inicial de persistencia simulada temporal.
 
-### Incluido en EP1
+### Incluido actualmente
 
 - Proyecto Ionic React con TypeScript.
-- Rutas públicas y protegidas.
-- Separación de roles: Solicitante y Funcionario Municipal.
-- Login, registro y recuperación de contraseña prototipales.
-- Menú lateral diferenciado por rol.
-- Encabezado común reutilizable para pantallas internas.
-- Creación, edición/complemento, listado, detalle y eliminación de solicitudes.
-- Bandeja e historial para funcionario.
-- Revisión de solicitudes por funcionario.
-- Cambio de estado mediante modal.
-- Rechazo de solicitudes mediante confirmación.
-- Comentarios de revisión.
-- Historial de revisiones.
-- Notificaciones simuladas para solicitante y funcionario.
+- Rutas públicas y protegidas en el frontend.
+- Separación estricta de roles validados desde el backend (Solicitante y Funcionario Municipal).
+- Autenticación real con JWT y encriptación de contraseñas.
+- Backend en Node.js con Express y Prisma ORM.
+- Base de datos relacional real en PostgreSQL.
+- Creación, edición, listado, detalle y eliminación de solicitudes (CRUD completo en BD).
+- Subida y descarga real de archivos al servidor mediante Multer.
+- Bandeja e historial de gestión real para el funcionario.
+- Cambio de estado y registro de comentarios persistidos en PostgreSQL.
+- Historial de revisiones automatizado en el servidor.
+- Notificaciones simuladas en frontend (estructura base para futura integración real).
 - Consulta de información sobre requisitos de trámites.
 - Contacto y ayuda con funcionarios simulados.
-- Datos simulados de solicitante, funcionario, solicitudes, notificaciones, contactos e información de trámites.
-- Persistencia temporal mediante `localStorage`.
+- Colección de pruebas en Postman documentada con flujos reales.
 - Refactorización modular por carpetas de dominio, aplicación, infraestructura, componentes y páginas.
 
-### No incluido en EP1
+### No incluido en esta entrega
 
-- Backend definitivo.
-- Base de datos relacional real.
-- Autenticación real con JWT.
-- Subida real de archivos al servidor.
-- Gestión avanzada de permisos.
-- Integración con servicios municipales reales.
-- Notificaciones push reales.
-- Envío real de correos de recuperación de contraseña.
-
-Estas características se consideran parte de una evolución futura del sistema, especialmente para etapas posteriores del proyecto.
-
+- Envío real de correos electrónicos para recuperación de contraseña.
+- Gestión avanzada de permisos multisucursal.
+- Integración con servicios municipales externos (RUT, Clave Única, etc.).
+- Notificaciones push o WebSockets en tiempo real.
 
 
 ## 5. Usuarios objetivo
@@ -818,15 +808,41 @@ Algunas diferencias se mantienen por decisiones de prototipo:
 - Node.js instalado.
 - npm instalado.
 - Git instalado.
+- PostgreSQL instalado y corriendo.
 
 ### Clonar repositorio
 
 ```bash
-git clone https://github.com/IgnacioGameolay/municipal-request-tracker.git
+git clone [https://github.com/IgnacioGameolay/municipal-request-tracker.git](https://github.com/IgnacioGameolay/municipal-request-tracker.git)
 cd municipal-request-tracker
 ```
 
+### Instalar y configurar el Backend (AGREGADO)
+
+Para levantar la API y la base de datos real:
+
+1. Abre una nueva terminal y entra a la carpeta del servidor:
+```bash
+   cd server
+   ```
+2. Instala las dependencias:
+```bash
+   npm install
+   ```
+3. **Variables de entorno:** Crea un archivo `.env` en la raíz de la carpeta `server` guiándote por `.env.example`. Configura de forma obligatoria tu `DATABASE_URL` y tu `JWT_SECRET`.
+4. Ejecuta las migraciones de Prisma para construir las tablas en PostgreSQL:
+```bash
+   npx prisma migrate dev
+   ```
+5. Levanta el servidor en modo desarrollo:
+```bash
+   npm run dev
+   ```
+*(El backend quedará corriendo en `http://localhost:3000`)*
+
 ### Instalar dependencias del frontend
+
+En una nueva terminal, vuelve a la raíz del proyecto e ingresa al cliente:
 
 ```bash
 cd client
@@ -846,6 +862,8 @@ $env:CYPRESS_INSTALL_BINARY=0; npm install
 ```
 
 ### Ejecutar en modo desarrollo
+
+Para el frontend:
 
 ```bash
 npm run dev
@@ -873,15 +891,15 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 
 
 
-## 20. Uso del sistema para demostración
+## 20. [MODIFICADO] Uso del sistema para demostración
 
 ### 20.1 Flujo solicitante recomendado
 
-1. Abrir la aplicación.
+1. Abrir la aplicación (asegurándose de tener el backend y PostgreSQL corriendo).
 2. Iniciar sesión como Solicitante.
 3. Revisar perfil y datos de empresa.
 4. Ir a "Realizar nueva solicitud".
-5. Crear una solicitud.
+5. Crear una solicitud y adjuntar un documento real (el backend ahora procesará y guardará el archivo).
 6. Verla en "Solicitudes realizadas".
 7. Entrar al detalle.
 8. Editar/complementar una solicitud.
@@ -896,17 +914,56 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 1. Iniciar sesión como Funcionario Municipal.
 2. Revisar perfil funcionario.
 3. Ingresar a bandeja o historial de solicitudes.
-4. Abrir una solicitud.
+4. Abrir una solicitud (aquí podrás ver o descargar los documentos adjuntos reales).
 5. Escribir comentario.
 6. Actualizar estado o rechazar solicitud.
-7. Confirmar cambio.
+7. Confirmar cambio (la trazabilidad quedará guardada de forma persistente en la base de datos).
 8. Volver a bandeja.
 9. Verificar que la solicitud quedó actualizada.
 10. Cambiar a solicitante para revisar cómo se visualiza el cambio.
 
+## 21. Verificación en POSTMAN
+
+Esta sección detalla cómo validar el funcionamiento del backend utilizando la colección exportada.
+
+### 21.1 Preparación del Entorno
+Antes de ejecutar las pruebas, asegúrate de que el servidor esté activo:
+1. Navega a la carpeta `server/`.
+2. Ejecuta `npm run dev` para levantar el backend en `http://localhost:3000`.
+
+### 21.2 Configuración en Postman
+Para ejecutar la colección `API Proyecto Web y Movil`, realiza estos pasos:
+
+1. **Importar Colección:** En Postman, ejecuta el comando "Ctrl" + "O" (o haz clic en el botón *Import*). Arrastra directamente la carpeta completa `postman/collections/API Proyecto Web y Movil` hacia la ventana, o usa la opción de seleccionar carpeta (Folder). Postman leerá automáticamente toda la estructura de archivos `.yaml`.
+2. **Importar Entorno:** En la misma ventana de importación, selecciona o arrastra el archivo `postman/environments/Local - Proyecto Web y Movil.environment.yaml`.
+3. **Selección:** Asegúrate de seleccionar el entorno "Local" en el menú desplegable superior derecho de Postman.
+
+### 21.3 Flujo de pruebas recomendado (Orden de ejecución)
+
+Para demostrar que el backend es seguro y funcional, sigue este orden:
+
+1. **Autenticación (Gestión de Token):**
+   - Ejecuta `POST Iniciar Sesión`.
+   - Nota: Si el token expira, simplemente vuelve a ejecutar esta petición.
+   - Instrucciones para actualizar: 
+     1. Copia el valor del token desde la respuesta (asegúrate de **NO** incluir las comillas `' '` ni caracteres extra).
+     2. Ve a la pestaña **Environments** (parte superior derecha).
+     3. Selecciona tu entorno `Local - Proyecto Web y Movil`.
+     4. Pega el nuevo Token en el campo `Current Value` de la variable `token`.
+     5. Haz clic en Save.
+     6. *Nota: El procedimiento es el mismo cuando se requiere actualizar la variable de id de solicitud y de documento.*
+     
+2. **Solicitudes:**
+   - Ejecuta `POST Crear Solicitud` (Asegúrate de tener un archivo cargado en el body de tipo `form-data`).
+   - Ejecuta `GET Listar Solicitudes` para verificar que la creación fue persistida.
+   - Ejecuta `GET Obtener Solicitud por ID` usando el ID generado en el paso anterior.
+   
+3. **Documentos:**
+   - Ejecuta `POST Subir un documento` para probar el manejo de archivos (Multer).
+   - Ejecuta `GET Ver Documentos Adjuntos` para confirmar la relación entre solicitud y archivo.
 
 
-## 21. Comandos útiles
+## 22. Comandos útiles
 
 ```bash
 # Instalar dependencias
@@ -925,84 +982,73 @@ npx prettier --write "src/**/*.{ts,tsx,css,json,md}"
 
 
 
-## 22. Limpieza de datos locales
+## 23. [MODIFICADO] Limpieza de datos locales y Base de Datos
 
-El prototipo usa `localStorage`. Si se desea reiniciar las solicitudes guardadas durante pruebas, abrir la consola del navegador y ejecutar:
+Para limpiar la base de datos real en etapa de pruebas, puedes abrir la consola en la carpeta del servidor y ejecutar:
+
+```bash
+npx prisma migrate reset
+```
+
+El prototipo frontend aún puede usar `localStorage` para almacenar la sesión activa (como el token JWT). Si se desea reiniciar la sesión local o las solicitudes cacheadas durante pruebas, abrir la consola del navegador y ejecutar:
 
 ```js
 localStorage.removeItem('solicitudes_db');
-```
-
-Para reiniciar rol y sesión prototipal:
-
-```js
-localStorage.removeItem('rol_actual');
-localStorage.removeItem('sesion_activa');
-```
-
-Para limpiar todo el almacenamiento local del prototipo:
-
-```js
+localStorage.removeItem('token');
 localStorage.clear();
 location.href = '/login';
 ```
 
-## 23. Limitaciones actuales
 
-- La autenticación es simulada.
-- Los datos no se guardan en servidor.
-- La documentación se representa visualmente, pero no se sube realmente.
-- Las notificaciones son simuladas.
-- La generación de ID es prototipal.
-- El backend todavía no está conectado al frontend.
-- El cambio manual de rol se mantiene como recurso de demostración para EP1.
-- El registro y la recuperación de contraseña validan datos, pero no crean usuarios reales ni envían correos.
+
+## 24. [MODIFICADO] Limitaciones actuales
+
+- Las notificaciones son simuladas en el frontend (aún no usan WebSockets para tiempo real).
+- El envío de correos electrónicos para recuperar contraseñas no utiliza un servidor SMTP real todavía.
+- La generación de algunos ID visuales en el frontend podría seguir un formato prototipal temporal.
+- El cambio manual de rol se mantiene como recurso rápido de demostración.
 - Algunas opciones visuales del menú funcionario todavía no tienen ruta propia.
 
-Estas limitaciones son coherentes con el alcance de la entrega parcial, cuyo foco es el frontend, la navegación, el prototipo funcional y la estructura base del sistema.
+Estas limitaciones son coherentes con el estado actual del proyecto, habiendo superado exitosamente la fase inicial al integrar un backend funcional, autenticación real y manejo de archivos.
 
 
 
-## 24. Proyección para próximas entregas
+## 25. [MODIFICADO] Proyección para próximas entregas
 
-Para una versión posterior del sistema se propone:
+Habiendo implementado exitosamente la API REST, la base de datos relacional, la autenticación JWT y la subida real de documentos, para una versión posterior del sistema se propone:
 
-- Implementar API REST.
-- Conectar base de datos relacional.
-- Implementar autenticación real con JWT.
-- Persistir usuarios, solicitudes, comentarios y revisiones en backend.
-- Generar ID únicos desde base de datos.
-- Implementar carga real de documentos.
-- Implementar notificaciones reales.
-- Enviar correos reales para recuperación de contraseña.
-- Mejorar permisos por rol desde backend.
-- Agregar auditoría de acciones.
-- Mejorar validación de formularios.
-- Centralizar servicios HTTP para comunicación con backend.
+- Implementar notificaciones push en tiempo real (ej. WebSockets / Socket.io).
+- Enviar correos reales para recuperación de contraseña integrando un servicio como NodeMailer.
+- Mejorar permisos por rol desde backend (ej. gestión multisucursal o multi-departamento).
+- Agregar auditoría avanzada de acciones en la base de datos.
+- Centralizar y robustecer los servicios HTTP en el frontend para la comunicación con el backend.
 - Corregir elementos visuales del menú que aún no tienen pantalla propia.
 
 
 
-## 25. Cumplimiento de pauta EP1
+## 26. [MODIFICADO] Cumplimiento de pauta EP1 y Siguientes
 
 | Criterio esperado | Evidencia en el proyecto |
 |---|---|
 | Uso de Ionic + React + TypeScript | Proyecto frontend en `client` construido con Ionic React y TypeScript. |
 | Rutas públicas | Login, registro y recuperación. |
-| Rutas protegidas | `ProtectedRoute` para solicitante y funcionario. |
-| Dos roles diferenciados | Solicitante y Funcionario Municipal. |
+| Rutas protegidas | `ProtectedRoute` para solicitante y funcionario (ahora con validación JWT). |
+| Dos roles diferenciados | Solicitante y Funcionario Municipal (validados en BD). |
 | Mínimo de pantallas implementadas | Se implementan más de cuatro pantallas funcionales. |
+| Persistencia de datos (AGREGADO) | Uso de PostgreSQL y Prisma ORM para solicitudes, usuarios y revisiones. |
+| Gestión de Archivos (AGREGADO) | Endpoints con Multer operativos en el backend para subida y descarga de expedientes. |
 | Componentes Ionic | Uso de `IonPage`, `IonHeader`, `IonToolbar`, `IonContent`, `IonMenu`, `IonButton`, `IonInput`, `IonSelect`, `IonModal`, entre otros. |
 | Organización modular | Carpetas `dominio`, `aplicacion`, `infraestructura`, `components`, `pages`, `routes` y `context`. |
 | Mockups asociados | Pantallas implementadas de acuerdo con el diseño del prototipo. |
 | Arquitectura de navegación | Rutas centralizadas en `src/routes/AppRouter.tsx` y protección en `ProtectedRoute.tsx`. |
+| Documentación API (AGREGADO) | Colección de Postman exportada con flujos probados. |
 | Funcionalidades más allá de login/registro | Solicitudes, historial, revisión, notificaciones, contacto e información. |
 | Separación de responsabilidades | Casos de uso, reglas, entidades, simulación de datos y repositorio local separados. |
 | Uso de repositorio | Proyecto estructurado para entrega mediante GitHub. |
 
 
 
-## 26. Autores
+## 27. Autores
 
 Proyecto desarrollado para la asignatura **ICI4247/1 - Ingeniería Web y Móvil**.
 
@@ -1015,8 +1061,8 @@ Integrantes:
 
 
 
-## 27. Estado actual
+## 28. [MODIFICADO] Estado actual
 
-El proyecto se encuentra en estado de prototipo frontend funcional para EP1. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, visualización de trazabilidad por parte del solicitante y separación de roles mediante rutas protegidas.
+El proyecto ha evolucionado de un prototipo frontend a una aplicación Full-Stack funcional. La aplicación permite demostrar los flujos principales de navegación, gestión de solicitudes, revisión por funcionario, visualización de trazabilidad por parte del solicitante, subida real de documentos y separación de roles mediante rutas protegidas conectadas a un backend real en Node.js y PostgreSQL.
 
-La versión actual incorpora una refactorización importante del frontend, separando páginas grandes en componentes reutilizables, casos de uso, reglas de dominio, entidades e infraestructura de almacenamiento/simulación de datos.
+La versión actual mantiene la refactorización importante del frontend (separando páginas grandes en componentes reutilizables, casos de uso, reglas de dominio y entidades) y suma la capa de infraestructura del servidor para garantizar la persistencia y seguridad definitiva de los datos.

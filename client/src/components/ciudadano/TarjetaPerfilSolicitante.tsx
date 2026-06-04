@@ -1,14 +1,18 @@
 import React from "react";
 
-import type { Solicitante } from "../../dominio/entidades/Solicitante";
+import type { UsuarioApi } from "../../services/authApi";
 import AvatarSolicitante from "./AvatarSolicitante";
 import CampoDatoSolicitante from "./CampoDatoSolicitante";
 
 interface Props {
-  solicitante: Solicitante;
+  usuario: UsuarioApi;
 }
 
-const TarjetaPerfilSolicitante: React.FC<Props> = ({ solicitante }) => {
+function formatearRol(rol: UsuarioApi["rol"]): string {
+  return rol === "funcionario" ? "Funcionario" : "Ciudadano";
+}
+
+const TarjetaPerfilSolicitante: React.FC<Props> = ({ usuario }) => {
   return (
     <div
       style={{
@@ -47,22 +51,12 @@ const TarjetaPerfilSolicitante: React.FC<Props> = ({ solicitante }) => {
             minWidth: "500px",
           }}
         >
-          <CampoDatoSolicitante etiqueta="Nombre" valor={solicitante.nombre} />
-
-          <CampoDatoSolicitante etiqueta="Rut" valor={solicitante.rut} />
-
-          <CampoDatoSolicitante
-            etiqueta="Teléfono"
-            valor={solicitante.telefono}
-          />
-
-          <CampoDatoSolicitante etiqueta="Email" valor={solicitante.email} />
-
-          <CampoDatoSolicitante
-            etiqueta="ROL"
-            valor={solicitante.rol}
-            columnas={2}
-          />
+          <CampoDatoSolicitante etiqueta="Nombre" valor={usuario.nombre} />
+          <CampoDatoSolicitante etiqueta="RUT" valor={usuario.rut} />
+          <CampoDatoSolicitante etiqueta="Email" valor={usuario.email} />
+          <CampoDatoSolicitante etiqueta="Región" valor={usuario.region} />
+          <CampoDatoSolicitante etiqueta="Comuna" valor={usuario.comuna} />
+          <CampoDatoSolicitante etiqueta="Rol" valor={formatearRol(usuario.rol)} />
         </div>
       </div>
     </div>

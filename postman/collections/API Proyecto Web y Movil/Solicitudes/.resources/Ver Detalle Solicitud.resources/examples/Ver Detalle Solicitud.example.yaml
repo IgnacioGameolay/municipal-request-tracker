@@ -1,0 +1,40 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{solicitudId}}"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "529"
+    etag: W/"211-sU//89Wsk5u+Tb6Q34BHbs25pYE"
+    date: Mon, 01 Jun 2026 04:10:46 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud obtenida correctamente",
+        "data": {
+          "id": "811f371c-2f33-40dd-ad55-8f55dbabe22f",
+          "usuarioId": "u1",
+          "funcionarioId": null,
+          "titulo": "Bache en calle principal",
+          "categoria": "Infraestructura",
+          "descripcion": "Existe un bache de gran tamaño en la calle principal que representa un peligro para los vehículos.",
+          "direccion": "Av. Principal 123",
+          "comuna": "Santiago",
+          "estado": "pendiente",
+          "prioridad": "alta",
+          "comentarioFuncionario": null,
+          "createdAt": "2026-06-01T04:10:20.097Z",
+          "updatedAt": "2026-06-01T04:10:20.097Z"
+        }
+      }
+order: 1780287048997

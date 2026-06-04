@@ -5,7 +5,7 @@ import FilaBandejaFuncionario from "./FilaBandejaFuncionario";
 
 interface Props {
   solicitudes: Solicitud[];
-  onRevisar: (id: number) => void;
+  onRevisar: (id: Solicitud["id"]) => void;
 }
 
 const TablaBandejaFuncionario: React.FC<Props> = ({

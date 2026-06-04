@@ -1,0 +1,61 @@
+$kind: http-example
+description: |-
+  Crea una nueva solicitud ciudadana en el sistema.
+
+  **Requiere autenticación:** Bearer Token `{{token}}` (rol: ciudadano)
+
+  **Estados disponibles:** `pendiente`, `en_revision`, `resuelta`, `rechazada`
+
+  **Prioridades disponibles:** `baja`, `media`, `alta`
+request:
+  url: "{{baseUrl}}/solicitudes"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "titulo": "Bache en calle principal",
+        "categoria": "Infraestructura",
+        "descripcion": "Existe un bache de gran tamaño en la calle principal que representa un peligro para los vehículos.",
+        "direccion": "Av. Principal 123",
+        "comuna": "Santiago",
+        "prioridad": "alta"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "527"
+    etag: W/"20f-Un4724YlhdrrnWcPaqfRFSXzwBo"
+    date: Mon, 01 Jun 2026 03:39:54 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud creada correctamente",
+        "data": {
+          "id": "7d3cbf52-9b1b-4c52-9810-f14421a87f2c",
+          "usuarioId": "u1",
+          "funcionarioId": null,
+          "titulo": "Bache en calle principal",
+          "categoria": "Infraestructura",
+          "descripcion": "Existe un bache de gran tamaño en la calle principal que representa un peligro para los vehículos.",
+          "direccion": "Av. Principal 123",
+          "comuna": "Santiago",
+          "estado": "pendiente",
+          "prioridad": "alta",
+          "comentarioFuncionario": null,
+          "createdAt": "2026-06-01T03:39:54.568Z",
+          "updatedAt": "2026-06-01T03:39:54.568Z"
+        }
+      }
+order: 1780285196125

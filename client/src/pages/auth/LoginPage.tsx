@@ -14,16 +14,19 @@ import {
   RolSesion,
 } from "../../aplicacion/casosDeUso/obtenerRutaInicioPorRol";
 
+import { login as loginApi } from "../../services/authApi";
+import { ApiClientError } from "../../services/apiClient";
+
 const LoginPage: React.FC = () => {
   const history = useHistory();
-  const { login } = useAuth();
+  const { login: loginContext } = useAuth();
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [rolSeleccionado, setRolSeleccionado] = useState<Role | undefined>();
   const [error, setError] = useState("");
 
-  const ingresar = () => {
+  const ingresar = async () => {
     const mensajeError = validarLogin({
       correo,
       password,
@@ -38,11 +41,38 @@ const LoginPage: React.FC = () => {
     if (!rolSeleccionado) {
       return;
     }
+try {
+      setError("");
 
-    setError("");
-    login(rolSeleccionado);
+      const sesion = await loginApi({email: correo,password,});
 
-    history.push(obtenerRutaInicioPorRol(rolSeleccionado as RolSesion));
+      const rolBackend = sesion.user.rol;
+      const rolRealFrontend: Role =
+        rolBackend === "ciudadano" ? "solicitante" : "funcionario";
+
+      if (rolRealFrontend !== rolSeleccionado) {
+        setError(
+          "El rol seleccionado no coincide con el usuario ingresado. Revisa si estás entrando como solicitante o funcionario."
+        );
+        return;
+      }
+
+      loginContext(sesion);
+
+      history.push(obtenerRutaInicioPorRol(rolRealFrontend as RolSesion));
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setError(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setError(error.message);
+        return;
+      }
+
+      setError("No se pudo iniciar sesión. Intenta nuevamente.");
+    }
   };
 
   return (
@@ -61,6 +91,7 @@ const LoginPage: React.FC = () => {
           onIngresar={ingresar}
         />
       </IonContent>
+
     </IonPage>
   );
 };

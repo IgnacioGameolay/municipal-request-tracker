@@ -5,12 +5,13 @@ import { createOutline, helpOutline, trashOutline } from "ionicons/icons";
 import ColorEstado from "../common/ColorEstado";
 import { Solicitud } from "../../dominio/entidades/Solicitud";
 import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
+import { normalizarEstado } from "../../dominio/reglas/normalizarEstado";
 
 interface Props {
   solicitud: Solicitud;
-  onEditar: (id: number) => void;
-  onDetalle: (id: number) => void;
-  onEliminar: (id: number) => void;
+  onEditar: (id: Solicitud["id"]) => void;
+  onDetalle: (id: Solicitud["id"]) => void;
+  onEliminar: (id: Solicitud["id"]) => void;
 }
 
 const FilaSolicitud: React.FC<Props> = ({
@@ -19,10 +20,12 @@ const FilaSolicitud: React.FC<Props> = ({
   onDetalle,
   onEliminar,
 }) => {
+  const estadoNormalizado = normalizarEstado(solicitud.estado);
+  const puedeModificar = estadoNormalizado === "pendiente";
   return (
     <tr>
       <td style={estiloCelda}>{solicitud.id}</td>
-      <td style={estiloCelda}>{solicitud.tipo || "Tipo 1"}</td>
+      <td style={estiloCelda}>{solicitud.tipo || "Sin categoría"}</td>
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>
@@ -41,15 +44,17 @@ const FilaSolicitud: React.FC<Props> = ({
         >
           <BotonTabla
             color="#0088ff"
-            titulo="Editar"
+            titulo={puedeModificar ? "Editar" : "Solo se pueden editar solicitudes pendientes"}
             icono={createOutline}
+            disabled={!puedeModificar}
             onClick={() => onEditar(solicitud.id)}
           />
 
           <BotonTabla
             color="#ff3b30"
-            titulo="Borrar"
+            titulo={puedeModificar ? "Borrar" : "Solo se pueden eliminar solicitudes pendientes"}
             icono={trashOutline}
+            disabled={!puedeModificar}
             onClick={() => onEliminar(solicitud.id)}
           />
 
@@ -70,6 +75,7 @@ interface PropsBotonTabla {
   titulo: string;
   icono: string;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const BotonTabla: React.FC<PropsBotonTabla> = ({
@@ -77,13 +83,15 @@ const BotonTabla: React.FC<PropsBotonTabla> = ({
   titulo,
   icono,
   onClick,
+  disabled = false,
 }) => {
   return (
     <div
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       title={titulo}
+      aria-disabled={disabled}
       style={{
-        backgroundColor: color,
+        backgroundColor: disabled ? "#b8b8b8" : color,
         color: "white",
         width: "26px",
         height: "26px",
@@ -91,13 +99,15 @@ const BotonTabla: React.FC<PropsBotonTabla> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        cursor: "pointer",
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.55 : 1,
       }}
     >
       <IonIcon icon={icono} />
     </div>
   );
 };
+
 
 const estiloCelda = {
   padding: "13px 10px",

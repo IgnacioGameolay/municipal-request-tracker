@@ -8,7 +8,7 @@ import { normalizarFechaVisual } from "../../dominio/reglas/formatearFecha";
 
 interface Props {
   solicitud: Solicitud;
-  onRevisar: (id: number) => void;
+  onRevisar: (id: Solicitud["id"]) => void;
 }
 
 const FilaBandejaFuncionario: React.FC<Props> = ({ solicitud, onRevisar }) => {

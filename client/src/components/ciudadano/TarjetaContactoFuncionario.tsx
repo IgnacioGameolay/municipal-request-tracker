@@ -50,18 +50,12 @@ const TarjetaContactoFuncionario: React.FC<Props> = ({ funcionario }) => {
           flex: 1,
         }}
       >
+        <CampoContactoFuncionario etiqueta="Nombre" valor={funcionario.nombre} />
+        <CampoContactoFuncionario etiqueta="RUT" valor={funcionario.rut} />
+        <CampoContactoFuncionario etiqueta="Región" valor={funcionario.region} />
+        <CampoContactoFuncionario etiqueta="Comuna" valor={funcionario.comuna} />
         <CampoContactoFuncionario
-          etiqueta="Nombre"
-          valor={funcionario.nombre}
-        />
-
-        <CampoContactoFuncionario
-          etiqueta="Teléfono"
-          valor={funcionario.telefono}
-        />
-
-        <CampoContactoFuncionario
-          etiqueta="Email Institucional"
+          etiqueta="Email institucional"
           valor={funcionario.email}
           columnas={2}
         />

@@ -9,12 +9,10 @@ import {
   IonButton
 } from '@ionic/react';
 import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
 
 import LogoMunicipal from './LogoMunicipal';
 import BarraRol from './BarraRol';
 import { RolUsuario } from '../../dominio/constantes/roles';
-import { useAuth } from '../../context/AuthContext';
 
 interface Props {
   rol: RolUsuario;
@@ -29,33 +27,14 @@ const EncabezadoAplicacion: React.FC<Props> = ({
   rol,
   rutaNotificaciones,
   rutaPerfil,
-  onNavegar,
-  permitirCambioManualRol = false
+  onNavegar
 }) => {
-  const history = useHistory();
-  const { cambiarRol } = useAuth();
-
   const irANotificaciones = () => {
     onNavegar(rutaNotificaciones);
   };
 
   const irAPerfil = () => {
     onNavegar(rutaPerfil);
-  };
-
-  const cambiarRolDesdeEncabezado = () => {
-    if (!permitirCambioManualRol) {
-      return;
-    }
-
-    if (rol === 'solicitante') {
-      cambiarRol('funcionario');
-      history.replace('/funcionario/tramites');
-      return;
-    }
-
-    cambiarRol('solicitante');
-    history.replace('/ciudadano/tramites');
   };
 
   return (
@@ -129,8 +108,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
 
           <BarraRol
             rol={rol}
-            permitirCambioManual={permitirCambioManualRol}
-            onClick={cambiarRolDesdeEncabezado}
+            permitirCambioManual={false}
           />
         </IonButtons>
       </IonToolbar>

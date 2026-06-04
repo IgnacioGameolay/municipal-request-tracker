@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { IonContent, IonPage, useIonViewWillEnter } from "@ionic/react";
+import {
+  IonContent,
+  IonPage,
+  IonSpinner,
+  IonToast,
+  useIonViewWillEnter,
+} from "@ionic/react";
 import { useHistory } from "react-router-dom";
 
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
@@ -8,7 +14,9 @@ import FiltrosBandejaFuncionario from "../../components/funcionario/FiltrosBande
 import TablaBandejaFuncionario from "../../components/funcionario/TablaBandejaFuncionario";
 
 import { Solicitud } from "../../dominio/entidades/Solicitud";
-import { obtenerSolicitudesGuardadas } from "../../infraestructura/almacenamiento/repositorioLocalSolicitudes";
+import { obtenerSolicitudes } from "../../services/solicitudesApi";
+import { mapSolicitudesApiToSolicitudes } from "../../services/solicitudesMapper";
+import { ApiClientError } from "../../services/apiClient";
 
 const BandejaFuncionario: React.FC = () => {
   const history = useHistory();
@@ -17,12 +25,34 @@ const BandejaFuncionario: React.FC = () => {
     [],
   );
   const [solicitudesMostrar, setSolicitudesMostrar] = useState<Solicitud[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
-  const cargarSolicitudes = () => {
-    const solicitudes = obtenerSolicitudesGuardadas();
+  const cargarSolicitudes = async () => {
+    try {
+      setCargando(true);
+      setMensajeError("");
 
-    setTodasLasSolicitudes(solicitudes);
-    setSolicitudesMostrar(solicitudes);
+      const solicitudesApi = await obtenerSolicitudes();
+      const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
+
+      setTodasLasSolicitudes(solicitudes);
+      setSolicitudesMostrar(solicitudes);
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      if (error instanceof Error) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudieron cargar las solicitudes.");
+    } finally {
+      setCargando(false);
+    }
   };
 
   const cambiarRolManual = () => {
@@ -32,11 +62,11 @@ const BandejaFuncionario: React.FC = () => {
   };
 
   useEffect(() => {
-    cargarSolicitudes();
+    void cargarSolicitudes();
   }, []);
 
   useIonViewWillEnter(() => {
-    cargarSolicitudes();
+    void cargarSolicitudes();
   });
 
   return (
@@ -69,17 +99,59 @@ const BandejaFuncionario: React.FC = () => {
               Bandeja de Gestión de Solicitudes
             </h2>
 
-            <FiltrosBandejaFuncionario
-              solicitudes={todasLasSolicitudes}
-              onFiltrar={setSolicitudesMostrar}
-            />
+            {cargando && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "30px",
+                }}
+              >
+                <IonSpinner name="crescent" />
+              </div>
+            )}
 
-            <TablaBandejaFuncionario
-              solicitudes={solicitudesMostrar}
-              onRevisar={(id) => history.push(`/funcionario/solicitud/${id}`)}
-            />
+            {!cargando && mensajeError && (
+              <div
+                style={{
+                  backgroundColor: "#ffe5e5",
+                  color: "#a00000",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                  border: "1px solid #ffb3b3",
+                }}
+              >
+                {mensajeError}
+              </div>
+            )}
+
+            {!cargando && !mensajeError && (
+              <>
+                <FiltrosBandejaFuncionario
+                  solicitudes={todasLasSolicitudes}
+                  onFiltrar={setSolicitudesMostrar}
+                />
+
+                <TablaBandejaFuncionario
+                  solicitudes={solicitudesMostrar}
+                  onRevisar={(id) =>
+                    history.push(`/funcionario/solicitud/${id}`)
+                  }
+                />
+              </>
+            )}
           </div>
         </ContenedorPagina>
+
+        <IonToast
+          isOpen={mensajeError !== ""}
+          message={mensajeError}
+          duration={2500}
+          color="danger"
+          position="bottom"
+          onDidDismiss={() => setMensajeError("")}
+        />
       </IonContent>
     </IonPage>
   );
