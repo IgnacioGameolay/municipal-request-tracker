@@ -5,17 +5,11 @@ import { useHistory } from "react-router-dom";
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
 import ContenedorPagina from "../../components/common/ContenedorPagina";
 import TarjetaPerfilFuncionario from "../../components/funcionario/TarjetaPerfilFuncionario";
-
-import { funcionariosSimulados } from "../../infraestructura/simulacionDatos/funcionariosSimulados";
+import { useAuth } from "../../context/AuthContext";
 
 const DashboardFuncionario: React.FC = () => {
   const history = useHistory();
-
-  const cambiarRolManual = () => {
-    localStorage.setItem("rol_actual", "solicitante");
-    window.dispatchEvent(new Event("rolCambiado"));
-    history.push("/ciudadano/tramites");
-  };
+  const { user } = useAuth();
 
   return (
     <IonPage>
@@ -24,8 +18,6 @@ const DashboardFuncionario: React.FC = () => {
         rutaNotificaciones="/funcionario/notificaciones"
         rutaPerfil="/funcionario/tramites"
         onNavegar={(ruta) => history.push(ruta)}
-        permitirCambioManualRol
-        onCambiarRolManual={cambiarRolManual}
       />
 
       <IonContent style={{ "--background": "#ffffff" }}>
@@ -48,7 +40,13 @@ const DashboardFuncionario: React.FC = () => {
               Información personal
             </h2>
 
-            <TarjetaPerfilFuncionario funcionario={funcionariosSimulados} />
+            {user ? (
+              <TarjetaPerfilFuncionario usuario={user} />
+            ) : (
+              <p style={{ color: "#333" }}>
+                No se pudo cargar la información del usuario autenticado.
+              </p>
+            )}
           </div>
         </ContenedorPagina>
       </IonContent>

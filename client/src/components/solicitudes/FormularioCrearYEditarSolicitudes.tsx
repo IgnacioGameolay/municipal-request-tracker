@@ -1,22 +1,13 @@
 import React from "react";
 import { IonInput, IonSelect, IonSelectOption } from "@ionic/react";
 
-export const OPCIONES_TRAMITES = [
-  "Permisos de Circulación 2026",
-  "Patentes Municipales",
-  "Becas Municipales 2026",
-  "Obtener y Renovar una Licencia de Conducir",
-  "Derechos de Aseo Domiciliario",
-  "Solicitud de Información, Reclamos y Sugerencias",
-  "Obtención de Casilla Única Digital"
-];
-
 interface Props {
   tipo: string;
   titulo: string;
   descripcionOriginal: string;
   descripcionAgregada: string;
   esEdicion: boolean;
+  opcionesTramites: string[];
   onCambiarTipo: (valor: string) => void;
   onCambiarTitulo: (valor: string) => void;
   onCambiarDescripcionOriginal: (valor: string) => void;
@@ -29,6 +20,7 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
   descripcionOriginal,
   descripcionAgregada,
   esEdicion,
+  opcionesTramites,
   onCambiarTipo,
   onCambiarTitulo,
   onCambiarDescripcionOriginal,
@@ -42,19 +34,23 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
         <IonSelect
           interface="popover"
           value={tipo}
-          placeholder="Seleccione..."
+          placeholder={
+            opcionesTramites.length > 0
+              ? "Seleccione..."
+              : "Cargando trámites..."
+          }
           onIonChange={(e) => onCambiarTipo(e.detail.value || "")}
-          disabled={esEdicion}
+          disabled={esEdicion || opcionesTramites.length === 0}
           style={{
             backgroundColor: esEdicion ? "#d3d3d3" : "#fff",
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
-            width: "200px",
+            width: "260px",
             paddingLeft: "10px",
           }}
         >
-          {OPCIONES_TRAMITES.map((opcion) => (
+          {opcionesTramites.map((opcion) => (
             <IonSelectOption key={opcion} value={opcion}>
               {opcion}
             </IonSelectOption>
@@ -115,7 +111,7 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
             </label>
 
             <textarea
-              placeholder="(Descripción agregada) Faltó incluir unos documentos, los adjunto ahora."
+              placeholder="Describe la información adicional que quieres agregar a esta solicitud."
               value={descripcionAgregada}
               onChange={(e) => onCambiarDescripcionAgregada(e.target.value)}
               style={{

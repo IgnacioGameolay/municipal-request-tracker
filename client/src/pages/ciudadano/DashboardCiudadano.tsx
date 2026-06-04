@@ -5,18 +5,11 @@ import { useHistory } from "react-router-dom";
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
 import ContenedorPagina from "../../components/common/ContenedorPagina";
 import TarjetaPerfilSolicitante from "../../components/ciudadano/TarjetaPerfilSolicitante";
-import TarjetaEmpresaSolicitante from "../../components/ciudadano/TarjetaEmpresaSolicitante";
-
-import { solicitantesSimulados } from "../../infraestructura/simulacionDatos/solicitantesSimulados";
+import { useAuth } from "../../context/AuthContext";
 
 const DashboardCiudadano: React.FC = () => {
   const history = useHistory();
-
-  const cambiarRolManual = () => {
-    localStorage.setItem("rol_actual", "funcionario");
-    window.dispatchEvent(new Event("rolCambiado"));
-    history.push("/funcionario/tramites");
-  };
+  const { user } = useAuth();
 
   return (
     <IonPage>
@@ -25,8 +18,6 @@ const DashboardCiudadano: React.FC = () => {
         rutaNotificaciones="/ciudadano/notificaciones"
         rutaPerfil="/ciudadano/tramites"
         onNavegar={(ruta) => history.push(ruta)}
-        permitirCambioManualRol
-        onCambiarRolManual={cambiarRolManual}
       />
 
       <IonContent style={{ "--background": "#ffffff" }}>
@@ -50,23 +41,13 @@ const DashboardCiudadano: React.FC = () => {
               Información personal
             </h2>
 
-            <TarjetaPerfilSolicitante solicitante={solicitantesSimulados} />
-
-            <h2
-              style={{
-                color: "#000",
-                fontWeight: "bold",
-                marginTop: "15px",
-                marginBottom: "15px",
-                fontSize: "1.5rem",
-              }}
-            >
-              Datos de empresa
-            </h2>
-
-            <TarjetaEmpresaSolicitante
-              empresa={solicitantesSimulados.empresa}
-            />
+            {user ? (
+              <TarjetaPerfilSolicitante usuario={user} />
+            ) : (
+              <p style={{ color: "#333" }}>
+                No se pudo cargar la información del usuario autenticado.
+              </p>
+            )}
           </div>
         </ContenedorPagina>
       </IonContent>

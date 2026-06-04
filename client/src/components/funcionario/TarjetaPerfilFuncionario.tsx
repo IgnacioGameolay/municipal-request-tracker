@@ -1,14 +1,18 @@
 import React from "react";
 
-import { Funcionario } from "../../dominio/entidades/Funcionario";
+import type { UsuarioApi } from "../../services/authApi";
 import AvatarFuncionario from "./AvatarFuncionario";
 import CampoDatoFuncionario from "./CampoDatoFuncionario";
 
 interface Props {
-  funcionario: Funcionario;
+  usuario: UsuarioApi;
 }
 
-const TarjetaPerfilFuncionario: React.FC<Props> = ({ funcionario }) => {
+function formatearRol(rol: UsuarioApi["rol"]): string {
+  return rol === "funcionario" ? "Funcionario" : "Ciudadano";
+}
+
+const TarjetaPerfilFuncionario: React.FC<Props> = ({ usuario }) => {
   return (
     <div
       style={{
@@ -45,31 +49,12 @@ const TarjetaPerfilFuncionario: React.FC<Props> = ({ funcionario }) => {
             flex: 1,
           }}
         >
-          <CampoDatoFuncionario etiqueta="Nombre" valor={funcionario.nombre} />
-
-          <CampoDatoFuncionario etiqueta="Rut" valor={funcionario.rut} />
-
-          <CampoDatoFuncionario
-            etiqueta="Teléfono"
-            valor={funcionario.telefono}
-          />
-
-          <CampoDatoFuncionario
-            etiqueta="Email personal"
-            valor={funcionario.emailPersonal}
-          />
-
-          <CampoDatoFuncionario
-            etiqueta="Email Institucional"
-            valor={funcionario.emailInstitucional}
-            columnas={2}
-          />
-
-          <CampoDatoFuncionario
-            etiqueta="ROL"
-            valor={funcionario.rol}
-            columnas={3}
-          />
+          <CampoDatoFuncionario etiqueta="Nombre" valor={usuario.nombre} />
+          <CampoDatoFuncionario etiqueta="RUT" valor={usuario.rut} />
+          <CampoDatoFuncionario etiqueta="Email" valor={usuario.email} />
+          <CampoDatoFuncionario etiqueta="Región" valor={usuario.region} />
+          <CampoDatoFuncionario etiqueta="Comuna" valor={usuario.comuna} />
+          <CampoDatoFuncionario etiqueta="Rol" valor={formatearRol(usuario.rol)} />
         </div>
       </div>
     </div>

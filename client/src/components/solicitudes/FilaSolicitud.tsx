@@ -25,7 +25,7 @@ const FilaSolicitud: React.FC<Props> = ({
   return (
     <tr>
       <td style={estiloCelda}>{solicitud.id}</td>
-      <td style={estiloCelda}>{solicitud.tipo || "Tipo 1"}</td>
+      <td style={estiloCelda}>{solicitud.tipo || "Sin categoría"}</td>
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>

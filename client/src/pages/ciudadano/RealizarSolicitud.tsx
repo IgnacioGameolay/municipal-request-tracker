@@ -5,8 +5,8 @@ import { useHistory, useParams } from "react-router-dom";
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
 import ContenedorPagina from "../../components/common/ContenedorPagina";
 import FormularioCrearYEditarSolicitudes from "../../components/solicitudes/FormularioCrearYEditarSolicitudes";
-import DocumentacionSolicitud from "../../components/solicitudes/DocumentacionSolicitud";
 import AccionesEnFomularioSolicitud from "../../components/solicitudes/AccionesEnFomularioSolicitud";
+import SelectorDocumentosPendientes from "../../components/solicitudes/SelectorDocumentosPendientes";
 
 import { validarFormularioSolicitud } from "../../dominio/reglas/validarFormularioSolicitud";
 import {
@@ -15,27 +15,12 @@ import {
   obtenerSolicitudPorId,
 } from "../../services/solicitudesApi";
 import { ApiClientError } from "../../services/apiClient";
-import SelectorDocumentosPendientes from "../../components/solicitudes/SelectorDocumentosPendientes";
 import { subirDocumentoSolicitud } from "../../services/documentosApi";
+import { obtenerTramitesMunicipales } from "../../services/tramitesApi";
+import { useAuth } from "../../context/AuthContext";
 
 const DESCRIPCION_EDICION_VACIA =
-  "Esta es la descripción de la solicitud original. Para motivos de transparencia, no se puede editar lo que ya fue enviado, sino que solo tiene permitido agregar más información.";
-
-function obtenerComunaUsuarioActual(): string {
-  try {
-    const usuarioGuardado = localStorage.getItem("usuario_actual");
-
-    if (!usuarioGuardado) {
-      return "No especificada";
-    }
-
-    const usuario = JSON.parse(usuarioGuardado) as { comuna?: string };
-
-    return usuario.comuna || "No especificada";
-  } catch {
-    return "No especificada";
-  }
-}
+  "No hay descripción registrada para esta solicitud.";
 
 function construirDescripcionEditada(
   descripcionOriginal: string,
@@ -54,6 +39,7 @@ function construirDescripcionEditada(
 const RealizarSolicitud: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
+  const { user } = useAuth();
 
   const esEdicion = !!id;
 
@@ -61,9 +47,24 @@ const RealizarSolicitud: React.FC = () => {
   const [titulo, setTitulo] = useState("");
   const [descripcionOriginal, setDescripcionOriginal] = useState("");
   const [descripcionAgregada, setDescripcionAgregada] = useState("");
+  const [opcionesTramites, setOpcionesTramites] = useState<string[]>([]);
   const [mensajeError, setMensajeError] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [archivosPendientes, setArchivosPendientes] = useState<File[]>([]);
+
+  const cargarTramites = async () => {
+    try {
+      const tramites = await obtenerTramitesMunicipales();
+      setOpcionesTramites(tramites.map((tramite) => tramite.tipo));
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudieron cargar los tipos de trámite.");
+    }
+  };
 
   const guardarFormulario = async () => {
     const error = validarFormularioSolicitud({
@@ -76,6 +77,11 @@ const RealizarSolicitud: React.FC = () => {
 
     if (error) {
       setMensajeError(error);
+      return;
+    }
+
+    if (!user) {
+      setMensajeError("No se pudo obtener la sesión del usuario autenticado.");
       return;
     }
 
@@ -95,18 +101,18 @@ const RealizarSolicitud: React.FC = () => {
           ),
         });
 
-        solicitudIdParaDocumentos = solicitudActualizada.id.toString();;
+        solicitudIdParaDocumentos = solicitudActualizada.id.toString();
       } else {
         const solicitudCreada = await crearSolicitud({
           titulo: titulo.trim(),
           categoria: tipo.trim(),
           descripcion: descripcionOriginal.trim(),
-          direccion: "Dirección no especificada",
-          comuna: obtenerComunaUsuarioActual(),
+          direccion: `${user.comuna}, ${user.region}`,
+          comuna: user.comuna,
           prioridad: "media",
         });
 
-        solicitudIdParaDocumentos = solicitudCreada.id.toString();;
+        solicitudIdParaDocumentos = solicitudCreada.id.toString();
       }
 
       for (const archivo of archivosPendientes) {
@@ -134,6 +140,10 @@ const RealizarSolicitud: React.FC = () => {
   };
 
   useEffect(() => {
+    void cargarTramites();
+  }, []);
+
+  useEffect(() => {
     const cargarSolicitudEdicion = async () => {
       if (!esEdicion) {
         return;
@@ -151,7 +161,7 @@ const RealizarSolicitud: React.FC = () => {
         }
 
         setTitulo(solicitudEncontrada.titulo);
-        setTipo(solicitudEncontrada.categoria || "Tipo 1");
+        setTipo(solicitudEncontrada.categoria || "");
         setDescripcionOriginal(
           solicitudEncontrada.descripcion || DESCRIPCION_EDICION_VACIA,
         );
@@ -223,6 +233,7 @@ const RealizarSolicitud: React.FC = () => {
                 descripcionOriginal={descripcionOriginal}
                 descripcionAgregada={descripcionAgregada}
                 esEdicion={esEdicion}
+                opcionesTramites={opcionesTramites}
                 onCambiarTipo={setTipo}
                 onCambiarTitulo={setTitulo}
                 onCambiarDescripcionOriginal={setDescripcionOriginal}
@@ -235,8 +246,6 @@ const RealizarSolicitud: React.FC = () => {
                 onError={setMensajeError}
                 disabled={guardando}
               />
-
-              <DocumentacionSolicitud />
 
               <AccionesEnFomularioSolicitud
                 esEdicion={esEdicion}

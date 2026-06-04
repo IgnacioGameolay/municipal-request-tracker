@@ -1,21 +1,54 @@
-import React from "react";
-import { IonContent, IonPage } from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import { IonContent, IonPage, IonSpinner, IonToast } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
 import ContenedorPagina from "../../components/common/ContenedorPagina";
 import ListaContactosFuncionarios from "../../components/ciudadano/ListaContactosFuncionarios";
-
-import { contactosFuncionariosSimulados } from "../../infraestructura/simulacionDatos/contactosFuncionariosSimulados";
+import type { ContactoFuncionario } from "../../dominio/entidades/ContactoFuncionario";
+import { ApiClientError } from "../../services/apiClient";
+import { obtenerFuncionariosContacto } from "../../services/usuariosApi";
 
 const ContactoCiudadano: React.FC = () => {
   const history = useHistory();
 
-  const cambiarRolManual = () => {
-    localStorage.setItem("rol_actual", "funcionario");
-    window.dispatchEvent(new Event("rolCambiado"));
-    history.push("/funcionario/tramites");
+  const [funcionarios, setFuncionarios] = useState<ContactoFuncionario[]>([]);
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
+  const cargarFuncionarios = async () => {
+    try {
+      setCargando(true);
+      setMensajeError("");
+
+      const funcionariosApi = await obtenerFuncionariosContacto();
+
+      setFuncionarios(
+        funcionariosApi.map((funcionario) => ({
+          id: funcionario.id,
+          nombre: funcionario.nombre,
+          rut: funcionario.rut,
+          email: funcionario.email,
+          region: funcionario.region,
+          comuna: funcionario.comuna,
+          rol: funcionario.rol,
+        })),
+      );
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudieron cargar los contactos de funcionarios.");
+    } finally {
+      setCargando(false);
+    }
   };
+
+  useEffect(() => {
+    void cargarFuncionarios();
+  }, []);
 
   return (
     <IonPage>
@@ -24,8 +57,6 @@ const ContactoCiudadano: React.FC = () => {
         rutaNotificaciones="/ciudadano/notificaciones"
         rutaPerfil="/ciudadano/tramites"
         onNavegar={(ruta) => history.push(ruta)}
-        permitirCambioManualRol
-        onCambiarRolManual={cambiarRolManual}
       />
 
       <IonContent style={{ "--background": "#ffffff" }}>
@@ -49,11 +80,32 @@ const ContactoCiudadano: React.FC = () => {
               Contacto
             </h2>
 
-            <ListaContactosFuncionarios
-              funcionarios={contactosFuncionariosSimulados}
-            />
+            {cargando && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "30px",
+                }}
+              >
+                <IonSpinner name="crescent" />
+              </div>
+            )}
+
+            {!cargando && (
+              <ListaContactosFuncionarios funcionarios={funcionarios} />
+            )}
           </div>
         </ContenedorPagina>
+
+        <IonToast
+          isOpen={mensajeError !== ""}
+          message={mensajeError}
+          duration={2500}
+          color="danger"
+          position="bottom"
+          onDidDismiss={() => setMensajeError("")}
+        />
       </IonContent>
     </IonPage>
   );

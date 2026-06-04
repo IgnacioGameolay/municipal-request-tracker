@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { IonContent, IonPage } from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import { IonContent, IonPage, IonSpinner, IonToast } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 
 import EncabezadoAplicacion from "../../components/common/EncabezadoAplicacion";
@@ -7,24 +7,50 @@ import ContenedorPagina from "../../components/common/ContenedorPagina";
 import SelectorTipoTramite from "../../components/ciudadano/SelectorTipoTramite";
 import DocumentosRequeridosTramite from "../../components/ciudadano/DocumentosRequeridosTramite";
 import ResumenInformacionTramite from "../../components/ciudadano/ResumenInformacionTramite";
-
-import { informacionTramitesSimulados } from "../../infraestructura/simulacionDatos/informacionTramitesSimulados";
+import { ApiClientError } from "../../services/apiClient";
+import {
+  obtenerTramitesMunicipales,
+  TramiteMunicipalApi,
+} from "../../services/tramitesApi";
 
 const InfoSolicitudes: React.FC = () => {
   const history = useHistory();
 
+  const [tramites, setTramites] = useState<TramiteMunicipalApi[]>([]);
   const [tipoTramite, setTipoTramite] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
-  const cambiarRolManual = () => {
-    localStorage.setItem("rol_actual", "funcionario");
-    window.dispatchEvent(new Event("rolCambiado"));
-    history.push("/funcionario/tramites");
+  const cargarTramites = async () => {
+    try {
+      setCargando(true);
+      setMensajeError("");
+
+      const tramitesApi = await obtenerTramitesMunicipales();
+
+      setTramites(tramitesApi);
+
+      if (!tipoTramite && tramitesApi.length > 0) {
+        setTipoTramite(tramitesApi[0].tipo);
+      }
+    } catch (error) {
+      if (error instanceof ApiClientError) {
+        setMensajeError(error.message);
+        return;
+      }
+
+      setMensajeError("No se pudo cargar la información de trámites.");
+    } finally {
+      setCargando(false);
+    }
   };
 
+  useEffect(() => {
+    void cargarTramites();
+  }, []);
+
   const informacionSeleccionada =
-    informacionTramitesSimulados.find(
-      (tramite) => tramite.tipo === tipoTramite,
-    ) || informacionTramitesSimulados[0];
+    tramites.find((tramite) => tramite.tipo === tipoTramite) ?? tramites[0];
 
   return (
     <IonPage>
@@ -33,8 +59,6 @@ const InfoSolicitudes: React.FC = () => {
         rutaNotificaciones="/ciudadano/notificaciones"
         rutaPerfil="/ciudadano/tramites"
         onNavegar={(ruta) => history.push(ruta)}
-        permitirCambioManualRol
-        onCambiarRolManual={cambiarRolManual}
       />
 
       <IonContent style={{ "--background": "#ffffff" }}>
@@ -58,33 +82,58 @@ const InfoSolicitudes: React.FC = () => {
               Información sobre solicitudes
             </h2>
 
-            <div
-              style={{
-                backgroundColor: "#eeeeee",
-                borderRadius: "8px",
-                padding: "30px",
-                color: "#000",
-              }}
-            >
-              <SelectorTipoTramite
-                tipos={informacionTramitesSimulados.map(
-                  (tramite) => tramite.tipo,
-                )}
-                tipoSeleccionado={tipoTramite}
-                onSeleccionarTipo={setTipoTramite}
-              />
+            {cargando && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  padding: "30px",
+                }}
+              >
+                <IonSpinner name="crescent" />
+              </div>
+            )}
 
-              <DocumentosRequeridosTramite
-                documentos={informacionSeleccionada.documentos}
-              />
+            {!cargando && informacionSeleccionada && (
+              <div
+                style={{
+                  backgroundColor: "#eeeeee",
+                  borderRadius: "8px",
+                  padding: "30px",
+                  color: "#000",
+                }}
+              >
+                <SelectorTipoTramite
+                  tipos={tramites.map((tramite) => tramite.tipo)}
+                  tipoSeleccionado={tipoTramite}
+                  onSeleccionarTipo={setTipoTramite}
+                />
 
-              <ResumenInformacionTramite
-                tiempoEstimado={informacionSeleccionada.tiempoEstimado}
-                areaResponsable={informacionSeleccionada.areaResponsable}
-              />
-            </div>
+                <DocumentosRequeridosTramite
+                  documentos={informacionSeleccionada.documentos}
+                />
+
+                <ResumenInformacionTramite
+                  tiempoEstimado={informacionSeleccionada.tiempoEstimado}
+                  areaResponsable={informacionSeleccionada.areaResponsable}
+                />
+              </div>
+            )}
+
+            {!cargando && !informacionSeleccionada && (
+              <p style={{ color: "#333" }}>No hay trámites disponibles.</p>
+            )}
           </div>
         </ContenedorPagina>
+
+        <IonToast
+          isOpen={mensajeError !== ""}
+          message={mensajeError}
+          duration={2500}
+          color="danger"
+          position="bottom"
+          onDidDismiss={() => setMensajeError("")}
+        />
       </IonContent>
     </IonPage>
   );

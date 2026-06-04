@@ -13,7 +13,6 @@ import ContenedorPagina from "../../components/common/ContenedorPagina";
 
 import ResumenSolicitud from "../../components/solicitudes/ResumenSolicitud";
 import FormularioSolicitud from "../../components/solicitudes/FormularioSolicitud";
-import DocumentacionSolicitud from "../../components/solicitudes/DocumentacionSolicitud";
 import RevisionSolicitud from "../../components/solicitudes/RevisionSolicitud";
 import ModalCambioDeEstado from "../../components/solicitudes/ModalCambioDeEstado";
 import ModalSolicitudRechazada from "../../components/solicitudes/ModalSolicitudRechazada";
@@ -268,7 +267,6 @@ const RevisarSolicitudFuncionario: React.FC = () => {
                   onCambiarComentario={setComentario}
                 />
 
-                <DocumentacionSolicitud />
 
                 <DocumentosSolicitud
                   solicitudId={id}

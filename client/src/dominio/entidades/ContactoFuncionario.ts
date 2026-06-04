@@ -1,6 +1,9 @@
 export interface ContactoFuncionario {
-  id: number;
+  id: string;
   nombre: string;
-  telefono: string;
+  rut: string;
   email: string;
+  region: string;
+  comuna: string;
+  rol: string;
 }

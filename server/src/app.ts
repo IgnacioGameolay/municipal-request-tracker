@@ -10,6 +10,9 @@ import {
 } from "./middlewares/error.middleware.js";
 import { successResponse } from "./utils/apiResponse.js";
 import documentosRoutes from "./routes/documentos.routes.js";
+import usuariosRoutes from "./routes/usuarios.routes.js";
+import tramitesRoutes from "./routes/tramites.routes.js";
+
 
 dotenv.config();
 
@@ -34,6 +37,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/solicitudes", solicitudesRoutes);
 app.use("/api/solicitudes", documentosRoutes);
 app.use("/api/notificaciones", notificacionesRoutes);
+app.use("/api/usuarios", usuariosRoutes);
+app.use("/api/tramites", tramitesRoutes);
+
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
