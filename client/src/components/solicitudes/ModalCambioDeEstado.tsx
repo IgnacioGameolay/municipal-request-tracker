@@ -1,6 +1,6 @@
 import React from "react";
 import { IonModal } from "@ionic/react";
-
+import { obtenerColorEstado } from "../../dominio/reglas/normalizarEstado";
 import { Solicitud } from "../../dominio/entidades/Solicitud";
 
 interface Props {
@@ -20,50 +20,51 @@ const ModalCambioDeEstado: React.FC<Props> = ({
   onConfirmar,
   onCancelar,
 }) => {
+  const { fondo, texto } = obtenerColorEstado(solicitud.estado);
   return (
-    <IonModal isOpen={abierto} onDidDismiss={onCancelar}>
+    <IonModal
+      isOpen={abierto}
+      onDidDismiss={onCancelar}
+      style={{
+        "--width": "450px",
+        "--height": "375px",
+        "--border-radius": "12px",
+      }}
+    >
       <div
         style={{
-          backgroundColor: "#f7f8fb",
-          minHeight: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "30px",
+          backgroundColor: "#f4f5f8",
+          borderRadius: "14px",
+          padding: "35px 45px",
+          width: "100%",
+          height: "100%",
+          maxWidth: "520px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
         }}
       >
-        <div
+        <h2
           style={{
-            backgroundColor: "#ffffff",
-            borderRadius: "14px",
-            padding: "35px 45px",
-            width: "100%",
-            maxWidth: "520px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
+            color: "#000",
+            textAlign: "center",
+            marginBottom: "35px",
+            fontSize: "1.6rem",
+            fontWeight: "bold",
           }}
         >
-          <h2
-            style={{
-              color: "#000",
-              textAlign: "center",
-              marginBottom: "35px",
-              fontSize: "1.6rem",
-              fontWeight: "bold",
-            }}
-          >
-            Cambiar estado de la solicitud
-          </h2>
-
+          Cambiar estado de la solicitud
+        </h2>
+        
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "flex-start",
+            gap: "30px",
+            marginBottom: "45px",
+          }}
+        >
           <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "flex-start",
-              gap: "30px",
-              marginBottom: "45px",
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
+            style={{ textAlign: "center" }}>
               <p
                 style={{
                   color: "#222",
@@ -73,11 +74,12 @@ const ModalCambioDeEstado: React.FC<Props> = ({
               >
                 Estado actual
               </p>
-
               <span
+                
                 style={{
+                  
                   display: "inline-block",
-                  backgroundColor: "#f2c500",
+                  backgroundColor: fondo,
                   color: "#ffffff",
                   fontWeight: "bold",
                   borderRadius: "18px",
@@ -85,9 +87,8 @@ const ModalCambioDeEstado: React.FC<Props> = ({
                 }}
               >
                 {solicitud.estado}
-              </span>
+              </span>                        
             </div>
-
             <div style={{ textAlign: "center" }}>
               <p
                 style={{
@@ -116,11 +117,9 @@ const ModalCambioDeEstado: React.FC<Props> = ({
                 <option value="Pendiente">Pendiente</option>
                 <option value="En revisión">En revisión</option>
                 <option value="Resuelta">Resuelta</option>
-                <option value="Rechazada">Rechazada</option>
               </select>
             </div>
           </div>
-
           <button
             type="button"
             onClick={onConfirmar}
@@ -155,10 +154,10 @@ const ModalCambioDeEstado: React.FC<Props> = ({
           >
             Cancelar
           </button>
-        </div>
       </div>
+
+
     </IonModal>
   );
 };
-
 export default ModalCambioDeEstado;
