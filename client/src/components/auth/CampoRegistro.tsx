@@ -19,10 +19,10 @@ const CampoRegistro: React.FC<Props> = ({
   return (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
+        position: "relative",
         width: "100%",
-        marginBottom: "10px",
+        marginBottom: "15px",
+        marginTop: "10px",
       }}
     >
       <IonInput
@@ -34,9 +34,9 @@ const CampoRegistro: React.FC<Props> = ({
           backgroundColor: "#f2f2f2",
           border: "1px solid #d1d1d1",
           borderRadius: "4px",
-          paddingLeft: "15px",
+          padding: "15px",
           height: "40px",
-          flex: 1,
+          width: "100%",
           color: "#666",
         }}
       />
@@ -44,10 +44,13 @@ const CampoRegistro: React.FC<Props> = ({
       {obligatorio && (
         <span
           style={{
+            position: "absolute",
+            top: "-20px",
+            left: "5px",
+            padding: "0.5px",
             color: "red",
             fontSize: "0.75rem",
-            marginLeft: "10px",
-            width: "90px",
+            zIndex: 1,
           }}
         >
           *(Obligatorio)

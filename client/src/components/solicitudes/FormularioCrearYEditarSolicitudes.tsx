@@ -28,11 +28,21 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
 }) => {
   return (
     <>
+    <style>
+        {`.custom-select-popover {--width: 450px;}`}
+    </style>
+
       <div style={{ marginBottom: "20px" }}>
         <label style={estiloEtiqueta}>Tipo de solicitud</label>
 
         <IonSelect
+          className="custom-select"
           interface="popover"
+          interfaceOptions={{
+            cssClass: "custom-select-popover",
+            alignment: 'start',
+            matchWidth: true,
+          }}
           value={tipo}
           placeholder={
             opcionesTramites.length > 0
@@ -46,7 +56,7 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
-            width: "260px",
+            width: "450px", //260px antes
             paddingLeft: "10px",
           }}
         >
