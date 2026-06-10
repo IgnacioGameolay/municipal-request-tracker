@@ -127,7 +127,6 @@ const ModalCambioDeEstado: React.FC<Props> = ({
               width: "100%",
               backgroundColor: "#63d11f",
               color: "#ffffff",
-              border: "1px solid #2c8a00",
               borderRadius: "5px",
               padding: "16px",
               fontWeight: "bold",

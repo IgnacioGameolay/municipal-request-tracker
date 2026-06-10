@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   IonHeader,
   IonToolbar,
@@ -6,9 +7,18 @@ import {
   IonButtons,
   IonIcon,
   IonMenuButton,
-  IonButton
+  IonButton,
+  IonPopover,
+  IonList,
+  IonItem,
+  IonLabel
 } from '@ionic/react';
-import { notificationsOutline, personCircleOutline } from 'ionicons/icons';
+import {
+  notificationsOutline,
+  personCircleOutline,
+  logOutOutline,
+  personOutline
+} from 'ionicons/icons';
 
 import LogoMunicipal from './LogoMunicipal';
 import BarraRol from './BarraRol';
@@ -21,20 +31,44 @@ interface Props {
   onNavegar: (ruta: string) => void;
   permitirCambioManualRol?: boolean;
   onCambiarRolManual?: () => void;
+  onCerrarSesion?: () => void;
 }
 
 const EncabezadoAplicacion: React.FC<Props> = ({
   rol,
   rutaNotificaciones,
   rutaPerfil,
-  onNavegar
+  onNavegar,
+  onCerrarSesion
 }) => {
+  const history = useHistory();
+
+  const [popoverEvent, setPopoverEvent] = useState<Event | undefined>();
+
   const irANotificaciones = () => {
     onNavegar(rutaNotificaciones);
   };
 
   const irAPerfil = () => {
+    setPopoverEvent(undefined);
     onNavegar(rutaPerfil);
+  };
+
+  const cerrarSesion = () => {
+    setPopoverEvent(undefined);
+
+    if (onCerrarSesion) {
+      onCerrarSesion();
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol_actual');
+      history.push('/login');
+    }
+  };
+
+  const abrirPopover = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPopoverEvent(e.nativeEvent);
   };
 
   return (
@@ -92,7 +126,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
 
           <IonButton
             fill="clear"
-            onClick={irAPerfil}
+            onClick={abrirPopover}
             style={{
               '--color': 'white',
               '--padding-start': '6px',
@@ -105,6 +139,29 @@ const EncabezadoAplicacion: React.FC<Props> = ({
               style={{ fontSize: '1.8rem' }}
             />
           </IonButton>
+
+          <IonPopover
+            isOpen={!!popoverEvent}
+            event={popoverEvent}
+            onDidDismiss={() => setPopoverEvent(undefined)}
+            side="bottom"
+            alignment="end"
+            showBackdrop={false}
+            backdropDismiss={true}
+            reference="event"
+          >
+            <IonList lines="none">
+              <IonItem button onClick={irAPerfil}>
+                <IonIcon icon={personOutline} slot="start" />
+                <IonLabel>Ver perfil</IonLabel>
+              </IonItem>
+
+              <IonItem button onClick={cerrarSesion}>
+                <IonIcon icon={logOutOutline} slot="start" />
+                <IonLabel>Cerrar sesión</IonLabel>
+              </IonItem>
+            </IonList>
+          </IonPopover>
 
           <BarraRol
             rol={rol}
