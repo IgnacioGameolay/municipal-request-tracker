@@ -57,22 +57,44 @@ export async function listarSolicitudes(req: AuthRequest, res: Response) {
   if (!req.user) {
     return errorResponse(res, 401, "Debes iniciar sesión");
   }
+  //Captura parametros de paginación 
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
 
   const solicitudes =
     req.user.rol === "funcionario"
       ? await prisma.solicitud.findMany({
           orderBy: { createdAt: "desc" },
+          skip: skip,  
+          take: limit,
         })
       : await prisma.solicitud.findMany({
           where: { usuarioId: req.user.id },
           orderBy: { createdAt: "desc" },
+          skip: skip,  
+          take: limit,
+        });
+
+  const totalRegistros = 
+    req.user.rol === "funcionario"
+      ? await prisma.solicitud.count() // El funcionario cuenta todas las solicitudes
+      : await prisma.solicitud.count({ // El ciudadano solo cuenta sus propias solicitudes
+          where: { usuarioId: req.user.id }
         });
 
   return successResponse(
     res,
     200,
     "Solicitudes obtenidas correctamente",
-    solicitudes,
+    {
+      solicitudes: solicitudes, 
+      meta: {
+        paginaActual: page,
+        totalPaginas: Math.ceil(totalRegistros / limit),
+        totalRegistros: totalRegistros
+      }
+    }
   );
 }
 export async function obtenerSolicitudPorId(req: AuthRequest, res: Response) {
