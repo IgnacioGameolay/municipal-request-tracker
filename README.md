@@ -270,6 +270,7 @@ funcionario -> funcionario
 - Multer.
 - CORS.
 - dotenv.
+- NodeMailer
 
 ### Desarrollo y pruebas
 
