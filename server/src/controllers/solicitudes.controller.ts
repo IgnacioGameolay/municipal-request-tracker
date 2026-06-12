@@ -2,6 +2,7 @@ import { Response } from "express";
 import { prisma } from "../config/prisma.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 import { successResponse, errorResponse } from "../utils/apiResponse.js";
+import { enviarCorreoConfirmacion } from "../utils/mailer.js";
 
 const estadosValidos = [
   "pendiente",
@@ -255,6 +256,27 @@ export async function crearSolicitud(req: AuthRequest, res: Response) {
 
     return nuevaSolicitud;
   });
+
+  try {
+    // Buscamos los datos extendidos del ciudadano para obtener su nombre real
+    const ciudadano = await prisma.usuario.findUnique({
+      where: { id: req.user!.id },
+      select: { nombre: true, email: true }
+    });
+
+    if (ciudadano) {
+      // Se ejecuta en segundo plano para no ralentizar la respuesta HTTP de la API
+      enviarCorreoConfirmacion(
+        ciudadano.email,
+        ciudadano.nombre,
+        solicitudCreada.titulo,
+        solicitudCreada.estado
+      ).catch(err => console.error("Error asíncrono en mailer:", err));
+    }
+  } catch (mailerError) {
+    // Evitamos que un fallo de red con Gmail bote la creación de la solicitud
+    console.error("Fallo no crítico al preparar el correo de notificación:", mailerError);
+  }
 
   return successResponse(
     res,
