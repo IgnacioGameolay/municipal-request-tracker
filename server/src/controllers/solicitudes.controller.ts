@@ -57,7 +57,7 @@ export async function listarSolicitudes(req: AuthRequest, res: Response) {
   if (!req.user) {
     return errorResponse(res, 401, "Debes iniciar sesión");
   }
-  //Captura parametros de paginación 
+
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const skip = (page - 1) * limit;
@@ -66,20 +66,35 @@ export async function listarSolicitudes(req: AuthRequest, res: Response) {
     req.user.rol === "funcionario"
       ? await prisma.solicitud.findMany({
           orderBy: { createdAt: "desc" },
-          skip: skip,  
+          skip: skip,
           take: limit,
+          select: {
+            id: true,
+            titulo: true,
+            categoria: true,
+            estado: true,
+            prioridad: true,
+            createdAt: true,
+          }
         })
       : await prisma.solicitud.findMany({
           where: { usuarioId: req.user.id },
           orderBy: { createdAt: "desc" },
-          skip: skip,  
+          skip: skip,
           take: limit,
+          select: {
+            id: true,
+            titulo: true,
+            categoria: true,
+            estado: true,
+            prioridad: true,
+          }
         });
 
   const totalRegistros = 
     req.user.rol === "funcionario"
-      ? await prisma.solicitud.count() // El funcionario cuenta todas las solicitudes
-      : await prisma.solicitud.count({ // El ciudadano solo cuenta sus propias solicitudes
+      ? await prisma.solicitud.count()
+      : await prisma.solicitud.count({
           where: { usuarioId: req.user.id }
         });
 
@@ -88,7 +103,7 @@ export async function listarSolicitudes(req: AuthRequest, res: Response) {
     200,
     "Solicitudes obtenidas correctamente",
     {
-      solicitudes: solicitudes, 
+      solicitudes: solicitudes,
       meta: {
         paginaActual: page,
         totalPaginas: Math.ceil(totalRegistros / limit),
