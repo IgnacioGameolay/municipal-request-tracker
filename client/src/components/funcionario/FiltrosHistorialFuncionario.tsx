@@ -112,14 +112,14 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr",
-          gap: "20px",
+          gridTemplateColumns: "200px 400px 1fr auto",
+          gap: "28px",
           marginBottom: "15px",
+          alignItems: "end",
         }}
       >
         <div>
-          <label style={estiloEtiqueta}>ID. Solicitud</label>
-
+          <label style={estiloEtiqueta}>Nro. Solicitud</label>
           <IonInput
             value={filtroId}
             onIonChange={(e) => setFiltroId(e.detail.value || "")}
@@ -128,8 +128,8 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
         </div>
 
         <div>
+          <style>{`.custom-select-popover1 {--width: 400px;}`}</style>
           <label style={estiloEtiqueta}>Tipo de solicitud</label>
-
           <IonSelect
             interface="popover"
             value={filtroTipo}
@@ -139,11 +139,15 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
                 ? "Seleccione..."
                 : "Sin tipos disponibles"
             }
+            interfaceOptions={{
+              cssClass: "custom-select-popover1",
+              alignment: 'start',
+              matchWidth: true,
+            }}
             style={estiloCampo}
             disabled={tiposDisponibles.length === 0}
           >
             <IonSelectOption value="">Todos</IonSelectOption>
-
             {tiposDisponibles.map((tipo) => (
               <IonSelectOption key={tipo} value={tipo}>
                 {tipo}
@@ -153,14 +157,19 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
         </div>
 
         <div>
+          <style>{`.custom-select-popover2 {--width: 150px;}`}</style>
           <label style={estiloEtiqueta}>Fecha solicitud</label>
-
           <IonSelect
             interface="popover"
             value={ordenFecha}
             onIonChange={(e) => setOrdenFecha(e.detail.value || "")}
-            placeholder="Seleccione orden..."
+            placeholder="Seleccione..."
             style={estiloCampo}
+            interfaceOptions={{
+              cssClass: "custom-select-popover2",
+              alignment: 'start',
+              matchWidth: true,
+            }}
           >
             <IonSelectOption value="recientes">Más recientes</IonSelectOption>
             <IonSelectOption value="antiguas">Más antiguas</IonSelectOption>
@@ -169,7 +178,6 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
         <div>
           <label style={estiloEtiqueta}>Cliente</label>
-
           <IonInput
             value={filtroCliente}
             onIonChange={(e) => setFiltroCliente(e.detail.value || "")}
@@ -180,20 +188,26 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
       <div
         style={{
-          display: "flex",
-          gap: "20px",
-          alignItems: "flex-end",
+          display: "grid",
+          gridTemplateColumns: "190px 1fr auto",
+          gap: "38px",
+          alignItems: "end",
         }}
       >
         <div style={{ width: "200px" }}>
+          <style>{`.custom-select-popover3 {--width: 200px;}`}</style>
           <label style={estiloEtiqueta}>Estado</label>
-
           <IonSelect
             interface="popover"
             value={filtroEstado}
             onIonChange={(e) => setFiltroEstado(e.detail.value || "")}
             placeholder="Seleccione..."
             style={estiloCampo}
+            interfaceOptions={{
+              cssClass: "custom-select-popover3",
+              alignment: 'start',
+              matchWidth: true,
+            }}
           >
             <IonSelectOption value="">Todos</IonSelectOption>
             <IonSelectOption value="Pendiente">Pendiente</IonSelectOption>
@@ -205,7 +219,6 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
 
         <div style={{ flex: 1 }}>
           <label style={estiloEtiqueta}>Título solicitud</label>
-
           <IonInput
             value={filtroTitulo}
             onIonChange={(e) => setFiltroTitulo(e.detail.value || "")}
@@ -227,7 +240,6 @@ const FiltrosHistorialFuncionario: React.FC<Props> = ({
           >
             Buscar
           </IonButton>
-
           <IonButton
             onClick={() => void limpiar()}
             style={{

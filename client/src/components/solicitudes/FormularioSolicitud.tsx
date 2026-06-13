@@ -14,6 +14,7 @@ const FormularioRevisionSolicitud: React.FC<Props> = ({
   comentario,
   onCambiarComentario,
 }) => {
+  const dBgColor = "#bbbbbb";
   return (
     <>
       <div style={{ marginBottom: "20px" }}>
@@ -33,13 +34,15 @@ const FormularioRevisionSolicitud: React.FC<Props> = ({
           value={solicitud.tipo || "Sin tipo especificado"}
           disabled
           style={{
-            backgroundColor: "#d3d3d3",
+            backgroundColor: dBgColor,
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
-            width: "200px",
+            width: "400px",
             paddingLeft: "10px",
             color: "#555",
+            fontFamily: "inherit",
+            opacity: 1,
           }}
         />
       </div>
@@ -61,12 +64,14 @@ const FormularioRevisionSolicitud: React.FC<Props> = ({
           value={solicitud.titulo}
           disabled
           style={{
-            backgroundColor: "#d3d3d3",
+            backgroundColor: dBgColor,
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
             paddingLeft: "10px",
             color: "#555",
+            fontFamily: "inherit",
+            opacity: 1,
           }}
         />
       </div>
@@ -98,13 +103,14 @@ const FormularioRevisionSolicitud: React.FC<Props> = ({
             style={{
               width: "100%",
               height: "200px",
-              backgroundColor: "#d3d3d3",
+              backgroundColor: dBgColor,
               border: "1px solid #ccc",
               borderRadius: "4px",
               padding: "10px",
               resize: "none",
               color: "#555",
               fontFamily: "inherit",
+              opacity: 1,
             }}
           />
         </div>

@@ -26,10 +26,11 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
   onCambiarDescripcionOriginal,
   onCambiarDescripcionAgregada,
 }) => {
+   const dBgColor = "#bbbbbb";
   return (
     <>
     <style>
-        {`.custom-select-popover {--width: 450px;}`}
+        {`.custom-select-popover {--width: 400px;}`}
     </style>
 
       <div style={{ marginBottom: "20px" }}>
@@ -52,12 +53,14 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
           onIonChange={(e) => onCambiarTipo(e.detail.value || "")}
           disabled={esEdicion || opcionesTramites.length === 0}
           style={{
-            backgroundColor: esEdicion ? "#d3d3d3" : "#fff",
+            backgroundColor: esEdicion ? dBgColor : "#fff",
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
-            width: "450px", //260px antes
+            width: "400px", //260px antes
             paddingLeft: "10px",
+            opacity: 1,
+            color: "#555",
           }}
         >
           {opcionesTramites.map((opcion) => (
@@ -76,12 +79,13 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
           onIonChange={(e) => onCambiarTitulo(e.detail.value || "")}
           disabled={esEdicion}
           style={{
-            backgroundColor: esEdicion ? "#d3d3d3" : "#fff",
+            backgroundColor: esEdicion ? dBgColor : "#fff",
             border: "1px solid #ccc",
             borderRadius: "4px",
             minHeight: "40px",
             paddingLeft: "10px",
             color: esEdicion ? "#555" : "#000",
+            opacity: 1,
           }}
         />
       </div>
@@ -104,13 +108,14 @@ const FormularioCrearYEditarSolicitudes: React.FC<Props> = ({
               style={{
                 width: "100%",
                 height: "200px",
-                backgroundColor: "#d3d3d3",
+                backgroundColor: dBgColor,
                 border: "1px solid #ccc",
                 borderRadius: "4px",
                 padding: "10px",
                 resize: "none",
                 color: "#555",
                 fontFamily: "inherit",
+                opacity: 1,
               }}
             />
           </div>

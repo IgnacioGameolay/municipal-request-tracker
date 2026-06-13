@@ -118,6 +118,7 @@ const FiltrarSolicitudes: React.FC<Props> = ({
   };
 
   return (
+    
     <div
       style={{
         backgroundColor: "#f4f5f8",
@@ -141,13 +142,13 @@ const FiltrarSolicitudes: React.FC<Props> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "190px 190px 190px",
+          gridTemplateColumns: "190px 400px 190px",
           gap: "38px",
           marginBottom: "18px",
         }}
       >
         <div>
-          <label style={estiloEtiqueta}>ID. Solicitud</label>
+          <label style={estiloEtiqueta}>Nro. Solicitud</label>
 
           <IonInput
             value={filtroId}
@@ -158,9 +159,16 @@ const FiltrarSolicitudes: React.FC<Props> = ({
 
         <div>
           <label style={estiloEtiqueta}>Tipo de solicitud</label>
-
+          <style>
+             {`.custom-select-popover {--width: 400px;}`}
+          </style>
           <IonSelect
             interface="popover"
+            interfaceOptions={{
+            cssClass: "custom-select-popover",
+            alignment: 'start',
+            matchWidth: true,
+            }}
             value={filtroTipo}
             onIonChange={(e) => setFiltroTipo(e.detail.value || "")}
             placeholder={
@@ -170,6 +178,7 @@ const FiltrarSolicitudes: React.FC<Props> = ({
             }
             style={estiloCampo}
             disabled={tiposDisponibles.length === 0}
+            
           >
             <IonSelectOption value="">Todos</IonSelectOption>
 
@@ -183,6 +192,9 @@ const FiltrarSolicitudes: React.FC<Props> = ({
 
         <div>
           <label style={estiloEtiqueta}>Fecha solicitud</label>
+          <style>
+            {`.custom-select-popover3 {--width: 190px;}`}
+          </style>         
 
           <IonSelect
             interface="popover"
@@ -190,6 +202,11 @@ const FiltrarSolicitudes: React.FC<Props> = ({
             onIonChange={(e) => setOrdenFecha(e.detail.value || "")}
             placeholder="Seleccione..."
             style={estiloCampo}
+            interfaceOptions={{
+              cssClass: "custom-select-popover3",
+              alignment: 'start',
+              matchWidth: true,
+            }}
           >
             <IonSelectOption value="recientes">Más recientes</IonSelectOption>
             <IonSelectOption value="antiguas">Más antiguas</IonSelectOption>
@@ -207,13 +224,20 @@ const FiltrarSolicitudes: React.FC<Props> = ({
       >
         <div>
           <label style={estiloEtiqueta}>Estado</label>
-
+          <style>
+            {`.custom-select-popover3 {--width: 190px;}`}
+          </style>         
           <IonSelect
             interface="popover"
             value={filtroEstado}
             onIonChange={(e) => setFiltroEstado(e.detail.value || "")}
             placeholder="Seleccione..."
             style={estiloCampo}
+            interfaceOptions={{
+              cssClass: "custom-select-popover3",
+              alignment: 'start',
+              matchWidth: true,
+            }}
           >
             <IonSelectOption value="">Todos</IonSelectOption>
             <IonSelectOption value="Pendiente">Pendiente</IonSelectOption>
