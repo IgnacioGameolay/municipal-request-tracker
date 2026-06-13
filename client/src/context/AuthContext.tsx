@@ -25,10 +25,8 @@ interface AuthState {
   role: Role | null;
   user: UsuarioApi | null;
 
-  // Nombre nuevo.
   setSession: (session: AuthSession) => void;
 
-  // Nombre antiguo que tus páginas ya usan.
   login: (session: AuthSession) => void;
 
   refreshSession: () => Promise<void>;
@@ -50,7 +48,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState<boolean>(!!obtenerTokenSesion());
 
   const logout = useCallback(() => {
+    // Limpieza de toda la sesión usando la API
     cerrarSesionApi();
+
+    localStorage.removeItem('rol_actual');
+    localStorage.removeItem('usuario_actual');
+    sessionStorage.clear();
+
+    // Resetear estado del contexto
     setUser(null);
     setRole(null);
     setIsLoading(false);

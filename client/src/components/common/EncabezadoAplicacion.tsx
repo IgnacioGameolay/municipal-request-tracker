@@ -23,6 +23,7 @@ import {
 import LogoMunicipal from './LogoMunicipal';
 import BarraRol from './BarraRol';
 import { RolUsuario } from '../../dominio/constantes/roles';
+import { useAuth } from '../../context/AuthContext';
 
 interface Props {
   rol: RolUsuario;
@@ -31,7 +32,6 @@ interface Props {
   onNavegar: (ruta: string) => void;
   permitirCambioManualRol?: boolean;
   onCambiarRolManual?: () => void;
-  onCerrarSesion?: () => void;
 }
 
 const EncabezadoAplicacion: React.FC<Props> = ({
@@ -39,9 +39,11 @@ const EncabezadoAplicacion: React.FC<Props> = ({
   rutaNotificaciones,
   rutaPerfil,
   onNavegar,
-  onCerrarSesion
+  permitirCambioManualRol,
+  onCambiarRolManual
 }) => {
   const history = useHistory();
+  const { logout } = useAuth();
 
   const [popoverEvent, setPopoverEvent] = useState<Event | undefined>();
 
@@ -57,13 +59,11 @@ const EncabezadoAplicacion: React.FC<Props> = ({
   const cerrarSesion = () => {
     setPopoverEvent(undefined);
 
-    if (onCerrarSesion) {
-      onCerrarSesion();
-    } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('rol_actual');
-      history.push('/login');
-    }
+    // Limpia toda la sesión usando el contexto
+    logout();
+
+    // Fuerza recarga completa para resetear React Router y evitar residuos
+    window.location.href = '/login';
   };
 
   const abrirPopover = (e: React.MouseEvent) => {
@@ -87,7 +87,6 @@ const EncabezadoAplicacion: React.FC<Props> = ({
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <LogoMunicipal />
-
           <IonTitle
             style={{
               fontWeight: 'bold',
@@ -118,10 +117,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
               marginRight: '8px'
             }}
           >
-            <IonIcon
-              icon={notificationsOutline}
-              style={{ fontSize: '1.5rem' }}
-            />
+            <IonIcon icon={notificationsOutline} style={{ fontSize: '1.5rem' }} />
           </IonButton>
 
           <IonButton
@@ -134,10 +130,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
               marginRight: '8px'
             }}
           >
-            <IonIcon
-              icon={personCircleOutline}
-              style={{ fontSize: '1.8rem' }}
-            />
+            <IonIcon icon={personCircleOutline} style={{ fontSize: '1.8rem' }} />
           </IonButton>
 
           <IonPopover
@@ -165,7 +158,7 @@ const EncabezadoAplicacion: React.FC<Props> = ({
 
           <BarraRol
             rol={rol}
-            permitirCambioManual={false}
+            permitirCambioManual={permitirCambioManualRol || false}
           />
         </IonButtons>
       </IonToolbar>
