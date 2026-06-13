@@ -89,6 +89,7 @@ export async function listarSolicitudes(req: AuthRequest, res: Response) {
             categoria: true,
             estado: true,
             prioridad: true,
+            createdAt: true,
           }
         });
 

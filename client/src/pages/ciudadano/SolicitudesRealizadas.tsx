@@ -42,8 +42,12 @@ const SolicitudesRealizadas: React.FC = () => {
     setCargando(true);
     setErrorCarga("");
 
-    const solicitudesApi = await obtenerSolicitudes();
-    const solicitudes = mapSolicitudesApiToSolicitudes(solicitudesApi);
+    const respuestaApi = await obtenerSolicitudes();
+    
+    const objetoBase = (respuestaApi as any).data || respuestaApi;
+    const lista = objetoBase.solicitudes || (Array.isArray(objetoBase) ? objetoBase : []);
+
+    const solicitudes = mapSolicitudesApiToSolicitudes(lista);
 
     setTodasLasSolicitudes(solicitudes);
     setSolicitudesMostrar(solicitudes);
@@ -65,6 +69,7 @@ const SolicitudesRealizadas: React.FC = () => {
   } finally {
     setCargando(false);
   }
+
 };
 
   const cambiarRolManual = () => {

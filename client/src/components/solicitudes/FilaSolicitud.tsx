@@ -29,7 +29,6 @@ const FilaSolicitud: React.FC<Props> = ({
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>
-
       <td style={{ padding: "13px 10px" }}>
         <ColorEstado estado={solicitud.estado} />
       </td>
