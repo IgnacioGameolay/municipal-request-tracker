@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { Response } from "express";
 import { prisma } from "../config/prisma.js";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
@@ -203,7 +204,7 @@ export async function crearSolicitud(req: AuthRequest, res: Response) {
     ? prioridad
     : "media";
 
-  const solicitudCreada = await prisma.$transaction(async (tx) => {
+  const solicitudCreada = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const nuevaSolicitud = await tx.solicitud.create({
       data: {
         usuarioId: req.user!.id,
@@ -381,7 +382,7 @@ export async function actualizarSolicitud(req: AuthRequest, res: Response) {
     ]);
   }
 
-  const solicitudActualizada = await prisma.$transaction(async (tx) => {
+  const solicitudActualizada = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const actualizada = await tx.solicitud.update({
       where: { id },
       data: datosActualizacion,
@@ -459,7 +460,7 @@ export async function actualizarEstadoSolicitud(req: AuthRequest, res: Response)
       ? comentarioFuncionario.trim()
       : undefined;
 
-  const solicitudActualizada = await prisma.$transaction(async (tx) => {
+  const solicitudActualizada = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     // [NUEVO] Limpiamos la bandeja: marcamos como leídas todas las alertas previas de esta solicitud para este funcionario
     await tx.notificacion.updateMany({
       where: {
@@ -551,7 +552,7 @@ export async function eliminarSolicitud(req: AuthRequest, res: Response) {
     );
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.documentoSolicitud.deleteMany({
       where: { solicitudId: id },
     });

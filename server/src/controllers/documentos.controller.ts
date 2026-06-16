@@ -1,7 +1,7 @@
+import type { Prisma } from "@prisma/client";
 import { Response } from "express";
 import fs from "node:fs";
 import path from "node:path";
-
 import { prisma } from "../config/prisma.js";
 import {
   MAX_DOCUMENTOS_POR_SOLICITUD,
@@ -144,7 +144,7 @@ export async function subirDocumentoSolicitud(
     );
   }
 
-  const nuevoDocumento = await prisma.$transaction(async (tx) => {
+  const nuevoDocumento = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const documento = await tx.documentoSolicitud.create({
       data: {
         solicitudId: solicitud.id,
@@ -280,7 +280,7 @@ export async function eliminarDocumentoSolicitud(
     ]);
   }
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.historialSolicitud.create({
       data: {
         solicitudId: solicitud.id,

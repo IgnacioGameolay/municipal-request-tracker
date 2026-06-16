@@ -54,10 +54,23 @@ export interface CambiarEstadoData {
   comentarioFuncionario?: string;
 }
 
-export async function obtenerSolicitudes(): Promise<SolicitudApi[]> {
-  const response = await apiRequest<SolicitudApi[]>("/solicitudes");
+interface ListarSolicitudesResponse {
+  solicitudes: SolicitudApi[];
+  meta?: {
+    paginaActual: number;
+    totalPaginas: number;
+    totalRegistros: number;
+  };
+}
 
-  return response.data ?? [];
+export async function obtenerSolicitudes(): Promise<SolicitudApi[]> {
+  const response = await apiRequest<ListarSolicitudesResponse | SolicitudApi[]>("/solicitudes");
+
+  if (Array.isArray(response.data)) {
+    return response.data;
+  }
+
+  return response.data?.solicitudes ?? [];
 }
 
 export const listarSolicitudesApi = obtenerSolicitudes;
