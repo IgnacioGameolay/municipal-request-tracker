@@ -25,7 +25,9 @@ const SelectorTipoTramite: React.FC<Props> = ({
       >
         Seleccione tipo de trámite:
       </label>
-
+      <style>
+        {`.custom-select-popover {--width: 400px;}`}
+      </style>
       <IonSelect
         interface="popover"
         value={tipoSeleccionado}
@@ -35,11 +37,16 @@ const SelectorTipoTramite: React.FC<Props> = ({
           backgroundColor: "#ffffff",
           border: "1px solid #999",
           borderRadius: "6px",
-          width: "200px",
+          width: "400px",
           minHeight: "40px",
           paddingLeft: "5px",
           color: "#333",
         }}
+        interfaceOptions={{
+            cssClass: "custom-select-popover",
+            alignment: 'start',
+            matchWidth: true,
+          }}
       >
         {tipos.map((tipo) => (
           <IonSelectOption key={tipo} value={tipo}>

@@ -68,6 +68,7 @@ const TablaHistorialFuncionario: React.FC<Props> = ({
             }}
           >
             <th style={estiloCabecera}>Nro. Solicitud</th>
+            <th style={estiloCabecera}>Tipo de Solicitud</th>
             <th style={estiloCabecera}>Título solicitud</th>
             <th style={estiloCabecera}>Encargado de revisión</th>
             <th style={estiloCabecera}>Fecha de solicitud</th>

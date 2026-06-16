@@ -18,6 +18,7 @@ const FilaHistorialFuncionario: React.FC<Props> = ({
   return (
     <tr style={{ borderBottom: "1px solid #ddd" }}>
       <td style={estiloCelda}>{solicitud.id}</td>
+      <td style={estiloCelda}>{solicitud.tipo}</td>
       <td style={estiloCelda}>{solicitud.titulo}</td>
       <td style={estiloCelda}>{solicitud.encargado}</td>
       <td style={estiloCelda}>{normalizarFechaVisual(solicitud.fecha)}</td>

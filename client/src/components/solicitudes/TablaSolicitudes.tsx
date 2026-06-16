@@ -66,7 +66,7 @@ const TablaSolicitudes: React.FC<Props> = ({
       >
         <thead>
           <tr style={{ color: "#000" }}>
-            <th style={estiloCabecera}>ID. Solicitud</th>
+            <th style={estiloCabecera}>Nro. Solicitud</th>
             <th style={estiloCabecera}>Tipo solicitud</th>
             <th style={estiloCabecera}>Título solicitud</th>
             <th style={estiloCabecera}>
