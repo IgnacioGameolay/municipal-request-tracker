@@ -13,6 +13,28 @@ interface UsuarioToken {
   rol: RolUsuario;
 }
 
+interface UsuarioPublico {
+  id: string;
+  nombre: string;
+  rut: string;
+  email: string;
+  region: string;
+  comuna: string;
+  rol: string;
+  createdAt: Date;
+}
+
+const publicUserSelect = {
+  id: true,
+  nombre: true,
+  rut: true,
+  email: true,
+  region: true,
+  comuna: true,
+  rol: true,
+  createdAt: true,
+} as const;
+
 function generateToken(usuario: UsuarioToken) {
   const secret = process.env.JWT_SECRET;
 
@@ -38,16 +60,7 @@ function generateToken(usuario: UsuarioToken) {
   );
 }
 
-function toPublicUser(usuario: {
-  id: string;
-  nombre: string;
-  rut: string;
-  email: string;
-  region: string;
-  comuna: string;
-  rol: string;
-  createdAt: Date;
-}) {
+function toPublicUser(usuario: UsuarioPublico) {
   return {
     id: usuario.id,
     nombre: usuario.nombre,
@@ -60,28 +73,44 @@ function toPublicUser(usuario: {
   };
 }
 
+function normalizarTexto(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizarEmail(value: unknown): string {
+  return normalizarTexto(value).toLowerCase();
+}
+
+function emailEsValido(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export async function register(req: Request, res: Response) {
-  const {
-    nombre,
-    rut,
-    email,
-    password,
-    region,
-    comuna,
-  } = req.body;
+  const nombre = normalizarTexto(req.body.nombre);
+  const rut = normalizarTexto(req.body.rut);
+  const emailNormalizado = normalizarEmail(req.body.email);
+  const password = req.body.password;
+  const region = normalizarTexto(req.body.region);
+  const comuna = normalizarTexto(req.body.comuna);
 
   const errors = [];
 
-  if (!nombre || typeof nombre !== "string") {
+  if (!nombre) {
     errors.push({ field: "nombre", code: "required" });
   }
 
-  if (!rut || typeof rut !== "string") {
+  if (!rut) {
     errors.push({ field: "rut", code: "required" });
   }
 
-  if (!email || typeof email !== "string") {
+  if (!emailNormalizado) {
     errors.push({ field: "email", code: "required" });
+  } else if (!emailEsValido(emailNormalizado)) {
+    errors.push({
+      field: "email",
+      code: "invalid_format",
+      message: "El correo electrónico no tiene un formato válido",
+    });
   }
 
   if (!password || typeof password !== "string" || password.length < 6) {
@@ -92,11 +121,11 @@ export async function register(req: Request, res: Response) {
     });
   }
 
-  if (!region || typeof region !== "string") {
+  if (!region) {
     errors.push({ field: "region", code: "required" });
   }
 
-  if (!comuna || typeof comuna !== "string") {
+  if (!comuna) {
     errors.push({ field: "comuna", code: "required" });
   }
 
@@ -109,10 +138,9 @@ export async function register(req: Request, res: Response) {
     );
   }
 
-  const emailNormalizado = String(email).trim().toLowerCase();
-
   const existe = await prisma.usuario.findUnique({
     where: { email: emailNormalizado },
+    select: { id: true },
   });
 
   if (existe) {
@@ -125,14 +153,15 @@ export async function register(req: Request, res: Response) {
 
   const nuevoUsuario = await prisma.usuario.create({
     data: {
-      nombre: nombre.trim(),
-      rut: rut.trim(),
+      nombre,
+      rut,
       email: emailNormalizado,
       passwordHash,
-      region: region.trim(),
-      comuna: comuna.trim(),
+      region,
+      comuna,
       rol: "ciudadano",
     },
+    select: publicUserSelect,
   });
 
   const token = generateToken({
@@ -148,19 +177,35 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
+  const emailNormalizado = normalizarEmail(req.body.email);
+  const password = req.body.password;
 
-  if (!email || !password) {
+  if (!emailNormalizado || !password) {
     return errorResponse(res, 400, "Correo y contraseña son obligatorios", [
       { field: "email", code: "required" },
       { field: "password", code: "required" },
     ]);
   }
 
-  const emailNormalizado = String(email).trim().toLowerCase();
+  if (!emailEsValido(emailNormalizado)) {
+    return errorResponse(res, 400, "El correo electrónico no tiene un formato válido", [
+      { field: "email", code: "invalid_format" },
+    ]);
+  }
 
   const usuario = await prisma.usuario.findUnique({
     where: { email: emailNormalizado },
+    select: {
+      id: true,
+      nombre: true,
+      rut: true,
+      email: true,
+      region: true,
+      comuna: true,
+      rol: true,
+      createdAt: true,
+      passwordHash: true,
+    },
   });
 
   if (!usuario) {
@@ -183,15 +228,33 @@ export async function login(req: Request, res: Response) {
     rol: usuario.rol as RolUsuario,
   });
 
+  const usuarioPublico = {
+    id: usuario.id,
+    nombre: usuario.nombre,
+    rut: usuario.rut,
+    email: usuario.email,
+    region: usuario.region,
+    comuna: usuario.comuna,
+    rol: usuario.rol,
+    createdAt: usuario.createdAt,
+  };
+
   return successResponse(res, 200, "Inicio de sesión correcto", {
-    user: toPublicUser(usuario),
+    user: toPublicUser(usuarioPublico),
     token,
   });
 }
 
 export async function me(req: AuthRequest, res: Response) {
+  if (!req.user?.id) {
+    return errorResponse(res, 401, "Usuario no autenticado", [
+      { code: "unauthorized" },
+    ]);
+  }
+
   const usuario = await prisma.usuario.findUnique({
-    where: { id: req.user?.id },
+    where: { id: req.user.id },
+    select: publicUserSelect,
   });
 
   if (!usuario) {
