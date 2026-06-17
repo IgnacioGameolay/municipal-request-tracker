@@ -69,11 +69,6 @@ const TablaSolicitudes: React.FC<Props> = ({
             <th style={estiloCabecera}>Nro. Solicitud</th>
             <th style={estiloCabecera}>Tipo solicitud</th>
             <th style={estiloCabecera}>Título solicitud</th>
-            <th style={estiloCabecera}>
-              Ult. Encargado de
-              <br />
-              revisión
-            </th>
             <th style={estiloCabecera}>Fecha de la solicitud</th>
             <th style={estiloCabecera}>Estado</th>
             <th style={estiloCabecera}>Acciones</th>

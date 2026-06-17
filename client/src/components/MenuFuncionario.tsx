@@ -123,8 +123,10 @@ export const MenuFuncionario: React.FC = () => {
           </IonMenuToggle>
 
           <IonMenuToggle autoHide={false}>
+            {/* AQUI SE AGREGA EL ROUTERLINK PARA LOS TICKETS */}
             <IonItem
               button
+              routerLink="/funcionario/tickets"
               lines="none"
               style={{
                 "--min-height": "35px",
@@ -133,7 +135,7 @@ export const MenuFuncionario: React.FC = () => {
               }}
             >
               <IonLabel style={{ textDecoration: "underline" }}>
-                Contacto con solicitantes
+                Bandeja de Soporte de Tickets
               </IonLabel>
             </IonItem>
           </IonMenuToggle>

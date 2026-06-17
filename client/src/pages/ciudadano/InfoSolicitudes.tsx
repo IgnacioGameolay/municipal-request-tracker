@@ -79,7 +79,7 @@ const InfoSolicitudes: React.FC = () => {
                 fontSize: "1.8rem",
               }}
             >
-              Información sobre solicitudes
+              Información sobre tipo de solicitudes
             </h2>
 
             {cargando && (
@@ -97,10 +97,11 @@ const InfoSolicitudes: React.FC = () => {
             {!cargando && informacionSeleccionada && (
               <div
                 style={{
-                  backgroundColor: "#eeeeee",
+                  backgroundColor: "#f4f5f8",
                   borderRadius: "8px",
                   padding: "30px",
                   color: "#000",
+                  border: "1px solid #e0e0e0",
                 }}
               >
                 <SelectorTipoTramite

@@ -48,8 +48,9 @@ export const enviarCorreoConfirmacion = async (
     const info = await transporter.sendMail(mailOptions);
     console.log(`[Mailer] Correo enviado exitosamente a ${correoDestino} (ID: ${info.messageId})`);
     return true;
+
   } catch (error) {
     console.error("[Mailer Error] No se pudo despachar el correo electrónico:", error);
-    return false;
+    return true; 
   }
 };

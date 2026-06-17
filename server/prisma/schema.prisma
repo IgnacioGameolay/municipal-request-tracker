@@ -43,6 +43,8 @@ model Usuario {
   historialAcciones HistorialSolicitud[]
   mensajes MensajeSolicitud[]
 
+  ticketsSoporte TicketSoporte[]
+
   @@map("usuarios")
 }
 
@@ -70,6 +72,8 @@ model Solicitud {
   notificaciones Notificacion[]
   historial HistorialSolicitud[]
   mensajes MensajeSolicitud[]
+
+  ticketsSoporte TicketSoporte[]
 
   @@map("solicitudes")
 }
@@ -139,4 +143,24 @@ model MensajeSolicitud {
   emisor Usuario @relation(fields: [emisorId], references: [id])
 
   @@map("mensajes_solicitud")
+}
+
+model TicketSoporte {
+  id                   String   @id @default(uuid())
+  solicitudId          String?  @map("solicitud_id")
+  usuarioId            String   @map("usuario_id")
+  
+  titulo               String
+  tipo                 String
+  comentario           String
+  respuestaFuncionario String?  @map("respuesta_funcionario") // <-- NUEVO CAMPO
+  estado               String   @default("pendiente") 
+  
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  usuario              Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  solicitud            Solicitud? @relation(fields: [solicitudId], references: [id], onDelete: SetNull)
+
+  @@map("tickets_soporte")
 }

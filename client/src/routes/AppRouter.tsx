@@ -18,12 +18,15 @@ import DetalleSolicitud from "../pages/ciudadano/DetalleSolicitud";
 import InfoSolicitudes from "../pages/ciudadano/InfoSolicitudes";
 import NotificacionesCiudadano from "../pages/ciudadano/NotificacionesCiudadano";
 import ContactoCiudadano from "../pages/ciudadano/ContactoCiudadano";
+import MisTicketsCiudadano from "../pages/ciudadano/MisTicketsCiudadano";
 
 import DashboardFuncionario from "../pages/funcionario/DashboardFuncionario";
 import HistorialFuncionario from "../pages/funcionario/HistorialFuncionario";
 import BandejaFuncionario from "../pages/funcionario/BandejaFuncionario";
 import RevisarSolicitudFuncionario from "../pages/funcionario/RevisarSolicitudFuncionario";
 import NotificacionesFuncionario from "../pages/funcionario/NotificacionesFuncionario";
+// NUEVA IMPORTACIÓN:
+import TicketsFuncionario from "../pages/funcionario/TicketsFuncionario";
 
 export const AppRouter: React.FC = () => {
   const [rolActual, setRolActual] = useState<string | null>(
@@ -101,6 +104,14 @@ export const AppRouter: React.FC = () => {
           allowedRole="solicitante"
         />
 
+        {/* NUEVA RUTA PARA VER LOS TICKETS */}
+        <ProtectedRoute
+          exact
+          path="/ciudadano/mis-tickets"
+          component={MisTicketsCiudadano}
+          allowedRole="solicitante"
+        />
+
         <ProtectedRoute
           exact
           path="/ciudadano/informacion-solicitudes"
@@ -140,6 +151,13 @@ export const AppRouter: React.FC = () => {
           exact
           path="/funcionario/notificaciones"
           component={NotificacionesFuncionario}
+          allowedRole="funcionario"
+        />
+        
+        <ProtectedRoute
+          exact
+          path="/funcionario/tickets"
+          component={TicketsFuncionario}
           allowedRole="funcionario"
         />
 
