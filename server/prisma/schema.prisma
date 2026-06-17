@@ -26,117 +26,142 @@ enum PrioridadSolicitud {
 }
 
 model Usuario {
-  id           String   @id @default(uuid())
+  id           String     @id @default(uuid())
   nombre       String
-  rut          String   @unique
-  email        String   @unique
-  passwordHash String   @map("password_hash")
+  rut          String     @unique
+  email        String     @unique
+  passwordHash String     @map("password_hash")
   region       String
   comuna       String
   rol          RolUsuario
-  createdAt    DateTime @default(now()) @map("created_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
 
-  solicitudesCreadas Solicitud[]          @relation("SolicitudesCiudadano")
-  solicitudesGestionadas Solicitud[]      @relation("SolicitudesFuncionario")
-  documentosSubidos DocumentoSolicitud[]
-  notificaciones Notificacion[]
-  historialAcciones HistorialSolicitud[]
-  mensajes MensajeSolicitud[]
+  solicitudesCreadas     Solicitud[]          @relation("SolicitudesCiudadano")
+  solicitudesGestionadas Solicitud[]          @relation("SolicitudesFuncionario")
+  documentosSubidos      DocumentoSolicitud[]
+  notificaciones         Notificacion[]
+  historialAcciones      HistorialSolicitud[]
+  mensajes               MensajeSolicitud[]
+  ticketsSoporte         TicketSoporte[]
 
   @@map("usuarios")
 }
 
 model Solicitud {
-  id          String            @id @default(uuid())
-  usuarioId   String            @map("usuario_id")
-  funcionarioId String?          @map("funcionario_id")
+  id            String  @id @default(uuid())
+  usuarioId     String  @map("usuario_id")
+  funcionarioId String? @map("funcionario_id")
 
-  titulo      String
-  categoria   String
-  descripcion String
-  direccion   String
-  comuna      String
-  estado      EstadoSolicitud   @default(pendiente)
-  prioridad   PrioridadSolicitud @default(media)
-  comentarioFuncionario String? @map("comentario_funcionario")
+  titulo                String
+  categoria             String
+  descripcion           String
+  direccion             String
+  comuna                String
+  estado                EstadoSolicitud    @default(pendiente)
+  prioridad             PrioridadSolicitud @default(media)
+  comentarioFuncionario String?            @map("comentario_funcionario")
 
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  usuario     Usuario @relation("SolicitudesCiudadano", fields: [usuarioId], references: [id])
+  usuario     Usuario  @relation("SolicitudesCiudadano", fields: [usuarioId], references: [id])
   funcionario Usuario? @relation("SolicitudesFuncionario", fields: [funcionarioId], references: [id])
 
-  documentos DocumentoSolicitud[]
+  documentos     DocumentoSolicitud[]
   notificaciones Notificacion[]
-  historial HistorialSolicitud[]
-  mensajes MensajeSolicitud[]
+  historial      HistorialSolicitud[]
+  mensajes       MensajeSolicitud[]
+  ticketsSoporte TicketSoporte[]
 
   @@map("solicitudes")
 }
 
 model DocumentoSolicitud {
-  id                  String   @id @default(uuid())
-  solicitudId          String   @map("solicitud_id")
-  subidoPorUsuarioId   String   @map("subido_por_usuario_id")
+  id                 String @id @default(uuid())
+  solicitudId        String @map("solicitud_id")
+  subidoPorUsuarioId String @map("subido_por_usuario_id")
 
-  nombreOriginal       String   @map("nombre_original")
-  nombreAlmacenado     String   @map("nombre_almacenado")
-  mimeType             String   @map("mime_type")
-  sizeBytes            Int      @map("size_bytes")
-  ruta                 String
-  hashArchivo          String?  @map("hash_archivo")
-  createdAt            DateTime @default(now()) @map("created_at")
+  nombreOriginal   String   @map("nombre_original")
+  nombreAlmacenado String   @map("nombre_almacenado")
+  mimeType         String   @map("mime_type")
+  sizeBytes        Int      @map("size_bytes")
+  ruta             String
+  hashArchivo      String?  @map("hash_archivo")
+  createdAt        DateTime @default(now()) @map("created_at")
 
   solicitud Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
-  subidoPor Usuario @relation(fields: [subidoPorUsuarioId], references: [id])
+  subidoPor Usuario   @relation(fields: [subidoPorUsuarioId], references: [id])
 
   @@map("documentos_solicitud")
 }
 
 model Notificacion {
-  id          String   @id @default(uuid())
-  usuarioId   String   @map("usuario_id")
-  solicitudId String?  @map("solicitud_id")
+  id          String  @id @default(uuid())
+  usuarioId   String  @map("usuario_id")
+  solicitudId String? @map("solicitud_id")
 
-  titulo      String
-  mensaje     String
-  leida       Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
+  titulo    String
+  mensaje   String
+  leida     Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
 
-  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuario   Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   solicitud Solicitud? @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
 
   @@map("notificaciones")
 }
 
 model HistorialSolicitud {
-  id              String   @id @default(uuid())
-  solicitudId      String   @map("solicitud_id")
-  usuarioActorId   String   @map("usuario_actor_id")
+  id             String @id @default(uuid())
+  solicitudId    String @map("solicitud_id")
+  usuarioActorId String @map("usuario_actor_id")
 
-  accion           String
-  estadoAnterior   EstadoSolicitud? @map("estado_anterior")
-  estadoNuevo      EstadoSolicitud? @map("estado_nuevo")
-  comentario       String?
-  createdAt        DateTime @default(now()) @map("created_at")
+  accion         String
+  estadoAnterior EstadoSolicitud? @map("estado_anterior")
+  estadoNuevo    EstadoSolicitud? @map("estado_nuevo")
+  comentario     String?
+  createdAt      DateTime         @default(now()) @map("created_at")
 
-  solicitud Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
-  usuarioActor Usuario @relation(fields: [usuarioActorId], references: [id])
+  solicitud    Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
+  usuarioActor Usuario   @relation(fields: [usuarioActorId], references: [id])
 
   @@map("historial_solicitudes")
 }
 
 model MensajeSolicitud {
-  id          String   @id @default(uuid())
-  solicitudId String   @map("solicitud_id")
-  emisorId    String   @map("emisor_id")
+  id          String @id @default(uuid())
+  solicitudId String @map("solicitud_id")
+  emisorId    String @map("emisor_id")
 
-  mensaje     String
-  leido       Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
+  mensaje   String
+  leido     Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
 
   solicitud Solicitud @relation(fields: [solicitudId], references: [id], onDelete: Cascade)
-  emisor Usuario @relation(fields: [emisorId], references: [id])
+  emisor    Usuario   @relation(fields: [emisorId], references: [id])
 
   @@map("mensajes_solicitud")
+}
+
+model TicketSoporte {
+  id          String  @id @default(uuid())
+  solicitudId String? @map("solicitud_id")
+  usuarioId   String  @map("usuario_id")
+
+  titulo               String
+  tipo                 String
+  comentario           String
+  respuestaFuncionario String? @map("respuesta_funcionario")
+  estado               String  @default("pendiente")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  usuario   Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  solicitud Solicitud? @relation(fields: [solicitudId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId])
+  @@index([solicitudId])
+  @@index([estado])
+  @@map("tickets_soporte")
 }

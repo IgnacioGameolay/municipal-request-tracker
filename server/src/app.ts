@@ -11,6 +11,8 @@ import notificacionesRoutes from "./routes/notificaciones.routes.js";
 import documentosRoutes from "./routes/documentos.routes.js";
 import usuariosRoutes from "./routes/usuarios.routes.js";
 import tramitesRoutes from "./routes/tramites.routes.js";
+import soporteRoutes from "./routes/soporte.routes.js";
+
 
 import {
   errorMiddleware,
@@ -111,6 +113,7 @@ app.use("/api/solicitudes", documentosRoutes);
 app.use("/api/notificaciones", notificacionesRoutes);
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/tramites", tramitesRoutes);
+app.use("/api/tickets", soporteRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);

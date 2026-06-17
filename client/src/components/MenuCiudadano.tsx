@@ -15,7 +15,6 @@ import {
 export const MenuCiudadano: React.FC = () => {
   return (
     <IonMenu menuId="menu-lateral" contentId="main-content" type="overlay">
-      {/* Cabecera propia del menú para que no se pegue al techo */}
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ "--background": "#04466e", color: "white" }}>
           <IonTitle style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
@@ -44,18 +43,11 @@ export const MenuCiudadano: React.FC = () => {
               button
               routerLink="/ciudadano/tramites"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Perfil
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Perfil</IonLabel>
             </IonItem>
           </IonMenuToggle>
-
         </IonList>
 
         {/* SECCIÓN 2: Gestor de solicitudes */}
@@ -77,15 +69,9 @@ export const MenuCiudadano: React.FC = () => {
               button
               routerLink="/ciudadano/nueva-solicitud"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Realizar nueva solicitud
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Realizar nueva solicitud</IonLabel>
             </IonItem>
           </IonMenuToggle>
 
@@ -94,18 +80,23 @@ export const MenuCiudadano: React.FC = () => {
               button
               routerLink="/ciudadano/historial"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Solicitudes realizadas
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Solicitudes realizadas</IonLabel>
             </IonItem>
           </IonMenuToggle>
         </IonList>
+
+        <IonMenuToggle autoHide={false}>
+            <IonItem
+              button
+              routerLink="/ciudadano/informacion-solicitudes"
+              lines="none"
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
+            >
+              <IonLabel style={{ textDecoration: "underline" }}>Información sobre tipo de solicitudes</IonLabel>
+            </IonItem>
+          </IonMenuToggle>
 
         {/* SECCIÓN 3: Centro de Comunicación */}
         <IonListHeader
@@ -122,55 +113,40 @@ export const MenuCiudadano: React.FC = () => {
         </IonListHeader>
         <IonList style={{ paddingTop: 0, paddingBottom: 0 }}>
           <IonMenuToggle autoHide={false}>
-            {/* Enalce a notificaciones*/}
             <IonItem
               button
               routerLink="/ciudadano/notificaciones"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Bandeja de notificaciones
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Bandeja de notificaciones</IonLabel>
             </IonItem>
           </IonMenuToggle>
+
           <IonMenuToggle autoHide={false}>
-            {/* agrega routerLink="/ciudadano/contacto" */}
+            {/* ESTE ES EL BOTÓN ACTUALIZADO PARA CREAR TICKET */}
             <IonItem
               button
               routerLink="/ciudadano/contacto"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Contacto y ayuda
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Enviar ticket al soporte</IonLabel>
             </IonItem>
           </IonMenuToggle>
+
           <IonMenuToggle autoHide={false}>
+            {/* ESTE ES EL NUEVO BOTÓN PARA VER TICKETS */}
             <IonItem
               button
-              routerLink="/ciudadano/informacion-solicitudes"
+              routerLink="/ciudadano/mis-tickets"
               lines="none"
-              style={{
-                "--min-height": "35px",
-                fontSize: "0.9rem",
-                color: "#555",
-              }}
+              style={{ "--min-height": "35px", fontSize: "0.9rem", color: "#555" }}
             >
-              <IonLabel style={{ textDecoration: "underline" }}>
-                Información sobre solicitudes
-              </IonLabel>
+              <IonLabel style={{ textDecoration: "underline" }}>Ver mis tickets</IonLabel>
             </IonItem>
           </IonMenuToggle>
+          
         </IonList>
       </IonContent>
     </IonMenu>
