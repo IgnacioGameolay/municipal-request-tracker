@@ -1,0 +1,17 @@
+$kind: http-request
+name: Ciudadano intenta responder ticket
+url: "{{baseUrl}}/tickets/{{id_ticket}}/responder"
+method: PATCH
+body:
+  type: json
+  content: "{\r
+
+    \  \"respuesta\": \"Me deja modificar o no\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Ciudadano intenta responder ticket.resources/examples
+order: 4501400888857501

@@ -1,9 +1,9 @@
 $kind: http-request
 name: Actualizar Solicitud Completa
 method: PUT
-url: "{{baseUrl}}/solicitudes/667406b4-219f-4819-9732-d00f93923a62"
+url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
 examples: .resources/PUT actualizar-solicitud.resources/examples
-order: 4000
+order: 5000
 description: |-
   Actualiza todos los campos de una solicitud existente (reemplazo completo).
 

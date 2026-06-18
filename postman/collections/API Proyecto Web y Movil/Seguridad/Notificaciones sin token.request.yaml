@@ -1,0 +1,5 @@
+$kind: http-request
+url: "{{baseUrl}}/notificaciones"
+method: GET
+examples: .resources/Notificaciones sin token.resources/examples
+order: 4261692941266720

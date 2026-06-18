@@ -22,9 +22,14 @@ body:
 scripts:
   - type: afterResponse
     code: |-
-      const jsonData = pm.response.json();
-      if (jsonData.token) {
-        pm.environment.set("tokenFuncionario", jsonData.token);
-        console.log("tokenFuncionario guardado:", jsonData.token);
+      // Validar que el login fue exitoso
+      pm.test("El estado es 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // Extraer el token de la respuesta y guardarlo en el environment
+      var jsonData = pm.response.json();
+      if (jsonData.data && jsonData.data.token) {
+          pm.environment.set("token_funcionario", jsonData.data.token);
       }
     language: text/javascript

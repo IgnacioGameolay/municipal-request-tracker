@@ -1,0 +1,72 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
+  method: PUT
+  body:
+    type: json
+    content: "{\r
+
+      \  \"titulo\": \"Bache en calle principal (Actualizado)\",\r
+
+      \  \"categoria\": \"Infraestructura\",\r
+
+      \  \"descripcion\": \"El bache se hizo más grande con la lluvia.\",\r
+
+      \  \"direccion\": \"Av. Principal 123\",\r
+
+      \  \"comuna\": \"Santiago\",\r
+
+      \  \"prioridad\": \"alta\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 300;w=900
+    ratelimit-limit: "300"
+    ratelimit-remaining: "284"
+    ratelimit-reset: "223"
+    content-type: application/json; charset=utf-8
+    content-length: "489"
+    etag: W/"1e9-LY6BNZRWM87Prwh3jS/Q3VrIb7Y"
+    date: Thu, 18 Jun 2026 02:56:51 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud actualizada correctamente",
+        "data": {
+          "id": "cfd339c8-ecc8-46ed-81be-59d7576b85c2",
+          "usuarioId": "u1",
+          "funcionarioId": null,
+          "titulo": "Bache en calle principal (Actualizado)",
+          "categoria": "Infraestructura",
+          "descripcion": "El bache se hizo más grande con la lluvia.",
+          "direccion": "Av. Principal 123",
+          "comuna": "Santiago",
+          "estado": "pendiente",
+          "prioridad": "alta",
+          "comentarioFuncionario": null,
+          "createdAt": "2026-06-18T02:46:51.707Z",
+          "updatedAt": "2026-06-18T02:56:51.390Z"
+        }
+      }
+order: 1781751417733

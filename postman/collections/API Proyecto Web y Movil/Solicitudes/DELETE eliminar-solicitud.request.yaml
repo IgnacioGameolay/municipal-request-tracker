@@ -3,7 +3,7 @@ name: Eliminar Solicitud
 method: DELETE
 url: "{{baseUrl}}/solicitudes/7d3cbf52-9b1b-4c52-9810-f14421a87f2c"
 examples: .resources/DELETE eliminar-solicitud.resources/examples
-order: 6000
+order: 7000
 description: |-
   Elimina permanentemente una solicitud del sistema.
 

@@ -2,14 +2,16 @@ name: Local - Proyecto Web y Móvil
 values:
   - key: baseUrl
     value: 'http://localhost:3000/api'
+  - key: token_ciudadano
+    value: ''
+  - key: token_funcionario
+    value: ''
+  - key: id_solicitud
+    value: ''
+  - key: id_ticket
+    value: ''
   - key: token
     value: ''
-  - key: solicitudId
-    value: ''
-  - key: documentoId
-    value: ''
-  - key: tokenCiudadano
-    value: ''
-  - key: tokenFuncionario
+  - key: notificacionFuncionarioID
     value: ''
 color: 0

@@ -1,0 +1,69 @@
+$kind: http-example
+name: Iniciar Sesión (Ciudadano)
+description: |-
+  Autentica a un **ciudadano** y guarda el token en `{{tokenCiudadano}}`.
+
+  **No requiere autenticación previa.**
+
+  El script de Tests guarda automáticamente el token recibido en la variable de entorno `tokenCiudadano`.
+request:
+  url: "{{baseUrl}}/auth/login"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "ciudadano@demo.cl",
+        "password": "123456"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 20;w=900
+    ratelimit-limit: "20"
+    ratelimit-remaining: "19"
+    ratelimit-reset: "900"
+    content-type: application/json; charset=utf-8
+    content-length: "468"
+    etag: W/"1d4-ns2BdglKv/Q0nvYaV2DLHhJr4CU"
+    date: Thu, 18 Jun 2026 02:45:56 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Inicio de sesión correcto",
+        "data": {
+          "user": {
+            "id": "u1",
+            "nombre": "Ciudadano Demo",
+            "rut": "11111111-1",
+            "email": "ciudadano@demo.cl",
+            "region": "Valparaíso",
+            "comuna": "Valparaíso",
+            "rol": "ciudadano",
+            "createdAt": "2026-06-17T22:59:09.004Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InUxIiwiZW1haWwiOiJjaXVkYWRhbm9AZGVtby5jbCIsInJvbCI6ImNpdWRhZGFubyIsImlhdCI6MTc4MTc1MDc1NiwiZXhwIjoxNzgxNzU3OTU2fQ._zmfwaIml8d5HzX_btcrgpIRtDJAY-Ry2LVBGucgiUQ"
+        }
+      }
+order: 1653557772792350

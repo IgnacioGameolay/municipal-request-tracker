@@ -1,0 +1,6 @@
+$kind: http-request
+name: Solicitudes sin token
+url: "{{baseUrl}}/solicitudes"
+method: GET
+examples: .resources/Solicitudes sin token.resources/examples
+order: 1781753005071

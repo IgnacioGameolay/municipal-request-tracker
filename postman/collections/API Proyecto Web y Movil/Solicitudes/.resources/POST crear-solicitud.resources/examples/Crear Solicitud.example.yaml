@@ -27,13 +27,28 @@ response:
   statusCode: 201
   statusText: Created
   headers:
-    x-powered-by: Express
-    access-control-allow-origin: http://localhost:8100
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
     vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 300;w=900
+    ratelimit-limit: "300"
+    ratelimit-remaining: "296"
+    ratelimit-reset: "823"
     content-type: application/json; charset=utf-8
     content-length: "527"
-    etag: W/"20f-Un4724YlhdrrnWcPaqfRFSXzwBo"
-    date: Mon, 01 Jun 2026 03:39:54 GMT
+    etag: W/"20f-tPgmyAfZhXJcwCGycwvpA0eXtOQ"
+    date: Thu, 18 Jun 2026 02:46:51 GMT
     connection: keep-alive
     keep-alive: timeout=5
   body:
@@ -43,7 +58,7 @@ response:
         "ok": true,
         "message": "Solicitud creada correctamente",
         "data": {
-          "id": "7d3cbf52-9b1b-4c52-9810-f14421a87f2c",
+          "id": "cfd339c8-ecc8-46ed-81be-59d7576b85c2",
           "usuarioId": "u1",
           "funcionarioId": null,
           "titulo": "Bache en calle principal",
@@ -54,8 +69,8 @@ response:
           "estado": "pendiente",
           "prioridad": "alta",
           "comentarioFuncionario": null,
-          "createdAt": "2026-06-01T03:39:54.568Z",
-          "updatedAt": "2026-06-01T03:39:54.568Z"
+          "createdAt": "2026-06-18T02:46:51.707Z",
+          "updatedAt": "2026-06-18T02:46:51.707Z"
         }
       }
-order: 1780285196125
+order: 1781750855987

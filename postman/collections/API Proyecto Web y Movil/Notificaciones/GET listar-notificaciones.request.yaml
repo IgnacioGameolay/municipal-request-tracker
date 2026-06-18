@@ -14,4 +14,4 @@ description: |-
 auth:
   type: bearer
   credentials:
-    token: "{{token}}"
+    token: "{{token_funcionario}}"

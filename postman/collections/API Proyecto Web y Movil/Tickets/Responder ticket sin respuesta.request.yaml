@@ -1,0 +1,13 @@
+$kind: http-request
+name: Responder ticket sin respuesta
+url: "{{baseUrl}}/tickets/{{id_ticket}}/responder"
+method: PATCH
+body:
+  type: json
+  content: "{}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_funcionario}}"
+examples: .resources/Responder ticket sin respuesta.resources/examples
+order: 4502360368882574
