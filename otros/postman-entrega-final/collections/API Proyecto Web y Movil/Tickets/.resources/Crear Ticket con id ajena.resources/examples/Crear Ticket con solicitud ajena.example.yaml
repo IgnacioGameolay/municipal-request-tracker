@@ -1,0 +1,58 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/tickets"
+  method: POST
+  body:
+    type: json
+    content: "{\r
+
+      \  \"solicitudId\": \"{{id_solicitud}}\",\r
+
+      \  \"titulo\": \"Intento solicitud ajena\",\r
+
+      \  \"tipo\": \"Seguimiento\",\r
+
+      \  \"comentario\": \"No debería poder asociar un ticket a una solicitud de otro usuario.\"\r
+
+      }"
+response:
+  statusCode: 401
+  statusText: Unauthorized
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 300;w=900
+    ratelimit-limit: "300"
+    ratelimit-remaining: "287"
+    ratelimit-reset: "275"
+    content-type: application/json; charset=utf-8
+    content-length: "87"
+    etag: W/"57-FdH+AKEtXwildJ1UvM30LwrrvIo"
+    date: Thu, 18 Jun 2026 03:11:56 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": false,
+        "message": "Token inválido o expirado",
+        "errors": [
+          {
+            "code": "invalid_token"
+          }
+        ]
+      }
+order: 1781752321668

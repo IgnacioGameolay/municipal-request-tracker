@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/solicitudes/{{solicitudId}}/documentos"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+examples: .resources/Listar documentos de una solicitud.resources/examples
+order: 1780282719665

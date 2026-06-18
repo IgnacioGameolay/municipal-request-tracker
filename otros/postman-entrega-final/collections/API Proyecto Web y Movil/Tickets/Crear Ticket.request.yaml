@@ -1,0 +1,23 @@
+$kind: http-request
+name: Crear Ticket
+url: "{{baseUrl}}/tickets"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"solicitudId\": \"{{id_solicitud}}\",\r
+
+    \  \"titulo\": \"Consulta sobre solicitud Postman\",\r
+
+    \  \"tipo\": \"Seguimiento\",\r
+
+    \  \"comentario\": \"Quisiera consultar el estado de mi solicitud.\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Crear Ticket.resources/examples
+order: 1781751280012

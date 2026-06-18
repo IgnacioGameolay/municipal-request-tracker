@@ -1,0 +1,29 @@
+$kind: http-request
+name: Registrar Usuario
+method: POST
+url: "{{baseUrl}}/auth/register"
+examples: .resources/POST register.resources/examples
+order: 2000
+description: |-
+  Registra un nuevo usuario en el sistema.
+
+  **No requiere autenticación previa.**
+
+  Crea una cuenta con rol `ciudadano` o `funcionario`. Los campos `rut`, `region`
+  y `comuna` son obligatorios según el modelo de datos.
+
+  **Roles disponibles:** `ciudadano`, `funcionario`
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nombre": "Vicente",
+      "apellido": "Quezada",
+      "rut": "12345678-9",
+      "region": "Valparaíso",
+      "comuna": "Viña del Mar",
+      "email": "ciudadano2.prueba@correo.com",
+      "password": "PasswordSeguro123!"
+    }

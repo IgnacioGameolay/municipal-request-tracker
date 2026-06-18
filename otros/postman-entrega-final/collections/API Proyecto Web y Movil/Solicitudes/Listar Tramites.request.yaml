@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/tramites"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenCiudadano}}"
+examples: .resources/Listar Tramites.resources/examples
+order: 10000

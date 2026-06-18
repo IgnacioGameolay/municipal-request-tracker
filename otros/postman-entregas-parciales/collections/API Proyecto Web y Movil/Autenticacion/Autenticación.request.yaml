@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/me"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+examples: .resources/Autenticación.resources/examples
+order: 3976241534206185

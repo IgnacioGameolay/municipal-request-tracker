@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/register"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"nombre\": \"Vicente Quezada\",\r
+
+    \  \"rut\": \"21627406-7\",\r
+
+    \  \"email\": \"vicequezagallardo@gmail.com\",\r
+
+    \  \"password\": \"panchita450\",\r
+
+    \  \"region\": \"Valparaíso\",\r
+
+    \  \"comuna\": \"Valparaíso\"\r
+
+    }"
+examples: .resources/Registrar con email duplicado.resources/examples
+order: 4006859383696452

@@ -1,0 +1,82 @@
+$kind: http-request
+name: Crear Solicitud
+method: POST
+url: "{{baseUrl}}/solicitudes"
+scripts:
+  - type: beforeRequest
+    code: "// 1. Verificamos que Postman realmente haya recibido una respuesta\r
+
+      if (pm.response) {\r
+
+      \    \r
+
+      \    pm.test(\"Se creó correctamente (201 Created)\", function () {\r
+
+      \        pm.response.to.have.status(201);\r
+
+      \    });\r
+
+      \r
+
+      \    if (pm.response.code === 201) {\r
+
+      \        var jsonData = pm.response.json();\r
+
+      \        \r
+
+      \        if (jsonData && jsonData.data && jsonData.data.id) {\r
+
+      \            var solicitudId = jsonData.data.id;\r
+
+      \            \r
+
+      \            pm.environment.set(\"id_solicitud\", solicitudId);\r
+
+      \            console.log(\"¡ID GUARDADO EXITOSAMENTE!: \" +
+      solicitudId);\r
+
+      \        } else {\r
+
+      \            console.error(\"El JSON no tiene la estructura esperada de
+      data.id\");\r
+
+      \        }\r
+
+      \    }\r
+
+      } else {\r
+
+      \    // 2. Si el servidor no respondió, mostramos este mensaje\r
+
+      \    console.error(\"No hubo respuesta. Verifica que el servidor esté
+      corriendo y el entorno seleccionado.\");\r
+
+      }"
+    language: text/javascript
+examples: .resources/POST crear-solicitud.resources/examples
+order: 4000
+description: |-
+  Crea una nueva solicitud ciudadana en el sistema.
+
+  **Requiere autenticación:** Bearer Token `{{token}}` (rol: ciudadano)
+
+  **Estados disponibles:** `pendiente`, `en_revision`, `resuelta`, `rechazada`
+
+  **Prioridades disponibles:** `baja`, `media`, `alta`
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "titulo": "Bache en calle principal",
+      "categoria": "Infraestructura",
+      "descripcion": "Existe un bache de gran tamaño en la calle principal que representa un peligro para los vehículos.",
+      "direccion": "Av. Principal 123",
+      "comuna": "Santiago",
+      "prioridad": "alta"
+    }

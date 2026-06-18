@@ -1,0 +1,16 @@
+# Variables de entorno
+.env
+
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Archivos subidos por usuarios (solo se versiona el marcador de carpeta)
+uploads/*
+!uploads/.gitkeep
+
+# Metadata local de la app de escritorio de Postman
+.postman/

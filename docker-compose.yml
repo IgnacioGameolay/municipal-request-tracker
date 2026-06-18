@@ -1,0 +1,62 @@
+services:
+  database:
+    image: postgres:17
+    container_name: municipal_database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-municipal_request_tracker}
+      POSTGRES_USER: ${POSTGRES_USER:-municipal_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-municipal_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-municipal_user} -d ${POSTGRES_DB:-municipal_request_tracker}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./nodejs-Municipal
+      dockerfile: Dockerfile
+    container_name: municipal_backend
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      CLIENT_URL: http://localhost:8100
+      JWT_SECRET: ${JWT_SECRET:-docker_secret_cambiar_en_produccion}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-2h}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-municipal_user}:${POSTGRES_PASSWORD:-municipal_password}@database:5432/${POSTGRES_DB:-municipal_request_tracker}?schema=public
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Portal Municipal <no-reply@municipal.local>}
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: ./Ionic-Municipal
+      dockerfile: Dockerfile
+    container_name: municipal_frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      VITE_API_URL: http://localhost:3000/api
+    ports:
+      - "8100:8100"
+
+volumes:
+  postgres_data:
+  uploads_data:

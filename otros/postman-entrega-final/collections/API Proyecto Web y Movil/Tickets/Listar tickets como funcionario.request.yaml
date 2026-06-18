@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/tickets"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_funcionario}}"
+examples: .resources/Listar tickets como funcionario.resources/examples
+order: 1965615148259169

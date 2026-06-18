@@ -1,0 +1,27 @@
+$kind: http-request
+name: Editar Solicitud
+url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \  \"titulo\": \"Bache en calle principal (Actualizado)\",\r
+
+    \  \"categoria\": \"Infraestructura\",\r
+
+    \  \"descripcion\": \"El bache se hizo más grande con la lluvia.\",\r
+
+    \  \"direccion\": \"Av. Principal 123\",\r
+
+    \  \"comuna\": \"Santiago\",\r
+
+    \  \"prioridad\": \"alta\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Editar Solicitud.resources/examples
+order: 11500

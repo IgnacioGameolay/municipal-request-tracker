@@ -1,0 +1,19 @@
+$kind: http-request
+name: Crear tickets sin comentarios
+url: "{{baseUrl}}/tickets"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"titulo\": \"Ticket inválido\",\r
+
+    \  \"tipo\": \"Seguimiento\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Crear tickets sin comentarios.resources/examples
+order: 3944797582973423

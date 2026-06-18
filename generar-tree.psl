@@ -1,0 +1,110 @@
+param(
+    [string]$Root = ".",
+    [string]$Output = "tree.md",
+    [int]$MaxDepth = 12
+)
+
+$ErrorActionPreference = "Stop"
+
+$excludedDirs = @(
+    ".git",
+    "node_modules",
+    "dist",
+    "build",
+    ".vite",
+    ".postman",
+    "coverage",
+    ".turbo"
+)
+
+$excludedFiles = @(
+    ".env",
+    ".env.local",
+    ".env.production",
+    ".DS_Store"
+)
+
+function Should-ExcludeDir {
+    param([System.IO.DirectoryInfo]$Dir)
+    return $excludedDirs -contains $Dir.Name
+}
+
+function Should-ExcludeFile {
+    param([System.IO.FileInfo]$File)
+    return $excludedFiles -contains $File.Name
+}
+
+function Write-Tree {
+    param(
+        [System.IO.DirectoryInfo]$Directory,
+        [string]$Prefix = "",
+        [int]$Depth = 0
+    )
+
+    if ($Depth -ge $MaxDepth) {
+        return @()
+    }
+
+    $items = @()
+
+    $dirs = Get-ChildItem -LiteralPath $Directory.FullName -Directory -Force |
+        Where-Object { -not (Should-ExcludeDir $_) } |
+        Sort-Object Name
+
+    $files = Get-ChildItem -LiteralPath $Directory.FullName -File -Force |
+        Where-Object { -not (Should-ExcludeFile $_) } |
+        Sort-Object Name
+
+    $items += $dirs
+    $items += $files
+
+    $lines = @()
+
+    for ($i = 0; $i -lt $items.Count; $i++) {
+        $item = $items[$i]
+        $isLast = ($i -eq $items.Count - 1)
+
+        if ($isLast) {
+            $connector = "└── "
+            $childPrefix = $Prefix + "    "
+        } else {
+            $connector = "├── "
+            $childPrefix = $Prefix + "│   "
+        }
+
+        if ($item.PSIsContainer) {
+            $lines += "$Prefix$connector$($item.Name)/"
+            $lines += Write-Tree -Directory $item -Prefix $childPrefix -Depth ($Depth + 1)
+        } else {
+            $lines += "$Prefix$connector$($item.Name)"
+        }
+    }
+
+    return $lines
+}
+
+$rootDir = Get-Item -LiteralPath $Root
+$projectName = $rootDir.Name
+
+$treeLines = @()
+$treeLines += "$projectName/"
+$treeLines += Write-Tree -Directory $rootDir
+
+$markdown = @()
+$markdown += "# Árbol del proyecto"
+$markdown += ""
+$markdown += "**Proyecto:** $projectName"
+$markdown += ""
+$markdown += "**Ruta:** $($rootDir.FullName)"
+$markdown += ""
+$markdown += "**Generado:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+$markdown += ""
+$markdown += "## Estructura"
+$markdown += ""
+$markdown += '```txt'
+$markdown += $treeLines
+$markdown += '```'
+
+$markdown | Set-Content -Path $Output -Encoding UTF8
+
+Write-Host "Árbol generado correctamente en: $Output"

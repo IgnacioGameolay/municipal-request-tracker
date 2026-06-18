@@ -1,0 +1,6 @@
+$kind: http-request
+name: Listar tramites sin token
+url: "{{baseUrl}}/tramites"
+method: GET
+examples: .resources/Listar tramites sin token.resources/examples
+order: 3986719661726195
