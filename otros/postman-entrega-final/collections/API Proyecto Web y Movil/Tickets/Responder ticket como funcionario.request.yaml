@@ -1,0 +1,17 @@
+$kind: http-request
+name: Responder ticket como funcionario
+url: "{{baseUrl}}/tickets/{{id_ticket}}/responder"
+method: PATCH
+body:
+  type: json
+  content: "{\r
+
+    \  \"respuesta\": \"Su solicitud fue revisada por el equipo municipal.\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_funcionario}}"
+examples: .resources/Responder ticket como funcionario.resources/examples
+order: 4419135863961278

@@ -1,0 +1,37 @@
+$kind: http-request
+name: Iniciar Sesión (Ciudadano)
+method: POST
+url: "{{baseUrl}}/auth/login"
+examples: .resources/POST login-ciudadano.resources/examples
+order: 1500
+description: |-
+  Autentica a un **ciudadano** y guarda el token en `{{tokenCiudadano}}`.
+
+  **No requiere autenticación previa.**
+
+  El script de Tests guarda automáticamente el token recibido en la variable de entorno `tokenCiudadano`.
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "ciudadano@demo.cl",
+      "password": "123456"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      // Validar que el login fue exitoso
+      pm.test("El estado es 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      // Extraer el token de la respuesta y guardarlo en el environment
+      var jsonData = pm.response.json();
+
+      if (jsonData.data && jsonData.data.token) {
+          pm.environment.set("token_ciudadano", jsonData.data.token);
+          console.log("Token de ciudadano guardado automáticamente.");
+      }
+    language: text/javascript

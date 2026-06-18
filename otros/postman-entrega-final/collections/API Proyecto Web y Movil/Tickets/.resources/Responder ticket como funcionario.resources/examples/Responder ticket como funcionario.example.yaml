@@ -1,0 +1,59 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/tickets/{{id_ticket}}/responder"
+  method: PATCH
+  body:
+    type: json
+    content: "{\r
+
+      \  \"respuesta\": \"Su solicitud fue revisada por el equipo municipal.\"\r
+
+      }"
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 300;w=900
+    ratelimit-limit: "300"
+    ratelimit-remaining: "280"
+    ratelimit-reset: "71"
+    content-type: application/json; charset=utf-8
+    content-length: "477"
+    etag: W/"1dd-PfrHbZ480RVTkLP2PZs9mNrRUKc"
+    date: Thu, 18 Jun 2026 03:15:21 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Ticket respondido exitosamente",
+        "data": {
+          "id": "e37dd4dd-feef-4b54-b319-9dd89d9af243",
+          "solicitudId": "50bb1fb0-f457-41a7-bd24-b99b02c503a3",
+          "usuarioId": "u1",
+          "titulo": "Consulta sobre solicitud Postman",
+          "tipo": "Seguimiento",
+          "comentario": "Quisiera consultar el estado de mi solicitud.",
+          "respuestaFuncionario": "Su solicitud fue revisada por el equipo municipal.",
+          "estado": "resuelto",
+          "createdAt": "2026-06-18T03:14:53.419Z",
+          "updatedAt": "2026-06-18T03:15:21.136Z"
+        }
+      }
+order: 1781752536923

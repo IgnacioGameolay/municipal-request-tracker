@@ -1,0 +1,37 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/usuarios/funcionarios"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "263"
+    etag: W/"107-1swQGDRSjUbEkuXK+lX1yVhAbKI"
+    date: Thu, 04 Jun 2026 03:30:24 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Funcionarios obtenidos correctamente",
+        "data": [
+          {
+            "id": "u2",
+            "nombre": "Funcionario Demo",
+            "rut": "22222222-2",
+            "email": "funcionario@demo.cl",
+            "region": "Valparaíso",
+            "comuna": "Valparaíso",
+            "rol": "funcionario",
+            "createdAt": "2026-05-31T00:15:41.374Z"
+          }
+        ]
+      }
+order: 1780543825168

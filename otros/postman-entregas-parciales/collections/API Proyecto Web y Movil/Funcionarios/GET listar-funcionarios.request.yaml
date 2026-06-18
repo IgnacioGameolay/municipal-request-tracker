@@ -1,0 +1,14 @@
+$kind: http-request
+name: Listar Funcionarios
+method: GET
+url: "{{baseUrl}}/usuarios/funcionarios"
+examples: .resources/GET listar-funcionarios.resources/examples
+order: 1000
+description: |-
+  Obtiene la lista de funcionarios registrados en el sistema.
+
+  **Requiere autenticación:** Bearer Token `{{token}}`
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenCiudadano}}"

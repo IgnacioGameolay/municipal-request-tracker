@@ -1,0 +1,10 @@
+$kind: http-request
+name: Funcionarios
+url: "{{baseUrl}}/usuarios/funcionarios"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenCiudadano}}"
+examples: .resources/Funcionarios.resources/examples
+order: 11000

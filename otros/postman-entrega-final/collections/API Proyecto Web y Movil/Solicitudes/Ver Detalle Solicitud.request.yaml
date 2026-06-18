@@ -1,0 +1,10 @@
+$kind: http-request
+name: Ver Detalle Solicitud
+url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_funcionario}}"
+examples: .resources/Ver Detalle Solicitud.resources/examples
+order: 9000

@@ -1,0 +1,61 @@
+$kind: http-example
+description: |-
+  Registra un nuevo usuario en el sistema.
+
+  **No requiere autenticación previa.**
+
+  Crea una cuenta con rol `ciudadano` o `funcionario`. Los campos `rut`, `region`
+  y `comuna` son obligatorios según el modelo de datos.
+
+  **Roles disponibles:** `ciudadano`, `funcionario`
+request:
+  url: "{{baseUrl}}/auth/register"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "nombre": "Vicente",
+        "apellido": "Quezada",
+        "rut": "12345678-9",
+        "region": "Valparaíso",
+        "comuna": "Viña del Mar",
+        "email": "ciudadano2.prueba@correo.com",
+        "password": "PasswordSeguro123!"
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "574"
+    etag: W/"23e-siZX+BrH+scX3Bq5h0TyQff91Tk"
+    date: Mon, 01 Jun 2026 03:15:50 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Usuario registrado correctamente",
+        "data": {
+          "user": {
+            "id": "7a144dfc-7ebc-481e-aac8-d22b08d88ecb",
+            "nombre": "Vicente",
+            "rut": "12345678-9",
+            "email": "ciudadano2.prueba@correo.com",
+            "region": "Valparaíso",
+            "comuna": "Viña del Mar",
+            "rol": "ciudadano",
+            "createdAt": "2026-06-01T03:15:50.928Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjdhMTQ0ZGZjLTdlYmMtNDgxZS1hYWM4LWQyMmIwOGQ4OGVjYiIsImVtYWlsIjoiY2l1ZGFkYW5vMi5wcnVlYmFAY29ycmVvLmNvbSIsInJvbCI6ImNpdWRhZGFubyIsImlhdCI6MTc4MDI4Mzc1MCwiZXhwIjoxNzgwMjkwOTUwfQ.7z59_X4ksVQeU0lMShio4JOEmZTvTHijteE5Pfk4-ss"
+        }
+      }
+order: 1780283838177

@@ -1,0 +1,55 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 300;w=900
+    ratelimit-limit: "300"
+    ratelimit-remaining: "290"
+    ratelimit-reset: "609"
+    content-type: application/json; charset=utf-8
+    content-length: "529"
+    etag: W/"211-kJvrjuDW6a0FMH5pixBfiQTXBZY"
+    date: Thu, 18 Jun 2026 02:50:24 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud obtenida correctamente",
+        "data": {
+          "id": "cfd339c8-ecc8-46ed-81be-59d7576b85c2",
+          "usuarioId": "u1",
+          "funcionarioId": null,
+          "titulo": "Bache en calle principal",
+          "categoria": "Infraestructura",
+          "descripcion": "Existe un bache de gran tamaño en la calle principal que representa un peligro para los vehículos.",
+          "direccion": "Av. Principal 123",
+          "comuna": "Santiago",
+          "estado": "pendiente",
+          "prioridad": "alta",
+          "comentarioFuncionario": null,
+          "createdAt": "2026-06-18T02:46:51.707Z",
+          "updatedAt": "2026-06-18T02:46:51.707Z"
+        }
+      }
+order: 2420009309266043

@@ -1,0 +1,21 @@
+$kind: http-request
+name: Crear ticket sin solicitud asociada
+url: "{{baseUrl}}/tickets"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"titulo\": \"Consulta general Postman\",\r
+
+    \  \"tipo\": \"Ayuda general\",\r
+
+    \  \"comentario\": \"Ticket sin solicitud asociada para validar soporte general.\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Crear ticket sin solicitud asociada.resources/examples
+order: 3927641241092265

@@ -1,0 +1,6 @@
+$kind: http-request
+name: Marcar notificación inexistente
+url: "{{baseUrl}}/notificaciones/{{uuidInexistente}}/leida"
+method: PATCH
+examples: .resources/Marcar notificación inexistente.resources/examples
+order: 4369488285489804

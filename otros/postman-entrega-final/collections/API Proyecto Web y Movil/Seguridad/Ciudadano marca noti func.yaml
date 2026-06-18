@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/notificaciones/{{notificacionFuncionarioID}}/leida"
+method: PATCH
+auth:
+  type: bearer
+  credentials:
+    token: "{{token_ciudadano}}"
+examples: .resources/Ciudadano intenta marcar notificación del funcionario.resources/examples
+order: 4191946736448070

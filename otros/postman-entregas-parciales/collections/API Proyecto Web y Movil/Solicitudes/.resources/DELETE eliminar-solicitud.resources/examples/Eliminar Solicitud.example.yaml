@@ -1,0 +1,37 @@
+$kind: http-example
+description: |-
+  Elimina permanentemente una solicitud del sistema.
+
+  **Requiere autenticación:** Bearer Token `{{token}}`
+
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud a eliminar.
+
+  ⚠️ **Esta acción es irreversible.** Al eliminar una solicitud, también se
+  eliminan en cascada sus documentos, notificaciones, historial y mensajes asociados.
+request:
+  url: "{{baseUrl}}/solicitudes/7d3cbf52-9b1b-4c52-9810-f14421a87f2c"
+  method: DELETE
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    x-powered-by: Express
+    access-control-allow-origin: http://localhost:8100
+    vary: Origin
+    content-type: application/json; charset=utf-8
+    content-length: "110"
+    etag: W/"6e-gHUu8LioRwPuQUesB4gcSTYS1u8"
+    date: Mon, 01 Jun 2026 03:53:47 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Solicitud eliminada correctamente",
+        "data": {
+          "id": "7d3cbf52-9b1b-4c52-9810-f14421a87f2c"
+        }
+      }
+order: 1780286029762

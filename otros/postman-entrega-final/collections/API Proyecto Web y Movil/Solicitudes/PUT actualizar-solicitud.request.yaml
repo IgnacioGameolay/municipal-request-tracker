@@ -1,0 +1,30 @@
+$kind: http-request
+name: Actualizar Solicitud Completa
+method: PUT
+url: "{{baseUrl}}/solicitudes/{{id_solicitud}}"
+examples: .resources/PUT actualizar-solicitud.resources/examples
+order: 5000
+description: |-
+  Actualiza todos los campos de una solicitud existente (reemplazo completo).
+
+  **Requiere autenticación:** Bearer Token `{{token}}`
+
+  Reemplaza `{{solicitudId}}` con el UUID de la solicitud a actualizar.
+  Se deben enviar todos los campos del recurso.
+auth:
+  type: bearer
+  credentials:
+    token: "{{token}}"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "titulo": "Bache en calle principal (actualizado)",
+      "categoria": "Infraestructura",
+      "descripcion": "Descripción actualizada del problema reportado.",
+      "direccion": "Av. Principal 123",
+      "comuna": "Santiago",
+      "prioridad": "media"
+    }

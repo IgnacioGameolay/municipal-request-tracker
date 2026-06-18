@@ -1,0 +1,68 @@
+$kind: http-example
+description: |-
+  Autentica a un **funcionario** y guarda el token en `{{tokenFuncionario}}`.
+
+  **No requiere autenticación previa.**
+
+  El script de Tests guarda automáticamente el token recibido en la variable de entorno `tokenFuncionario`.
+request:
+  url: "{{baseUrl}}/auth/login"
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "email": "funcionario@demo.cl",
+        "password": "123456"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    content-security-policy: "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+    cross-origin-opener-policy: same-origin
+    cross-origin-resource-policy: cross-origin
+    origin-agent-cluster: ?1
+    referrer-policy: no-referrer
+    strict-transport-security: max-age=31536000; includeSubDomains
+    x-content-type-options: nosniff
+    x-dns-prefetch-control: off
+    x-download-options: noopen
+    x-frame-options: SAMEORIGIN
+    x-permitted-cross-domain-policies: none
+    x-xss-protection: "0"
+    vary: Origin
+    access-control-allow-credentials: "true"
+    ratelimit-policy: 20;w=900
+    ratelimit-limit: "20"
+    ratelimit-remaining: "18"
+    ratelimit-reset: "881"
+    content-type: application/json; charset=utf-8
+    content-length: "479"
+    etag: W/"1df-DLGAPJspp/90tdBBZWH9IPvr1ww"
+    date: Thu, 18 Jun 2026 02:46:16 GMT
+    connection: keep-alive
+    keep-alive: timeout=5
+  body:
+    type: json
+    content: |-
+      {
+        "ok": true,
+        "message": "Inicio de sesión correcto",
+        "data": {
+          "user": {
+            "id": "u2",
+            "nombre": "Funcionario Demo",
+            "rut": "22222222-2",
+            "email": "funcionario@demo.cl",
+            "region": "Valparaíso",
+            "comuna": "Valparaíso",
+            "rol": "funcionario",
+            "createdAt": "2026-06-17T22:59:09.008Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InUyIiwiZW1haWwiOiJmdW5jaW9uYXJpb0BkZW1vLmNsIiwicm9sIjoiZnVuY2lvbmFyaW8iLCJpYXQiOjE3ODE3NTA3NzYsImV4cCI6MTc4MTc1Nzk3Nn0.FldDhIMaGgYfcQy9-MGN5qf8JQzEJ3Xy1lQwPo7CzQI"
+        }
+      }
+order: 1781750778444

@@ -18,7 +18,7 @@ services:
 
   backend:
     build:
-      context: ./server
+      context: ./nodejs-Municipal
       dockerfile: Dockerfile
     container_name: municipal_backend
     depends_on:
@@ -46,7 +46,7 @@ services:
 
   frontend:
     build:
-      context: ./client
+      context: ./Ionic-Municipal
       dockerfile: Dockerfile
     container_name: municipal_frontend
     depends_on:
